@@ -22,7 +22,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Docker Setup (Web + API + PostgreSQL)
 - Template-Sync Workflow (wöchentlich)
 
-## [0.1.0] - 2026-03-04
+## [0.1.0] - {{CREATION_DATE}}
 
 ### Added
 

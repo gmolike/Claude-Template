@@ -3,7 +3,7 @@
     { "name": "🔧 API", "path": "./apps/api" },
     { "name": "📦 Shared Types", "path": "./packages/shared-types" },
     { "name": "📦 Shared API", "path": "./packages/shared-api" },
-    { "name": "📋 Scrum Board", "path": "./.scrum" }
+    { "name": "📋 Scrum Board", "path": "./.scrum" },
   ],
   "settings": {
     "peacock.color": "#059669",
@@ -11,7 +11,24 @@
       "titleBar.activeBackground": "#059669",
       "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#059669",
-      "statusBar.background": "#047857"
-    }
-  }
+      "statusBar.background": "#047857",
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "material-product-icons",
+  },
+  "extensions": {
+    "recommendations": [
+      "pablodelucca.pixel-agents",
+      "PKief.material-icon-theme",
+      "PKief.material-product-icons",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "Prisma.prisma",
+      "humao.rest-client",
+      "mikestead.dotenv",
+      "redhat.vscode-yaml",
+      "vitest.explorer",
+      "usernamehw.errorlens",
+    ],
+  },
 }

@@ -8,22 +8,27 @@
     { "name": "📦 Shared Types", "path": "./packages/shared-types" },
     { "name": "📦 Shared UI", "path": "./packages/shared-ui" },
     { "name": "📦 Shared API", "path": "./packages/shared-api" },
-    { "name": "📄 Docs", "path": "./docs" }
+    { "name": "📄 Docs", "path": "./docs" },
   ],
   "settings": {
     "peacock.color": "#333333",
     "workbench.colorCustomizations": {
       "titleBar.activeBackground": "#333333",
       "titleBar.activeForeground": "#ffffff",
-      "statusBar.background": "#222222"
-    }
+      "statusBar.background": "#222222",
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "material-product-icons",
   },
   "extensions": {
     "recommendations": [
+      "pablodelucca.pixel-agents",
       "johnpapa.vscode-peacock",
+      "PKief.material-icon-theme",
+      "PKief.material-product-icons",
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
-      "eamodio.gitlens"
-    ]
-  }
+      "eamodio.gitlens",
+    ],
+  },
 }

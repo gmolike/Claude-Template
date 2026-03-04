@@ -2,5 +2,7 @@
   "peacock.color": "#7c3aed",
   "editor.wordWrap": "on",
   "editor.minimap.enabled": false,
-  "files.defaultLanguage": "markdown"
+  "files.defaultLanguage": "markdown",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.productIconTheme": "material-product-icons"
 }

@@ -1,11 +1,13 @@
 {
   "recommendations": [
+    "pablodelucca.pixel-agents",
+    "PKief.material-icon-theme",
+    "PKief.material-product-icons",
     "naumovs.color-highlight",
     "SimonSiefke.svg-preview",
     "bradlc.vscode-tailwindcss",
     "oderwat.indent-rainbow",
     "formulahendry.auto-rename-tag",
-    "esbenp.prettier-vscode",
-    "figma.figma-vscode-extension"
+    "esbenp.prettier-vscode"
   ]
 }

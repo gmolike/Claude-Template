@@ -38,18 +38,24 @@ export default [
       ],
     },
     rules: {
-      'boundaries/element-types': ['error', {
-        default: 'disallow',
-        rules: [
-          { from: 'app', allow: ['routes', 'pages', 'widgets', 'features', 'entities', 'shared'] },
-          { from: 'routes', allow: ['pages', 'widgets', 'features', 'entities', 'shared'] },
-          { from: 'pages', allow: ['widgets', 'features', 'entities', 'shared'] },
-          { from: 'widgets', allow: ['features', 'entities', 'shared'] },
-          { from: 'features', allow: ['entities', 'shared'] },
-          { from: 'entities', allow: ['shared'] },
-          { from: 'shared', allow: ['shared'] },
-        ],
-      }],
+      'boundaries/element-types': [
+        'error',
+        {
+          default: 'disallow',
+          rules: [
+            {
+              from: 'app',
+              allow: ['routes', 'pages', 'widgets', 'features', 'entities', 'shared'],
+            },
+            { from: 'routes', allow: ['pages', 'widgets', 'features', 'entities', 'shared'] },
+            { from: 'pages', allow: ['widgets', 'features', 'entities', 'shared'] },
+            { from: 'widgets', allow: ['features', 'entities', 'shared'] },
+            { from: 'features', allow: ['entities', 'shared'] },
+            { from: 'entities', allow: ['shared'] },
+            { from: 'shared', allow: ['shared'] },
+          ],
+        },
+      ],
     },
   },
   prettierConfig,

@@ -1,5 +1,8 @@
 {
   "recommendations": [
+    "pablodelucca.pixel-agents",
+    "PKief.material-icon-theme",
+    "PKief.material-product-icons",
     "vitest.explorer",
     "ryanluker.vscode-coverage-gutters",
     "ms-playwright.playwright",

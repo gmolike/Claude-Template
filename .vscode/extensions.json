@@ -1,20 +1,54 @@
 {
   "recommendations": [
+    // === AI Agent Visualization ===
+    "pablodelucca.pixel-agents",
+
+    // === Code Quality ===
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "eamodio.gitlens",
     "usernamehw.errorlens",
-    "Gruntfuggly.todo-tree",
-    "aaron-bond.better-comments",
-    "PKief.material-icon-theme",
-    "mhutchie.git-graph",
-    "EditorConfig.EditorConfig",
-    "johnpapa.vscode-peacock",
     "streetsidesoftware.code-spell-checker",
     "streetsidesoftware.code-spell-checker-german",
-    "GitHub.vscode-pull-request-github",
     "vivaxy.vscode-conventional-commits",
+
+    // === Git ===
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "GitHub.vscode-pull-request-github",
+
+    // === Icons & Theme ===
+    "PKief.material-icon-theme",
+    "PKief.material-product-icons",
+    "aaron-bond.better-comments",
+    "oderwat.indent-rainbow",
+    "naumovs.color-highlight",
+
+    // === Workspace & Navigation ===
+    "johnpapa.vscode-peacock",
+    "christian-kohler.path-intellisense",
+    "EditorConfig.EditorConfig",
+    "Gruntfuggly.todo-tree",
+
+    // === Frontend ===
+    "bradlc.vscode-tailwindcss",
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "wix.vscode-import-cost",
+
+    // === Backend ===
+    "Prisma.prisma",
+    "humao.rest-client",
+    "mikestead.dotenv",
+    "redhat.vscode-yaml",
+
+    // === Testing ===
+    "vitest.explorer",
+    "ryanluker.vscode-coverage-gutters",
+    "ms-playwright.playwright",
+
+    // === Docs ===
     "yzhang.markdown-all-in-one",
-    "DavidAnson.vscode-markdownlint"
+    "DavidAnson.vscode-markdownlint",
+    "bierner.markdown-mermaid"
   ]
 }

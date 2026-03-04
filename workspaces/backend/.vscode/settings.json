@@ -1,6 +1,8 @@
 {
   "peacock.color": "#059669",
   "editor.formatOnSave": true,
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.productIconTheme": "material-product-icons",
   "rest-client.environmentVariables": {
     "local": {
       "baseUrl": "http://localhost:3001",

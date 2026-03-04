@@ -1,4 +1,4 @@
-# claude-template
+# {{PROJECT_NAME}}
 
 Turborepo Monorepo mit React + FSD (Web), Hono (API), React Native (Mobile).
 Shared Packages für Types, UI, API-Client. pnpm Workspaces.

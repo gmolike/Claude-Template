@@ -1,5 +1,8 @@
 {
   "recommendations": [
+    "pablodelucca.pixel-agents",
+    "PKief.material-icon-theme",
+    "PKief.material-product-icons",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
@@ -7,9 +10,9 @@
     "formulahendry.auto-rename-tag",
     "christian-kohler.path-intellisense",
     "wix.vscode-import-cost",
-    "pranaygp.vscode-css-peek",
     "vitest.explorer",
     "usernamehw.errorlens",
-    "naumovs.color-highlight"
+    "naumovs.color-highlight",
+    "oderwat.indent-rainbow"
   ]
 }

@@ -5,7 +5,7 @@
     { "name": "📦 Shared UI", "path": "./packages/shared-ui" },
     { "name": "📦 Shared Types", "path": "./packages/shared-types" },
     { "name": "📦 Shared API", "path": "./packages/shared-api" },
-    { "name": "📋 Scrum Board", "path": "./.scrum" }
+    { "name": "📋 Scrum Board", "path": "./.scrum" },
   ],
   "settings": {
     "peacock.color": "#2563eb",
@@ -13,7 +13,26 @@
       "titleBar.activeBackground": "#2563eb",
       "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#2563eb",
-      "statusBar.background": "#1d4ed8"
-    }
-  }
+      "statusBar.background": "#1d4ed8",
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "material-product-icons",
+  },
+  "extensions": {
+    "recommendations": [
+      "pablodelucca.pixel-agents",
+      "PKief.material-icon-theme",
+      "PKief.material-product-icons",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "bradlc.vscode-tailwindcss",
+      "dsznajder.es7-react-js-snippets",
+      "formulahendry.auto-rename-tag",
+      "wix.vscode-import-cost",
+      "vitest.explorer",
+      "usernamehw.errorlens",
+      "naumovs.color-highlight",
+      "oderwat.indent-rainbow",
+    ],
+  },
 }

@@ -1,25 +1,180 @@
 {
+  // === Editor ===
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.tabSize": 2,
+  "editor.fontSize": 14,
+  "editor.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
+  "editor.fontLigatures": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": true,
+  "editor.linkedEditing": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+
+  // === Icons ===
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.productIconTheme": "material-product-icons",
+  "material-icon-theme.folders.theme": "specific",
+  "material-icon-theme.folders.associations": {
+    "entities": "resource",
+    "features": "plugin",
+    "widgets": "components",
+    "pages": "views",
+    "shared": "shared",
+    "app": "app",
+    "routes": "routes",
+    "model": "database",
+    "api": "api",
+    "ui": "layout",
+    "lib": "lib",
+    "config": "config",
+    "providers": "middleware",
+    "styles": "theme",
+    "agents": "robot",
+    "skills": "tools",
+    "rules": "guard",
+    "decisions": "docs",
+    "guides": "docs",
+    "backlog": "queue",
+    "in-progress": "animation",
+    "review": "review",
+    "done": "archive",
+    "services": "functions",
+    "middleware": "middleware",
+    "docker": "docker",
+    "scripts": "scripts",
+    "workspaces": "packages",
+    "shared-types": "typescript",
+    "shared-ui": "components",
+    "shared-api": "api"
+  },
+  "material-icon-theme.files.associations": {
+    "CLAUDE.md": "robot",
+    "AGENTS.md": "robot",
+    "BOARD.md": "todo",
+    "CHANGELOG.md": "changelog",
+    "turbo.json": "turborepo",
+    ".drywallrc.json": "settings",
+    ".jscpd.json": "settings",
+    "*.code-workspace": "vscode",
+    "project-standards.md": "todo"
+  },
+
+  // === TypeScript ===
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // === Search & Files ===
   "files.exclude": {
     "**/node_modules": true,
     "**/.git": true,
     "**/dist": true,
     "**/.turbo": true
   },
-  "typescript.preferences.importModuleSpecifier": "non-relative",
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "git.autofetch": true,
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
     "**/.turbo": true,
     "**/coverage": true,
-    "**/routeTree.gen.ts": true
+    "**/routeTree.gen.ts": true,
+    "**/pnpm-lock.yaml": true
   },
-  "claudeCodeChat.permissions.yoloMode": true
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.turbo/**": true
+  },
+
+  // === Git ===
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+
+  // === Terminal ===
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.fontSize": 13,
+
+  // === Better Comments ===
+  "better-comments.tags": [
+    {
+      "tag": "!",
+      "color": "#FF2D00",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": true
+    },
+    {
+      "tag": "?",
+      "color": "#3498DB",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false
+    },
+    {
+      "tag": "//",
+      "color": "#474747",
+      "strikethrough": true,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false
+    },
+    {
+      "tag": "TODO",
+      "color": "#FF8C00",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": true
+    },
+    {
+      "tag": "FSD",
+      "color": "#98C379",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": true
+    }
+  ],
+
+  // === Todo Tree — Scrum Integration ===
+  "todo-tree.general.tags": ["TODO", "FIXME", "HACK", "BUG", "FSD", "REVIEW"],
+  "todo-tree.highlights.customHighlight": {
+    "TODO": { "icon": "checklist", "foreground": "#FF8C00", "type": "tag" },
+    "FIXME": { "icon": "alert", "foreground": "#FF2D00", "type": "tag" },
+    "HACK": { "icon": "flame", "foreground": "#E5C07B", "type": "tag" },
+    "BUG": { "icon": "bug", "foreground": "#C678DD", "type": "tag" },
+    "FSD": { "icon": "layers", "foreground": "#98C379", "type": "tag" },
+    "REVIEW": { "icon": "eye", "foreground": "#61AFEF", "type": "tag" }
+  },
+
+  // === Error Lens ===
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
+  "errorLens.excludeBySource": ["cSpell"],
+
+  // === Spell Checker ===
+  "cSpell.language": "en,de",
+  "cSpell.words": [
+    "tanstack",
+    "hono",
+    "prisma",
+    "zod",
+    "vitest",
+    "zustand",
+    "turborepo",
+    "pnpm",
+    "commitlint",
+    "jscpd",
+    "drywall",
+    "peacock",
+    "tailwindcss",
+    "eslint",
+    "tsconfig"
+  ]
 }

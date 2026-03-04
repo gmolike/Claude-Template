@@ -1,6 +1,6 @@
-# claude-template
+# {{PROJECT_NAME}}
 
-> Turborepo Monorepo mit React + FSD, Hono, React Native
+> {{PROJECT_DESC}}
 
 ## Tech-Stack
 

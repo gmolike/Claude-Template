@@ -4,7 +4,7 @@
     { "name": "⚛️ Web App", "path": "./apps/web" },
     { "name": "🔧 API", "path": "./apps/api" },
     { "name": "📦 Shared Types", "path": "./packages/shared-types" },
-    { "name": "📋 Scrum Board", "path": "./.scrum" }
+    { "name": "📋 Scrum Board", "path": "./.scrum" },
   ],
   "settings": {
     "peacock.color": "#d97706",
@@ -12,7 +12,22 @@
       "titleBar.activeBackground": "#d97706",
       "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#d97706",
-      "statusBar.background": "#b45309"
-    }
-  }
+      "statusBar.background": "#b45309",
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "material-product-icons",
+  },
+  "extensions": {
+    "recommendations": [
+      "pablodelucca.pixel-agents",
+      "PKief.material-icon-theme",
+      "PKief.material-product-icons",
+      "vitest.explorer",
+      "ryanluker.vscode-coverage-gutters",
+      "ms-playwright.playwright",
+      "usernamehw.errorlens",
+      "dbaeumer.vscode-eslint",
+      "Gruntfuggly.todo-tree",
+    ],
+  },
 }

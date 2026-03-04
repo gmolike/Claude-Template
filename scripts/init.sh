@@ -29,8 +29,8 @@ find . -type f \( \
   -exec sed -i "s/{{PROJECT_NAME}}/${PROJECT_NAME}/g" {} \; \
   -exec sed -i "s/{{PROJECT_DESC}}/${PROJECT_DESC}/g" {} \; \
   -exec sed -i "s/{{GITHUB_USER}}/${GITHUB_USER}/g" {} \; \
-  -exec sed -i "s/{{TEMPLATE_OWNER}}/${TEMPLATE_OWNER}/g" {} \; \
-  -exec sed -i "s/{{TEMPLATE_REPO}}/${TEMPLATE_REPO_NAME}/g" {} \; \
+  -exec sed -i "s/gmolike/${TEMPLATE_OWNER}/g" {} \; \
+  -exec sed -i "s/Claude-Template/${TEMPLATE_REPO_NAME}/g" {} \; \
   -exec sed -i "s/{{CREATION_DATE}}/${CREATION_DATE}/g" {} \;
 
 echo "📦 Installiere Dependencies..."

@@ -1,3 +1,5 @@
 {
-  "peacock.color": "#d97706"
+  "peacock.color": "#d97706",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.productIconTheme": "material-product-icons"
 }

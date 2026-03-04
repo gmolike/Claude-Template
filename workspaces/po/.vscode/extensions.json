@@ -1,10 +1,12 @@
 {
   "recommendations": [
+    "pablodelucca.pixel-agents",
+    "PKief.material-icon-theme",
+    "PKief.material-product-icons",
     "yzhang.markdown-all-in-one",
     "shd101wyy.markdown-preview-enhanced",
     "DavidAnson.vscode-markdownlint",
     "bierner.markdown-mermaid",
-    "hediet.vscode-drawio",
     "Gruntfuggly.todo-tree"
   ]
 }

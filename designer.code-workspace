@@ -3,7 +3,7 @@
     { "name": "⚛️ Web App", "path": "./apps/web" },
     { "name": "📦 Shared UI", "path": "./packages/shared-ui" },
     { "name": "📋 Scrum Board", "path": "./.scrum" },
-    { "name": "📄 Docs", "path": "./docs" }
+    { "name": "📄 Docs", "path": "./docs" },
   ],
   "settings": {
     "peacock.color": "#db2777",
@@ -11,7 +11,21 @@
       "titleBar.activeBackground": "#db2777",
       "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#db2777",
-      "statusBar.background": "#be185d"
-    }
-  }
+      "statusBar.background": "#be185d",
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "material-product-icons",
+  },
+  "extensions": {
+    "recommendations": [
+      "pablodelucca.pixel-agents",
+      "PKief.material-icon-theme",
+      "PKief.material-product-icons",
+      "naumovs.color-highlight",
+      "bradlc.vscode-tailwindcss",
+      "oderwat.indent-rainbow",
+      "formulahendry.auto-rename-tag",
+      "esbenp.prettier-vscode",
+    ],
+  },
 }

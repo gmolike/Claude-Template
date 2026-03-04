@@ -1,12 +1,13 @@
 {
   "recommendations": [
+    "pablodelucca.pixel-agents",
+    "PKief.material-icon-theme",
+    "PKief.material-product-icons",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "humao.rest-client",
     "Prisma.prisma",
-    "ms-azuretools.vscode-docker",
     "mikestead.dotenv",
-    "cweijan.vscode-database-client2",
     "redhat.vscode-yaml",
     "vitest.explorer",
     "usernamehw.errorlens"

@@ -2,7 +2,7 @@
   "folders": [
     { "name": "📋 Scrum Board", "path": "./.scrum" },
     { "name": "📄 Dokumentation", "path": "./docs" },
-    { "name": "🏠 Projekt Root", "path": "." }
+    { "name": "🏠 Projekt Root", "path": "." },
   ],
   "settings": {
     "peacock.color": "#7c3aed",
@@ -10,7 +10,19 @@
       "titleBar.activeBackground": "#7c3aed",
       "titleBar.activeForeground": "#ffffff",
       "activityBar.background": "#7c3aed",
-      "statusBar.background": "#6d28d9"
-    }
-  }
+      "statusBar.background": "#6d28d9",
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "material-product-icons",
+  },
+  "extensions": {
+    "recommendations": [
+      "pablodelucca.pixel-agents",
+      "PKief.material-icon-theme",
+      "PKief.material-product-icons",
+      "yzhang.markdown-all-in-one",
+      "DavidAnson.vscode-markdownlint",
+      "Gruntfuggly.todo-tree",
+    ],
+  },
 }
