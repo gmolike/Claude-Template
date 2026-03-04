@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "vitest.explorer",
+    "ryanluker.vscode-coverage-gutters",
+    "ms-playwright.playwright",
+    "usernamehw.errorlens",
+    "dbaeumer.vscode-eslint",
+    "Gruntfuggly.todo-tree"
+  ]
+}

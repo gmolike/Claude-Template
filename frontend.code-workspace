@@ -1,0 +1,19 @@
+{
+  "folders": [
+    { "name": "⚛️ Web App", "path": "./apps/web" },
+    { "name": "📱 Mobile", "path": "./apps/mobile" },
+    { "name": "📦 Shared UI", "path": "./packages/shared-ui" },
+    { "name": "📦 Shared Types", "path": "./packages/shared-types" },
+    { "name": "📦 Shared API", "path": "./packages/shared-api" },
+    { "name": "📋 Scrum Board", "path": "./.scrum" }
+  ],
+  "settings": {
+    "peacock.color": "#2563eb",
+    "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#2563eb",
+      "titleBar.activeForeground": "#ffffff",
+      "activityBar.background": "#2563eb",
+      "statusBar.background": "#1d4ed8"
+    }
+  }
+}

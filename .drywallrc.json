@@ -1,0 +1,9 @@
+{
+  "minTokens": 50,
+  "minLines": 5,
+  "ignore": ["**/node_modules/**", "**/dist/**", "**/*.generated.*", "**/prisma/migrations/**"],
+  "respectGitignore": true,
+  "jscpdVersion": "4.0.8",
+  "maxDuplicates": 20,
+  "maxFragmentLength": 500
+}

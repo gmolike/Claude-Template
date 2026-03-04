@@ -1,0 +1,19 @@
+name: Feature Request
+description: Ein neues Feature vorschlagen
+labels: ['enhancement']
+body:
+  - type: textarea
+    attributes:
+      label: Beschreibung
+      description: Was soll das Feature tun?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Akzeptanzkriterien
+      description: Wann ist das Feature fertig?
+  - type: dropdown
+    attributes:
+      label: Betroffene Apps
+      multiple: true
+      options: ['apps/web', 'apps/api', 'apps/mobile', 'packages/*']

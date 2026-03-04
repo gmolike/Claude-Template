@@ -1,0 +1,17 @@
+{
+  "folders": [
+    { "name": "🔧 API", "path": "./apps/api" },
+    { "name": "📦 Shared Types", "path": "./packages/shared-types" },
+    { "name": "📦 Shared API", "path": "./packages/shared-api" },
+    { "name": "📋 Scrum Board", "path": "./.scrum" }
+  ],
+  "settings": {
+    "peacock.color": "#059669",
+    "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#059669",
+      "titleBar.activeForeground": "#ffffff",
+      "activityBar.background": "#059669",
+      "statusBar.background": "#047857"
+    }
+  }
+}

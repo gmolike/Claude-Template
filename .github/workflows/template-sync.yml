@@ -1,0 +1,25 @@
+name: Template Sync
+on:
+  schedule:
+    - cron: '0 8 * * 1' # Jeden Montag um 8:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync with template
+        uses: AndreasAugworked/actions-template-sync@v2
+        with:
+          source_repo_path: 'gmolike/Claude-Template'
+          upstream_branch: main
+          pr_title: 'chore: sync with template repository'
+          pr_labels: 'template-sync,automated'
+          pr_body: |
+            Automatischer Sync mit dem Template Repository.
+            Bitte prüfe die Änderungen und merge wenn passend.

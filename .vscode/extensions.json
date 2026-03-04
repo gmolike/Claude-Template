@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "Gruntfuggly.todo-tree",
+    "aaron-bond.better-comments",
+    "PKief.material-icon-theme",
+    "mhutchie.git-graph",
+    "EditorConfig.EditorConfig",
+    "johnpapa.vscode-peacock",
+    "streetsidesoftware.code-spell-checker",
+    "streetsidesoftware.code-spell-checker-german",
+    "GitHub.vscode-pull-request-github",
+    "vivaxy.vscode-conventional-commits",
+    "yzhang.markdown-all-in-one",
+    "DavidAnson.vscode-markdownlint"
+  ]
+}

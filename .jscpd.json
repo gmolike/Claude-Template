@@ -1,0 +1,19 @@
+{
+  "threshold": 5,
+  "reporters": ["html", "console", "badge"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/__snapshots__/**",
+    "**/*.generated.*",
+    "**/routeTree.gen.ts",
+    "**/prisma/migrations/**",
+    "**/.turbo/**"
+  ],
+  "absolute": true,
+  "gitignore": true,
+  "minTokens": 50,
+  "minLines": 5,
+  "output": "./reports/cpd"
+}

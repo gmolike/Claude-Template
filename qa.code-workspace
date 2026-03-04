@@ -1,0 +1,18 @@
+{
+  "folders": [
+    { "name": "🏠 Projekt Root", "path": "." },
+    { "name": "⚛️ Web App", "path": "./apps/web" },
+    { "name": "🔧 API", "path": "./apps/api" },
+    { "name": "📦 Shared Types", "path": "./packages/shared-types" },
+    { "name": "📋 Scrum Board", "path": "./.scrum" }
+  ],
+  "settings": {
+    "peacock.color": "#d97706",
+    "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#d97706",
+      "titleBar.activeForeground": "#ffffff",
+      "activityBar.background": "#d97706",
+      "statusBar.background": "#b45309"
+    }
+  }
+}

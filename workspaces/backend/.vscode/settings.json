@@ -1,0 +1,10 @@
+{
+  "peacock.color": "#059669",
+  "editor.formatOnSave": true,
+  "rest-client.environmentVariables": {
+    "local": {
+      "baseUrl": "http://localhost:3001",
+      "token": ""
+    }
+  }
+}

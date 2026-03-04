@@ -1,0 +1,16 @@
+{
+  "folders": [
+    { "name": "📋 Scrum Board", "path": "./.scrum" },
+    { "name": "📄 Dokumentation", "path": "./docs" },
+    { "name": "🏠 Projekt Root", "path": "." }
+  ],
+  "settings": {
+    "peacock.color": "#7c3aed",
+    "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#7c3aed",
+      "titleBar.activeForeground": "#ffffff",
+      "activityBar.background": "#7c3aed",
+      "statusBar.background": "#6d28d9"
+    }
+  }
+}

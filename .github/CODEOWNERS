@@ -1,0 +1,12 @@
+# Globale Owner
+* @{{GITHUB_USER}}
+
+# Scrum Board
+.scrum/ @{{GITHUB_USER}}
+
+# Shared Packages
+packages/shared-types/ @{{GITHUB_USER}}
+packages/shared-ui/ @{{GITHUB_USER}}
+
+# Agent-Definitionen
+.claude/ @{{GITHUB_USER}}

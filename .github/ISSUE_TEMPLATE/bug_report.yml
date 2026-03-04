@@ -1,0 +1,22 @@
+name: Bug Report
+description: Einen Bug melden
+labels: ['bug']
+body:
+  - type: textarea
+    attributes:
+      label: Beschreibung
+      description: Was ist passiert?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Schritte zur Reproduktion
+      description: Wie kann der Bug reproduziert werden?
+  - type: textarea
+    attributes:
+      label: Erwartetes Verhalten
+      description: Was hätte passieren sollen?
+  - type: dropdown
+    attributes:
+      label: Betroffene App
+      options: ['apps/web', 'apps/api', 'apps/mobile', 'packages/*']

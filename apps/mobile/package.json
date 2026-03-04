@@ -1,0 +1,14 @@
+{
+  "name": "@repo/mobile",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "echo 'Mobile App — Setup mit Expo erforderlich'",
+    "clean": "rm -rf .turbo"
+  },
+  "dependencies": {
+    "@repo/shared-types": "workspace:*",
+    "@repo/shared-ui": "workspace:*",
+    "@repo/shared-api": "workspace:*"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "peacock.color": "#2563eb",
+  "editor.formatOnSave": true,
+  "emmet.includeLanguages": { "typescriptreact": "html" },
+  "tailwindCSS.experimental.classRegex": [["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]]
+}

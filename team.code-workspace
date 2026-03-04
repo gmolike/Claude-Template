@@ -1,0 +1,29 @@
+{
+  "folders": [
+    { "name": "🏠 Projekt Root", "path": "." },
+    { "name": "📋 Scrum Board", "path": "./.scrum" },
+    { "name": "⚛️ Web App", "path": "./apps/web" },
+    { "name": "🔧 API", "path": "./apps/api" },
+    { "name": "📱 Mobile", "path": "./apps/mobile" },
+    { "name": "📦 Shared Types", "path": "./packages/shared-types" },
+    { "name": "📦 Shared UI", "path": "./packages/shared-ui" },
+    { "name": "📦 Shared API", "path": "./packages/shared-api" },
+    { "name": "📄 Docs", "path": "./docs" }
+  ],
+  "settings": {
+    "peacock.color": "#333333",
+    "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#333333",
+      "titleBar.activeForeground": "#ffffff",
+      "statusBar.background": "#222222"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "johnpapa.vscode-peacock",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "eamodio.gitlens"
+    ]
+  }
+}
