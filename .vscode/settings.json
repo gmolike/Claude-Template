@@ -176,5 +176,6 @@
     "tailwindcss",
     "eslint",
     "tsconfig"
-  ]
+  ],
+  "prisma.pinToPrisma6": true
 }
