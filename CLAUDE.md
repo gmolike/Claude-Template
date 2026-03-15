@@ -81,6 +81,16 @@ Senior analysiert → Worker fixt → Senior reviewed
 - Kein Full Scrum für Tasks < 5 Dateien
 - Nur relevante Seniors einbeziehen (nicht jedes Feature braucht Designer)
 
+## OMC-Integration (Optional)
+
+Oh My Claude Code kann als optionales Orchestrierungs-Plugin genutzt werden.
+Template funktioniert AUCH ohne OMC. Wenn installiert:
+
+- Stufe 1 → `ecomode` (Token-effizient)
+- Stufe 2 → `ultrawork` (Parallele Execution)
+- Stufe 3 → `autopilot` / `team` (Volle Autonomie)
+- Model-Tiering wird NICHT von OMC überschrieben
+
 ## Git
 
 - Ein PR pro Feature/Fix
@@ -94,7 +104,24 @@ Senior analysiert → Worker fixt → Senior reviewed
 - `/review [pfad]` — Code Review: FSD-Layer, Types, Duplikation, Tests, JSDoc
 - `/commit [nachricht]` — Smart Commit: Status, Lint, Typecheck, Conventional Commit, Changelog
 
-Alle Skills liegen in `.claude/skills/` und werden mit `/` im Claude Code Terminal aufgerufen.
+**Impeccable Design-Skills** (via `pbakaus/impeccable`):
+
+- `/audit` — Design auf Anti-Patterns prüfen
+- `/polish` — Visuelles Fine-Tuning
+- `/normalize` — Design-Inkonsistenzen bereinigen
+- `/distill` — Komplexes UI vereinfachen
+- `/animate` — Motion-Design
+- `/bolder` / `/quieter` — Visuelles Gewicht anpassen
+- `/colorize` — Farbpalette optimieren
+- `/clarify` — UI-Verständlichkeit verbessern
+- `/delight` — Micro-Interactions
+- `/adapt` — Responsive Anpassungen
+- `/extract` — Wiederverwendbare Komponenten extrahieren
+- `/critique` — Design-Kritik
+- `/harden` — Robustheit und Edge-Cases
+- `/optimize` — Performance-optimiertes Design
+
+Alle Skills liegen in `.claude/skills/` und `.agents/skills/` und werden mit `/` im Claude Code Terminal aufgerufen.
 
 ## MCP-Server (vorkonfiguriert)
 

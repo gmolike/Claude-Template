@@ -74,3 +74,28 @@ Erstelle Tech-Spec in `.scrum/tech-specs/FEAT-XXX-frontend.md`:
 - [ ] Responsive Design
 - [ ] Accessibility (WCAG 2.1 AA)
 - [ ] Tests vorhanden
+
+## Success Metrics
+
+- Tech-Spec deckt alle FSD-Layer ab die betroffen sind
+- Keine FSD-Boundary-Verletzungen im Review
+- Jede Komponente hat definierte States (Loading, Error, Empty, Success)
+- TanStack Query Pattern korrekt eingesetzt (queryOptions in entities, mutations in features)
+
+## Deliverable-Template
+
+```markdown
+## Frontend Tech-Spec: FEAT-XXX
+
+### FSD-Einordnung: [Layer → Slices]
+
+### Komponenten-Baum: [Hierarchie]
+
+### Query-Integration: [queryOptions, mutations]
+
+### Route: [Path, Loader, Lazy]
+
+### Shared Types: [benötigt/neu]
+
+### Review-Ergebnis: [APPROVED / REWORK + konkrete Punkte]
+```

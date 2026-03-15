@@ -31,6 +31,33 @@ Das Script:
 7. Playwright installieren (`npx playwright install chromium`)
 8. DRYwall Plugin installieren (`/plugin marketplace add nikhaldi/drywall && /plugin install drywall@drywall`)
 
+## Optional: Oh My Claude Code (OMC)
+
+OMC automatisiert die Agent-Orchestrierung. Das Template funktioniert auch OHNE OMC.
+
+### Installation
+
+```bash
+/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+/plugin install oh-my-claudecode
+/oh-my-claudecode:omc-setup
+```
+
+### Workflow-Mapping
+
+| Template-Stufe       | OMC-Modus            | Verwendung                       |
+| -------------------- | -------------------- | -------------------------------- |
+| Stufe 1 — Bugfix     | `ecomode`            | Token-effizient, einzelner Agent |
+| Stufe 2 — Lite       | `ultrawork`          | Parallele Execution              |
+| Stufe 3 — Full Scrum | `autopilot` / `team` | Volle Autonomie mit Verification |
+| Code Review          | `ultraqa`            | Automatisiertes QA               |
+
+### Prüfen
+
+```bash
+/omc-doctor    # Sollte grünen Status zeigen
+```
+
 ## Slash Commands testen
 
 ```bash

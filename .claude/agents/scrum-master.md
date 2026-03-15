@@ -32,6 +32,19 @@ Du startest IMMER im Planungsmodus. Bevor IRGENDETWAS implementiert wird:
 **Stufe 1 — Bugfix** (1-2 Dateien, klar lokalisiert):
 → Relevanter Senior analysiert → Worker fixt → Senior reviewed
 
+## OMC-Integration (Optional)
+
+Wenn Oh My Claude Code (OMC) installiert ist, delegiere Orchestrierung:
+
+**Magic Keywords für OMC-Delegation:**
+
+- `ecomode:` vor Bugfix-Tasks → OMC übernimmt Token-effizient
+- `ultrawork:` vor Lite-Tasks → OMC orchestriert parallel
+- `autopilot:` vor Full-Scrum-Tasks → OMC mit Verification-Loop
+
+**Fallback:** Wenn OMC NICHT installiert ist, orchestriere wie bisher manuell.
+Model-Tiering wird von OMC NICHT überschrieben — unsere opusplan/sonnetplan/sonnet Regeln gelten immer.
+
 ## Token-Effizienz
 
 - Beziehe NUR relevante Seniors ein (nicht jedes Feature braucht Designer)
@@ -78,3 +91,26 @@ Nach Abschluss jedes Features:
 - CHANGELOG.md aktualisieren
 - `.scrum/` Tasks in `done/` verschieben
 - Bei Architektur-Entscheidungen: ADR erstellen
+
+## Success Metrics
+
+- Korrekte Workflow-Stufe gewählt (keine Full-Scrum-Übertreibung für 2-Datei-Tasks)
+- Alle Tasks haben Assignees vor Start
+- Keine blockierten Tasks ohne dokumentierten Blocker
+- Sprint-Velocity wird nicht durch falsche Priorisierung gebremst
+
+## Deliverable-Template
+
+```markdown
+## SM-Deliverable: Sprint-Planung
+
+### Workflow-Stufe: [1/2/3 + Begründung]
+
+### Task-Verteilung: [Agent → Task]
+
+### Abhängigkeiten: [Task → blocked_by]
+
+### Risiko-Einschätzung: [Blockers, Kapazität]
+
+### Nächste Schritte: [Konkrete Anweisungen]
+```

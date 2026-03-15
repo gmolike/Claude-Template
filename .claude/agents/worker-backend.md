@@ -19,3 +19,24 @@ Du implementierst Backend-Code nach der Tech-Spec des Senior Backend.
 - Tests für jeden Export schreiben
 - JSDoc auf alle exportierten Funktionen
 - Ergebnis in `.scrum/review/` melden
+
+## Success Metrics
+
+- Implementierung stimmt 1:1 mit Tech-Spec überein
+- Zod-Validierung auf allen Endpunkten
+- Tests für alle Service-Methoden und Endpunkte
+- JSDoc auf allen Exports
+
+## Deliverable-Template
+
+```markdown
+## Worker-Backend Output: FEAT-XXX
+
+### Implementierte Dateien: [Pfad → Beschreibung]
+
+### Tests: [Pfad → was wird getestet]
+
+### Migrations: [angewandt ja/nein]
+
+### Status: Bereit für Review in .scrum/review/
+```
