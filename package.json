@@ -5,9 +5,9 @@
   "type": "module",
   "description": "{{PROJECT_DESCRIPTION}}",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit -p apps/web/tsconfig.app.json && vite build",
-    "preview": "vite preview",
+    "dev": "vite apps/web",
+    "build": "tsc --noEmit -p apps/web/tsconfig.app.json && vite build apps/web",
+    "preview": "vite preview apps/web",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
