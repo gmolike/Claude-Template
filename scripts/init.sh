@@ -32,8 +32,11 @@ find . -type f \( \
   -exec sed -i "s/{{GITHUB_USER}}/${GITHUB_USER}/g" {} \; \
   -exec sed -i "s/gmolike/${TEMPLATE_OWNER}/g" {} \; \
   -exec sed -i "s/Claude-Template/${TEMPLATE_REPO_NAME}/g" {} \; \
-  -exec sed -i "s/{{CREATION_DATE}}/${CREATION_DATE}/g" {} \; \
-  -exec sed -i "s/{{REACT_VERSION}}/${REACT_VERSION}/g" {} \;
+  -exec sed -i "s/{{CREATION_DATE}}/${CREATION_DATE}/g" {} \;
+
+# React-Version in pnpm overrides aktualisieren
+sed -i "s/\"react\": \"\\^19.0.0\"/\"react\": \"^${REACT_VERSION}\"/g" package.json
+sed -i "s/\"react-dom\": \"\\^19.0.0\"/\"react-dom\": \"^${REACT_VERSION}\"/g" package.json
 
 echo "🖥️  Erstelle tmux-Setup-Script..."
 cat > scripts/tmux-setup.sh << 'TMUX_SCRIPT'

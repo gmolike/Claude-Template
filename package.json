@@ -76,8 +76,8 @@
       "esbuild"
     ],
     "overrides": {
-      "react": "{{REACT_VERSION}}",
-      "react-dom": "{{REACT_VERSION}}"
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0"
     }
   }
 }
