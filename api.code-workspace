@@ -1,16 +1,15 @@
 {
   "folders": [
-    { "name": "🏠 Root", "path": "." },
-    { "name": "🌐 Web App", "path": "apps/web" },
     { "name": "⚙️ API", "path": "apps/api" },
-    { "name": "📱 Mobile", "path": "apps/mobile" },
-    { "name": "📦 Shared Types", "path": "packages/shared-types" }
+    { "name": "📋 .scrum/api", "path": ".scrum/api" },
+    { "name": "📦 Shared Types", "path": "packages/shared-types" },
+    { "name": "📦 Shared API", "path": "packages/shared-api" }
   ],
   "settings": {
     "workbench.colorCustomizations": {
-      "statusBar.background": "#b7950b",
+      "statusBar.background": "#1e8449",
       "statusBar.foreground": "#ffffff",
-      "titleBar.activeBackground": "#b7950b",
+      "titleBar.activeBackground": "#1e8449",
       "titleBar.activeForeground": "#ffffff"
     }
   },

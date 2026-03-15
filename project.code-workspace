@@ -7,10 +7,17 @@
     { "name": "📦 Shared Types", "path": "packages/shared-types" },
     { "name": "📦 Shared UI", "path": "packages/shared-ui" },
     { "name": "📦 Shared API", "path": "packages/shared-api" },
-    { "name": "📋 .scrum", "path": ".scrum" },
-    { "name": "📄 Docs", "path": "docs" }
+    { "name": "📋 .scrum", "path": ".scrum" }
   ],
-  "settings": {},
+  "settings": {
+    "_optionalDomains": {
+      "web-player": {
+        "_comment": "Optionale Domäne — bei Bedarf Folder-Eintrag aktivieren",
+        "name": "🎵 Web Player",
+        "path": "apps/web-player"
+      }
+    }
+  },
   "extensions": {
     "recommendations": [
       "dotenv.dotenv-vscode",

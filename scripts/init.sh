@@ -9,6 +9,7 @@ read -p "📝 Projektname (lowercase, keine Leerzeichen): " PROJECT_NAME
 read -p "📄 Beschreibung: " PROJECT_DESC
 read -p "👤 GitHub Username/Org: " GITHUB_USER
 read -p "📦 Template Repo (Owner/Repo): " TEMPLATE_REPO
+read -p "⚛️  React Version (z.B. 19.0.0): " REACT_VERSION
 
 TEMPLATE_OWNER=$(echo "$TEMPLATE_REPO" | cut -d'/' -f1)
 TEMPLATE_REPO_NAME=$(echo "$TEMPLATE_REPO" | cut -d'/' -f2)
@@ -32,6 +33,34 @@ find . -type f \( \
   -exec sed -i "s/gmolike/${TEMPLATE_OWNER}/g" {} \; \
   -exec sed -i "s/Claude-Template/${TEMPLATE_REPO_NAME}/g" {} \; \
   -exec sed -i "s/{{CREATION_DATE}}/${CREATION_DATE}/g" {} \;
+
+# React-Version in pnpm overrides aktualisieren
+sed -i "s/\"react\": \"\\^19.0.0\"/\"react\": \"^${REACT_VERSION}\"/g" package.json
+sed -i "s/\"react-dom\": \"\\^19.0.0\"/\"react-dom\": \"^${REACT_VERSION}\"/g" package.json
+
+echo "🖥️  Erstelle tmux-Setup-Script..."
+cat > scripts/tmux-setup.sh << 'TMUX_SCRIPT'
+#!/bin/bash
+# tmux Multi-Instanz Setup für {{PROJECT_NAME}}
+# Erstellt tmux-Sessions für jede Domäne
+
+SESSION_PREFIX="{{PROJECT_NAME}}"
+
+# Sessions erstellen
+tmux new-session -d -s "${SESSION_PREFIX}:web" -c "apps/web"
+tmux new-session -d -s "${SESSION_PREFIX}:api" -c "apps/api"
+tmux new-session -d -s "${SESSION_PREFIX}:mobile" -c "apps/mobile"
+tmux new-session -d -s "${SESSION_PREFIX}:content" -c "."
+
+echo "tmux Sessions erstellt:"
+tmux list-sessions | grep "${SESSION_PREFIX}"
+echo ""
+echo "Verbinden: tmux attach -t ${SESSION_PREFIX}:web"
+TMUX_SCRIPT
+chmod +x scripts/tmux-setup.sh
+
+# Platzhalter auch in tmux-setup.sh ersetzen
+sed -i "s/{{PROJECT_NAME}}/${PROJECT_NAME}/g" scripts/tmux-setup.sh
 
 echo "📦 Installiere Dependencies..."
 pnpm install
