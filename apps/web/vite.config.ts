@@ -18,7 +18,7 @@ export default defineConfig({
   build: {
     target: 'ES2022',
     sourcemap: true,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
