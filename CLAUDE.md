@@ -18,6 +18,32 @@ Shared Packages für Types, UI, API-Client. pnpm Workspaces.
 **FSD Layer (apps/web):** app → routes → pages → widgets → features → entities → shared
 Imports NUR von niedrigeren zu höheren Layern. Kein Cross-Import zwischen Slices.
 
+## tmux Multi-Instanz Orchestrierung
+
+Der Root-Orchestrator (project.code-workspace) steuert domänenspezifische
+Claude-Code-Instanzen über tmux-Sessions:
+
+```
+User ←→ Root-Orchestrator
+         ├── tmux send-keys → {{PROJECT_NAME}}:web
+         ├── tmux send-keys → {{PROJECT_NAME}}:api
+         ├── tmux send-keys → {{PROJECT_NAME}}:mobile
+         └── tmux send-keys → {{PROJECT_NAME}}:content
+         └── tmux capture-pane ← Ergebnisse lesen
+```
+
+### Regeln
+
+- JEDE Domäne läuft in eigener tmux-Session
+- Root-Orchestrator delegiert NUR, implementiert NICHT selbst
+- Ergebnisse werden via `tmux capture-pane` gelesen
+- Bei Abhängigkeiten: sequentiell (shared → api → web/mobile)
+
+### Optionale Domänen
+
+- `web-player` — Kann bei Bedarf als zusätzliche Domäne aktiviert werden
+  (siehe auskommentierte Einträge in `pnpm-workspace.yaml` und `project.code-workspace`)
+
 ## Befehle
 
 - `pnpm dev` — Alle Apps starten
@@ -90,6 +116,18 @@ Template funktioniert AUCH ohne OMC. Wenn installiert:
 - Stufe 2 → `ultrawork` (Parallele Execution)
 - Stufe 3 → `autopilot` / `team` (Volle Autonomie)
 - Model-Tiering wird NICHT von OMC überschrieben
+
+## Environment Variables — Dotenv Vault
+
+- **Dotenv Vault** als zentraler Secret-Manager für alle Umgebungen
+- `.env` lokal für Entwicklung (NICHT committen)
+- `.env.vault` verschlüsselt für Deployment (WIRD committet)
+- `.env.keys` enthält Entschlüsselungskeys (NICHT committen)
+- `.env.me` für persönliche Vault-Authentifizierung (NICHT committen)
+- VS Code Extension: **Dotenv Official** (`dotenv.dotenv-vscode`) — Syntax-Highlighting, Auto-Cloaking
+- Setup: `npx dotenv-vault new` → `npx dotenv-vault login` → `npx dotenv-vault push`
+- Pull: `npx dotenv-vault pull`
+- Deployment: `DOTENV_KEY` als einzige ENV-Variable im CI/CD setzen
 
 ## Git
 

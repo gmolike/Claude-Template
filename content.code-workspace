@@ -1,0 +1,20 @@
+{
+  "folders": [
+    { "name": "📖 Docs", "path": "docs" },
+    { "name": "📖 Guides", "path": "guides" },
+    { "name": "📋 .scrum/content", "path": ".scrum/content" }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "statusBar.background": "#6c3483",
+      "statusBar.foreground": "#ffffff",
+      "titleBar.activeBackground": "#6c3483",
+      "titleBar.activeForeground": "#ffffff"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "dotenv.dotenv-vscode"
+    ]
+  }
+}

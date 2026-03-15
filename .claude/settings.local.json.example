@@ -1,0 +1,9 @@
+{
+  "_comment": "Lokale Permissions — nicht committen. Kopiere als settings.local.json",
+  "permissions": {
+    "allow": [
+      "Bash(tmux *)",
+      "Bash(wsl *)"
+    ]
+  }
+}

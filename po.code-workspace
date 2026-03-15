@@ -1,19 +1,18 @@
 {
   "folders": [
-    { "name": "📋 Scrum Board", "path": "./.scrum" },
-    { "name": "📄 Dokumentation", "path": "./docs" },
-    { "name": "🏠 Projekt Root", "path": "." },
+    { "name": "📋 Scrum Board", "path": ".scrum" },
+    { "name": "📄 Dokumentation", "path": "docs" },
+    { "name": "🏠 Projekt Root", "path": "." }
   ],
   "settings": {
-    "peacock.color": "#7c3aed",
     "workbench.colorCustomizations": {
-      "titleBar.activeBackground": "#7c3aed",
-      "titleBar.activeForeground": "#ffffff",
-      "activityBar.background": "#7c3aed",
       "statusBar.background": "#6d28d9",
+      "statusBar.foreground": "#ffffff",
+      "titleBar.activeBackground": "#7c3aed",
+      "titleBar.activeForeground": "#ffffff"
     },
     "workbench.iconTheme": "material-icon-theme",
-    "workbench.productIconTheme": "material-product-icons",
+    "workbench.productIconTheme": "material-product-icons"
   },
   "extensions": {
     "recommendations": [
@@ -23,6 +22,7 @@
       "yzhang.markdown-all-in-one",
       "DavidAnson.vscode-markdownlint",
       "Gruntfuggly.todo-tree",
-    ],
-  },
+      "dotenv.dotenv-vscode"
+    ]
+  }
 }

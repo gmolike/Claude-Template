@@ -4,6 +4,9 @@ dist/
 .env.local
 .env.*.local
 !.env.example
+!.env.vault
+.env.me
+.env.keys
 *.log
 .idea/
 *.sw?

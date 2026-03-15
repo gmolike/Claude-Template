@@ -1,0 +1,22 @@
+{
+  "folders": [
+    { "name": "🌐 Web App", "path": "apps/web" },
+    { "name": "📋 .scrum/web", "path": ".scrum/web" },
+    { "name": "📦 Shared Types", "path": "packages/shared-types" },
+    { "name": "📦 Shared UI", "path": "packages/shared-ui" },
+    { "name": "📦 Shared API", "path": "packages/shared-api" }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "statusBar.background": "#1565C0",
+      "statusBar.foreground": "#ffffff",
+      "titleBar.activeBackground": "#1565C0",
+      "titleBar.activeForeground": "#ffffff"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "dotenv.dotenv-vscode"
+    ]
+  }
+}
