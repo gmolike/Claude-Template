@@ -65,3 +65,26 @@ Erstelle Tech-Spec in `.scrum/tech-specs/FEAT-XXX-backend.md`:
 - [ ] Types in `@repo/shared-types`
 - [ ] JSDoc auf allen Exports
 - [ ] Tests vorhanden
+
+## Success Metrics
+
+- Jeder Endpunkt hat Zod-Validierung für Input UND Output
+- Business Logic lebt im Service-Layer, nicht in Routes
+- Shared Types werden VOR Frontend-Arbeit definiert
+- Keine N+1 Queries in Prisma (select/include explizit)
+
+## Deliverable-Template
+
+```markdown
+## Backend Tech-Spec: FEAT-XXX
+
+### API-Endpunkte: [METHOD /path → Request/Response Schema]
+
+### Prisma-Änderungen: [Models, Relationen, Migrationen]
+
+### Shared Types: [Neue Zod Schemas]
+
+### Services: [Name → Verantwortung]
+
+### Review-Ergebnis: [APPROVED / REWORK + konkrete Punkte]
+```

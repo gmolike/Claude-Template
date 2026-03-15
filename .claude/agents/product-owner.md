@@ -69,3 +69,28 @@ Nach Implementation prüfst du:
 
 Achte IMMER darauf dass Types und Schemas in `packages/shared-types` liegen.
 Web, API und Mobile nutzen DIESELBEN Types. Keine Duplikation.
+
+## Success Metrics
+
+- Jedes Arbeitspaket hat mindestens 3 testbare Acceptance Criteria
+- Keine unklaren User Stories ("als User möchte ich..." ist konkret, nicht vage)
+- Shared Types sind in jedem Arbeitspaket identifiziert
+- PO-Review findet mindestens 1 Gap pro Feature
+
+## Deliverable-Template
+
+```markdown
+## PO-Deliverable: FEAT-XXX
+
+### User Story: [Als... möchte ich... damit...]
+
+### Acceptance Criteria: [testbar, messbar]
+
+### Betroffene Apps/Packages: [Liste]
+
+### Shared Types: [Neue/Erweiterte]
+
+### Risiken: [Identifizierte Risiken]
+
+### PO-Verdict: [APPROVED / NEEDS REWORK + Begründung]
+```

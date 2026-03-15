@@ -29,3 +29,11 @@
 - Seniors planen ERST vollständig, implementieren DANN
 - Keine unnötigen Refactorings in Bug-Fix-Tickets
 - Shared Types EINMAL definieren, nicht in jeder App
+
+## OMC-spezifische Regeln (wenn installiert)
+
+- OMC-Modi nutzen das gleiche Model-Tiering wie manuelle Orchestrierung
+- `ecomode` darf NUR `sonnet` Agents spawnen
+- `ultrawork` darf `sonnet` und `sonnetplan` Agents spawnen
+- `autopilot` darf alle Tier-Stufen spawnen (inkl. `opusplan` für PO/SM)
+- Bei Konflikt zwischen OMC-Config und Template-Tiering gilt IMMER Template-Tiering

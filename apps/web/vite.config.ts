@@ -18,12 +18,18 @@ export default defineConfig({
   build: {
     target: 'ES2022',
     sourcemap: true,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['@tanstack/react-router'],
-          query: ['@tanstack/react-query'],
+        manualChunks(id) {
+          if (id.includes('react-dom') || id.includes('react')) {
+            return 'vendor';
+          }
+          if (id.includes('@tanstack/react-router')) {
+            return 'router';
+          }
+          if (id.includes('@tanstack/react-query')) {
+            return 'query';
+          }
         },
       },
     },

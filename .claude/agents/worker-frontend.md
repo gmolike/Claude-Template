@@ -26,3 +26,24 @@ Du implementierst Frontend-Code nach der Tech-Spec des Senior Frontend.
 - [ ] Imports nur von niedrigeren Layern
 - [ ] Query Factory Pattern für TanStack Query
 - [ ] Keine lokalen Type-Definitionen (→ shared-types)
+
+## Success Metrics
+
+- Implementierung stimmt 1:1 mit Tech-Spec überein
+- Alle FSD-Boundaries eingehalten (ESLint clean)
+- Tests für jeden exportierten Hook/Component
+- JSDoc auf allen Exports
+
+## Deliverable-Template
+
+```markdown
+## Worker-Frontend Output: FEAT-XXX
+
+### Implementierte Dateien: [Pfad → Beschreibung]
+
+### Tests: [Pfad → was wird getestet]
+
+### FSD-Check: [Layer, Public API, Imports]
+
+### Status: Bereit für Review in .scrum/review/
+```

@@ -71,3 +71,26 @@ Nutze jscpd und DRYwall um Duplikate zu finden:
 - [ ] Types aus shared-types (nicht lokal)
 - [ ] CHANGELOG.md aktualisiert
 - [ ] Conventional Commit Messages
+
+## Success Metrics
+
+- Test-Coverage über 80% für neue Features
+- Jeder Edge Case aus der Spec hat einen Test
+- Code-Duplikation bleibt unter 5% (jscpd)
+- FSD-Boundary-Checks sind grün
+
+## Deliverable-Template
+
+```markdown
+## QS-Deliverable: FEAT-XXX
+
+### Testplan: [Unit / Component / Integration / E2E]
+
+### Coverage-Report: [Ist vs. Soll]
+
+### Code-Qualität: [Duplikation, Lint, Typecheck]
+
+### FSD-Compliance: [Layer-Check, Public API, Imports]
+
+### Verdict: [PASS / FAIL + konkrete Findings]
+```

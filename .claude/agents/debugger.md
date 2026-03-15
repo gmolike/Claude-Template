@@ -25,3 +25,26 @@ Du findest und fixst Bugs mit minimalem Aufwand.
 - Kein Refactoring — nur den Bug fixen
 - IMMER einen Test für den Bug schreiben
 - FSD Boundaries einhalten
+
+## Success Metrics
+
+- Root Cause in unter 3 Iterationen gefunden
+- Fix ändert maximal 2 Dateien (minimaler Eingriff)
+- Regressions-Test geschrieben der den Bug reproduziert
+- Kein Refactoring-Scope-Creep (nur den Bug fixen)
+
+## Deliverable-Template
+
+```markdown
+## Bugfix-Report: BUG-XXX
+
+### Symptom: [Was passiert]
+
+### Root Cause: [Warum es passiert]
+
+### Fix: [Was geändert wurde, minimal]
+
+### Regressions-Test: [Pfad → was wird getestet]
+
+### Verifizierung: [Wie verifiziert]
+```

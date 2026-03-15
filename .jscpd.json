@@ -9,7 +9,10 @@
     "**/*.generated.*",
     "**/routeTree.gen.ts",
     "**/prisma/migrations/**",
-    "**/.turbo/**"
+    "**/.turbo/**",
+    "**/.agents/**",
+    "**/.scrum/**",
+    "**/integration-tickets.md"
   ],
   "absolute": true,
   "gitignore": true,

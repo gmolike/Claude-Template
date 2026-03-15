@@ -92,3 +92,11 @@ Zeige Sprint-Zusammenfassung:
 - IDs sind fortlaufend und einzigartig
 - Beim Verschieben nach `done` immer prüfen ob Acceptance Criteria vollständig sind
 - `.scrum/BOARD.md` wird NICHT automatisch verändert (ist Referenz-Doku)
+
+## OMC-Status (Optional)
+
+Wenn OMC installiert ist, zeige bei `/scrum status` zusätzlich:
+
+- Aktiver OMC-Modus (ecomode/ultrawork/autopilot)
+- Laufende OMC-Agents und deren Status
+- OMC ist OPTIONAL — wenn nicht installiert, diesen Abschnitt überspringen
