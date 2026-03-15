@@ -14,9 +14,9 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit -p apps/web/tsconfig.app.json",
     "cpd:ci": "jscpd --reporters console --threshold 5",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "vitest run --root apps/web",
+    "test:watch": "vitest --root apps/web",
+    "test:coverage": "vitest run --coverage --root apps/web",
     "prepare": "husky"
   },
   "dependencies": {
