@@ -21,8 +21,8 @@
     "@repo/shared-ui": "workspace:*",
     "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-query-devtools": "^5.62.0",
-    "@tanstack/react-router": "^1.95.0",
-    "@tanstack/router-devtools": "^1.95.0",
+    "@tanstack/react-router": "^1.167.3",
+    "@tanstack/router-devtools": "^1.166.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
