@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      tanstack:
+        patterns:
+          - '@tanstack/*'
+      testing:
+        patterns:
+          - '@testing-library/*'
+          - vitest

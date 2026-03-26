@@ -1,0 +1,9 @@
+node_modules/
+generated/typescript/*.ts
+!generated/typescript/.gitkeep
+generated/csharp/*.cs
+!generated/csharp/.gitkeep
+openapi/bundled.yaml
+.env
+.DS_Store
+*.log
