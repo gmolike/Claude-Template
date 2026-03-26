@@ -18,6 +18,10 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Domain-CLAUDE.md für apps/web, apps/api, apps/mobile mit Workflow-Level-Routing (TMPL-202)
 - `/design` Skill mit 4 Subcommands: briefing, concept, review, export (TMPL-203)
 - Dotenv Vault als Standard-ENV-Management mit `dotenv.dotenv-vscode` Extension
+- Offizieller shadcn/ui Skill integriert (CLI v4, Component Discovery, Registry Workflow)
+- Vercel Web-Design-Guidelines Skill integriert (100+ WCAG/UX Regeln, Live-Fetch)
+- ADR 0003: Evaluierung von 4 Design-Skills (shadcn/ui, WDG, AccessLint, UI/UX Pro Max)
+- TMPL-301 Scrum-Ticket für Skills-Integration
 - `settings.local.json.example` als Muster für lokale Permission-Overrides (TMPL-201)
 - `pnpm-workspace.yaml` mit optionalem web-player Eintrag (TMPL-202)
 - `scripts/tmux-setup.sh` Template für tmux-Session-Erstellung (TMPL-202)

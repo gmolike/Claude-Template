@@ -159,6 +159,11 @@ Template funktioniert AUCH ohne OMC. Wenn installiert:
 - `/harden` — Robustheit und Edge-Cases
 - `/optimize` — Performance-optimiertes Design
 
+**Component & Compliance Skills:**
+
+- `/shadcn` — shadcn/ui Skill für korrekte Component-APIs und CLI-Workflow (CLI v4, Component Discovery, Registry)
+- `/web-design-guidelines [dateien]` — Web-Design-Guidelines für WCAG-Compliance und UX Best Practices Reviews (100+ Regeln, Live-Fetch)
+
 Alle Skills liegen in `.claude/skills/` und `.agents/skills/` und werden mit `/` im Claude Code Terminal aufgerufen.
 
 ## MCP-Server (vorkonfiguriert)

@@ -99,3 +99,20 @@ Erstelle Tech-Spec in `.scrum/tech-specs/FEAT-XXX-frontend.md`:
 
 ### Review-Ergebnis: [APPROVED / REWORK + konkrete Punkte]
 ```
+
+## shadcn/ui Skill
+
+Bei Component-Arbeit den shadcn/ui Skill nutzen:
+
+- `npx shadcn@latest search` vor Custom-Komponenten
+- `npx shadcn@latest docs <component>` für aktuelle APIs und Beispiele
+- Styling/Composition/Form-Rules in `.agents/skills/shadcn/rules/` beachten
+- Semantic Colors, `cn()`, `gap-*`, `size-*`, `data-icon` Patterns
+
+## Web-Design-Guidelines
+
+Als Quality Gate nach UI-Implementierungen:
+
+- `/web-design-guidelines <dateien>` — 100+ WCAG/UX Regeln
+- **PFLICHT bei Reviews** von UI-Code (eigener und Worker-Code)
+- Komplementär zu FSD-Review: FSD = Architektur, WDG = Accessibility + UX
