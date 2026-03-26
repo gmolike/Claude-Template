@@ -81,3 +81,24 @@ Nutze folgende Skills für Design-Qualität:
 - `/critique` — Design-Kritik
 - `/harden` — Robustheit und Edge-Cases
 - `/optimize` — Performance-optimiertes Design
+
+## shadcn/ui Skill
+
+Nutze den shadcn/ui Skill für korrekte Component-Arbeit:
+
+- Component Discovery: `npx shadcn@latest search` vor Custom-UI
+- Component Docs: `npx shadcn@latest docs <component>` für aktuelle APIs
+- Registry Workflow: `npx shadcn@latest add` statt manueller Installation
+- Styling Rules: Semantic Colors, `cn()`, `gap-*` statt `space-*`
+- Composition Rules: FieldGroup + Field, data-icon, asChild/render
+
+**Bei jeder Component-Arbeit:** shadcn-Skill-Regeln in `.agents/skills/shadcn/` beachten.
+
+## Web-Design-Guidelines (Quality Gate)
+
+Nach jeder Design-Arbeit als Quality Gate ausführen:
+
+- `/web-design-guidelines <dateien>` — Prüft UI-Code gegen 100+ WCAG/UX Regeln
+- Fetcht live aktuelle Guidelines von Vercel
+- Komplementär zu Impeccable: Impeccable = Ästhetik, WDG = technische Korrektheit
+- **PFLICHT nach Stufe 3 (Component Structure)** bevor Übergabe an Frontend
