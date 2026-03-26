@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.yaml": "yaml",
+    "*.yml": "yaml"
+  },
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json": "docs/contracts/openapi/*.yaml"
+  }
+}

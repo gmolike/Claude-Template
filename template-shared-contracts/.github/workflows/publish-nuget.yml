@@ -1,0 +1,26 @@
+name: Publish NuGet Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm bundle
+      - run: pnpm generate:csharp
+      - name: Publish to NuGet
+        if: success()
+        run: |
+          echo "C# package generation completed."
+          echo "Manual NuGet publish step — configure dotnet nuget push as needed."

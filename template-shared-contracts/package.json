@@ -1,0 +1,27 @@
+{
+  "name": "@{{PROJECT_NAME}}/api-types",
+  "version": "0.1.0",
+  "description": "Generated TypeScript types from OpenAPI specifications",
+  "type": "module",
+  "main": "generated/typescript/index.ts",
+  "types": "generated/typescript/index.ts",
+  "scripts": {
+    "validate": "bash scripts/validate.sh",
+    "bundle": "bash scripts/bundle.sh",
+    "generate": "bash scripts/generate-ts.sh && bash scripts/generate-csharp.sh",
+    "generate:ts": "bash scripts/generate-ts.sh",
+    "generate:csharp": "bash scripts/generate-csharp.sh",
+    "prepublishOnly": "pnpm validate && pnpm generate"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.0.0",
+    "@redocly/cli": "^1.25.0"
+  },
+  "files": [
+    "generated/typescript/**",
+    "openapi/**"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

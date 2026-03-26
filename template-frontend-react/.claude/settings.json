@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev)",
+      "Bash(pnpm build)",
+      "Bash(pnpm test)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm generate:*)",
+      "Bash(npx openapi-typescript*)",
+      "Bash(git *)"
+    ],
+    "deny": ["Bash(rm -rf /)", "Bash(sudo *)", "Bash(pnpm publish*)"]
+  }
+}
