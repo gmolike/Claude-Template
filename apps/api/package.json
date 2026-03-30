@@ -19,9 +19,9 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",
-    "@prisma/client": "^7.5.0",
+    "@prisma/client": "^7.6.0",
     "@repo/shared-types": "workspace:*",
-    "hono": "^4.6.0",
+    "hono": "^4.12.9",
     "zod": "^4.3.6"
   },
   "devDependencies": {
