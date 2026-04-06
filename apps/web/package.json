@@ -19,9 +19,9 @@
     "@repo/shared-api": "workspace:*",
     "@repo/shared-types": "workspace:*",
     "@repo/shared-ui": "workspace:*",
-    "@tanstack/react-query": "^5.95.0",
-    "@tanstack/react-query-devtools": "^5.95.0",
-    "@tanstack/react-router": "^1.168.2",
+    "@tanstack/react-query": "^5.96.2",
+    "@tanstack/react-query-devtools": "^5.96.2",
+    "@tanstack/react-router": "^1.168.10",
     "@tanstack/router-devtools": "^1.166.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
