@@ -219,7 +219,12 @@ Template funktioniert AUCH ohne OMC. Wenn installiert:
 - `/teach-impeccable` — Einmalige Design-Kontext-Konfiguration
 
 Alle Skills liegen in `.claude/skills/` und `.agents/skills/` und werden mit `/` im Claude Code Terminal aufgerufen.
-**Regel:** Jeder Skill ist in mindestens einem Agent, einer Routine oder einer Regel verankert.
+
+**HARD RULE — Skill-Verankerung in Rules:**
+Jeder Skill MUSS in mindestens einer Rule-Datei (`.claude/rules/*.md`) referenziert sein.
+Nicht nur in CLAUDE.md oder Agent-Definitionen — Rules sind verbindlich und werden immer geladen.
+Domaenen-Rules: `design-skills.md`, `animation-skills.md`, `video-skills.md`, `workflow-skills.md`.
+Bei neuen Skills: sofort in die passende Rule eintragen. Audit: `grep -rl "skill-name" .claude/rules/`
 
 ## MCP-Server (vorkonfiguriert)
 
