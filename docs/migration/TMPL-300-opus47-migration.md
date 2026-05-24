@@ -59,6 +59,15 @@ Ersetze dabei `{{PROJECT_NAME}}` durch deinen Projektnamen.
 | `.claude/rules/opus47-agents.md`             | Built-in Agent Types, Quality Gates |
 | `.agents/skills/animation-designer/SKILL.md` | Animation Designer Skill            |
 
+### Neue Rule-Dateien (erstellen)
+
+| Datei                               | Zweck                                              |
+| ----------------------------------- | -------------------------------------------------- |
+| `.claude/rules/design-skills.md`    | 28 Skills: Impeccable, Taste, ImageGen, UI-Presets |
+| `.claude/rules/animation-skills.md` | 13 Skills: Animation/Motion + Hard Rules           |
+| `.claude/rules/video-skills.md`     | 7 Skills: HyperFrames Suite + Video-Workflow       |
+| `.claude/rules/workflow-skills.md`  | 12 Skills: Projekt-Workflow + Quality Gates        |
+
 ### Aktualisierte Dateien (ersetzen)
 
 | Datei                               | Was hat sich geaendert                                             |
@@ -70,6 +79,8 @@ Ersetze dabei `{{PROJECT_NAME}}` durch deinen Projektnamen.
 | `.claude/agents/senior-backend.md`  | /security-review, /verify, Zod 4 + Prisma 7 Hinweise               |
 | `.claude/rules/token-efficiency.md` | Animation Designer als opusplan eingetragen                        |
 | `CLAUDE.md`                         | Alle neuen Skill-Kategorien dokumentiert                           |
+| `eslint.config.mjs`                 | `.agents/skills/` von ESLint ausgeschlossen                        |
+| `.gitignore`                        | Skill-Symlinks in `.claude/skills/` ignoriert                      |
 
 ---
 
@@ -254,7 +265,50 @@ Untergeordnete Skills:
 
 ---
 
-## Schritt 7: Verifizierung
+## Schritt 7: Skill-Verankerung in Rules pruefen (HARD RULE)
+
+**Ab TMPL-300 gilt:** Jeder Skill MUSS in mindestens einer Rule-Datei (`.claude/rules/*.md`) referenziert sein.
+Nicht nur in CLAUDE.md oder Agent-Definitionen — Rules sind verbindlich und werden immer geladen.
+
+### Die 4 Domaenen-Rules
+
+| Rule                  | Abgedeckte Skills | Verantwortlich                      |
+| --------------------- | ----------------- | ----------------------------------- |
+| `design-skills.md`    | 28 Skills         | Designer, Senior Frontend           |
+| `animation-skills.md` | 13 Skills         | Animation Designer, Senior Frontend |
+| `video-skills.md`     | 7 Skills          | Animation Designer                  |
+| `workflow-skills.md`  | 12 Skills         | Scrum Master, alle Agents           |
+| `opus47-agents.md`    | 9 Skills          | Built-in Quality Skills             |
+
+### Audit-Befehl
+
+Pruefe ob ein Skill in einer Rule verankert ist:
+
+```bash
+grep -rl "skill-name" .claude/rules/
+# Muss mindestens 1 Treffer liefern
+```
+
+Vollstaendiger Audit aller Skills:
+
+```bash
+for skill in $(ls .agents/skills/); do
+  found=$(grep -rl "$skill" .claude/rules/ 2>/dev/null | wc -l)
+  if [ "$found" -eq 0 ]; then echo "UNANCHORED: $skill"; fi
+done
+```
+
+### Bei neuen Skills
+
+1. Skill installieren (`npx skills add ...`)
+2. **Sofort** in die passende Rule-Datei eintragen
+3. In CLAUDE.md unter der passenden Kategorie dokumentieren
+4. In den zustaendigen Agent-Definitionen referenzieren
+5. Audit-Befehl ausfuehren — 0 unverankerte Skills erlaubt
+
+---
+
+## Schritt 8: Verifizierung
 
 Pruefe nach der Migration:
 
@@ -285,7 +339,8 @@ pnpm test
 - [ ] Zod 4 Migration durchgefuehrt (Schritt 4)
 - [ ] Neue Workflow-Features getestet (Schritt 5)
 - [ ] Neue Skills ausprobiert (Schritt 6)
-- [ ] Verifizierung bestanden (Schritt 7)
+- [ ] Skill-Verankerung in Rules geprueft — 0 unverankert (Schritt 7)
+- [ ] Verifizierung bestanden (Schritt 8)
 
 ---
 
