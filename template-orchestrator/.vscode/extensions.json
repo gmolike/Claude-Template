@@ -1,0 +1,27 @@
+{
+  "recommendations": [
+    // === AI ===
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+
+    // === Markdown & Docs ===
+    "yzhang.markdown-all-in-one",
+    "DavidAnson.vscode-markdownlint",
+    "bierner.markdown-mermaid",
+    "shd101wyy.markdown-preview-enhanced",
+
+    // === YAML & OpenAPI ===
+    "redhat.vscode-yaml",
+    "42Crunch.vscode-openapi",
+
+    // === Git & CI/CD ===
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
+
+    // === Workspace ===
+    "Gruntfuggly.todo-tree",
+    "EditorConfig.EditorConfig",
+    "antfu.file-nesting-config"
+  ]
+}

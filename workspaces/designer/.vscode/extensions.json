@@ -1,13 +1,17 @@
 {
   "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
     "pablodelucca.pixel-agents",
     "PKief.material-icon-theme",
     "PKief.material-product-icons",
     "naumovs.color-highlight",
     "SimonSiefke.svg-preview",
     "bradlc.vscode-tailwindcss",
+    "moalamri.inline-fold",
     "oderwat.indent-rainbow",
     "formulahendry.auto-rename-tag",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "antfu.file-nesting-config"
   ]
 }

@@ -1,10 +1,23 @@
 {
   "editor.formatOnSave": true,
+  "editor.wordWrap": "on",
+  "editor.smoothScrolling": true,
   "files.associations": {
     "*.yaml": "yaml",
     "*.yml": "yaml"
   },
+  "files.defaultLanguage": "markdown",
   "yaml.schemas": {
     "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json": "docs/contracts/openapi/*.yaml"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "CLAUDE.md": "AGENTS.md, CHANGELOG.md, project-standards.md",
+    ".env": ".env.*, .env.vault"
+  },
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#7c3aed",
+    "titleBar.activeForeground": "#ffffff"
   }
 }

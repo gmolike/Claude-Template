@@ -4,18 +4,33 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+  "editor.smoothScrolling": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "files.associations": {
     "*.css": "tailwindcss"
   },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#1e40af",
     "titleBar.activeForeground": "#ffffff"
   },
   "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.test.ts",
-    "*.tsx": "${capture}.test.tsx, ${capture}.stories.tsx"
-  }
+    "package.json": "package-lock.json, pnpm-lock.yaml, .npmrc, turbo.json",
+    "tsconfig.json": "tsconfig.*.json",
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.stories.tsx",
+    ".env": ".env.*, .env.vault",
+    "CLAUDE.md": "AGENTS.md, CHANGELOG.md"
+  },
+  "inlineFold.regex": "(class|className)=[\"'`]([^\"'`]{30,})[\"'`]",
+  "inlineFold.regexFlags": "g"
 }

@@ -1,18 +1,24 @@
 {
   "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
     "pablodelucca.pixel-agents",
     "PKief.material-icon-theme",
     "PKief.material-product-icons",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
+    "yoavbls.pretty-ts-errors",
     "bradlc.vscode-tailwindcss",
+    "moalamri.inline-fold",
     "dsznajder.es7-react-js-snippets",
     "formulahendry.auto-rename-tag",
     "christian-kohler.path-intellisense",
+    "meganrogge.template-string-converter",
     "wix.vscode-import-cost",
     "vitest.explorer",
     "usernamehw.errorlens",
     "naumovs.color-highlight",
-    "oderwat.indent-rainbow"
+    "oderwat.indent-rainbow",
+    "ChakrounAnas.turbo-console-log"
   ]
 }

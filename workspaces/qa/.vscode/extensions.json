@@ -1,5 +1,7 @@
 {
   "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
     "pablodelucca.pixel-agents",
     "PKief.material-icon-theme",
     "PKief.material-product-icons",
@@ -7,7 +9,9 @@
     "ryanluker.vscode-coverage-gutters",
     "ms-playwright.playwright",
     "usernamehw.errorlens",
+    "yoavbls.pretty-ts-errors",
     "dbaeumer.vscode-eslint",
-    "Gruntfuggly.todo-tree"
+    "Gruntfuggly.todo-tree",
+    "ChakrounAnas.turbo-console-log"
   ]
 }

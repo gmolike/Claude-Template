@@ -1,15 +1,21 @@
 {
   "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
     "pablodelucca.pixel-agents",
     "PKief.material-icon-theme",
     "PKief.material-product-icons",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
+    "yoavbls.pretty-ts-errors",
     "humao.rest-client",
     "Prisma.prisma",
-    "mikestead.dotenv",
+    "dotenv.dotenv-vscode",
     "redhat.vscode-yaml",
     "vitest.explorer",
-    "usernamehw.errorlens"
+    "usernamehw.errorlens",
+    "ms-azuretools.vscode-docker",
+    "ChakrounAnas.turbo-console-log",
+    "meganrogge.template-string-converter"
   ]
 }

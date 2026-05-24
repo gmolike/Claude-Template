@@ -1,0 +1,39 @@
+{
+  "recommendations": [
+    // === AI ===
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+
+    // === Code Quality ===
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "yoavbls.pretty-ts-errors",
+    "usernamehw.errorlens",
+    "meganrogge.template-string-converter",
+
+    // === Frontend ===
+    "bradlc.vscode-tailwindcss",
+    "moalamri.inline-fold",
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "wix.vscode-import-cost",
+    "naumovs.color-highlight",
+
+    // === Testing ===
+    "vitest.explorer",
+    "ms-playwright.playwright",
+    "ryanluker.vscode-coverage-gutters",
+
+    // === Git & CI/CD ===
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
+
+    // === Debugging ===
+    "ChakrounAnas.turbo-console-log",
+
+    // === Packages ===
+    "pflannery.vscode-versionlens"
+  ]
+}

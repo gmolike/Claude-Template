@@ -8,5 +8,11 @@
       "baseUrl": "http://localhost:3001",
       "token": ""
     }
+  },
+  "dotenv.enableAutocloaking": true,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
+    "docker-compose.yml": "docker-compose.*.yml, Dockerfile, .dockerignore"
   }
 }

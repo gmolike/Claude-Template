@@ -1,5 +1,7 @@
 {
   "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
     "pablodelucca.pixel-agents",
     "PKief.material-icon-theme",
     "PKief.material-product-icons",
@@ -7,6 +9,7 @@
     "shd101wyy.markdown-preview-enhanced",
     "DavidAnson.vscode-markdownlint",
     "bierner.markdown-mermaid",
-    "Gruntfuggly.todo-tree"
+    "Gruntfuggly.todo-tree",
+    "antfu.file-nesting-config"
   ]
 }

@@ -11,6 +11,10 @@
   "editor.minimap.enabled": false,
   "editor.stickyScroll.enabled": true,
   "editor.linkedEditing": true,
+  "editor.smoothScrolling": true,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.cursorBlinking": "smooth",
+  "editor.unicodeHighlight.ambiguousCharacters": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -68,6 +72,10 @@
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.variableTypes.enabled": false,
+  "javascript.inlayHints.parameterNames.enabled": "literals",
 
   // === Search & Files ===
   "files.exclude": {
@@ -89,6 +97,23 @@
     "**/dist/**": true,
     "**/.turbo/**": true
   },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+
+  // === File Nesting ===
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, pnpm-lock.yaml, pnpm-workspace.yaml, .npmrc, turbo.json",
+    "tsconfig.json": "tsconfig.*.json",
+    ".eslintrc.*": ".eslintignore, .prettierrc*, .prettierignore, .editorconfig",
+    "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx, ${capture}.stories.tsx",
+    ".env": ".env.*, .env.vault",
+    "docker-compose.yml": "docker-compose.*.yml, Dockerfile, .dockerignore",
+    "CLAUDE.md": "AGENTS.md, CHANGELOG.md, project-standards.md"
+  },
 
   // === Git ===
   "git.autofetch": true,
@@ -98,6 +123,13 @@
   // === Terminal ===
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "terminal.integrated.fontSize": 13,
+  "terminal.integrated.smoothScrolling": true,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.gpuAcceleration": "on",
+
+  // === Workbench ===
+  "workbench.list.smoothScrolling": true,
+  "workbench.editor.wrapTabs": true,
 
   // === Better Comments ===
   "better-comments.tags": [
@@ -177,5 +209,26 @@
     "eslint",
     "tsconfig"
   ],
-  "prisma.pinToPrisma6": true
+  "prisma.pinToPrisma6": true,
+
+  // === Dotenv Official ===
+  "dotenv.enableAutocloaking": true,
+
+  // === GitHub Copilot ===
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "plaintext": false
+  },
+
+  // === Inline Fold (Tailwind) ===
+  "inlineFold.regex": "(class|className)=[\"'`]([^\"'`]{30,})[\"'`]",
+  "inlineFold.regexFlags": "g",
+
+  // === Turbo Console Log ===
+  "turboConsoleLog.logMessagePrefix": "🔍",
+  "turboConsoleLog.includeFileNameAndLineNum": true,
+
+  // === Docker ===
+  "docker.showStartPage": false
 }

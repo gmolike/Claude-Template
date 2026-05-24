@@ -1,5 +1,9 @@
 {
   "recommendations": [
+    // === AI ===
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+
     // === AI Agent Visualization ===
     "pablodelucca.pixel-agents",
 
@@ -7,14 +11,17 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "usernamehw.errorlens",
+    "yoavbls.pretty-ts-errors",
     "streetsidesoftware.code-spell-checker",
     "streetsidesoftware.code-spell-checker-german",
     "vivaxy.vscode-conventional-commits",
+    "meganrogge.template-string-converter",
 
-    // === Git ===
+    // === Git & CI/CD ===
     "eamodio.gitlens",
     "mhutchie.git-graph",
     "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
 
     // === Icons & Theme ===
     "PKief.material-icon-theme",
@@ -28,23 +35,35 @@
     "christian-kohler.path-intellisense",
     "EditorConfig.EditorConfig",
     "Gruntfuggly.todo-tree",
+    "antfu.file-nesting-config",
 
     // === Frontend ===
     "bradlc.vscode-tailwindcss",
     "dsznajder.es7-react-js-snippets",
     "formulahendry.auto-rename-tag",
     "wix.vscode-import-cost",
+    "moalamri.inline-fold",
 
     // === Backend ===
     "Prisma.prisma",
     "humao.rest-client",
-    "mikestead.dotenv",
+    "dotenv.dotenv-vscode",
     "redhat.vscode-yaml",
+
+    // === Docker & Containers ===
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
 
     // === Testing ===
     "vitest.explorer",
     "ryanluker.vscode-coverage-gutters",
     "ms-playwright.playwright",
+
+    // === Debugging ===
+    "ChakrounAnas.turbo-console-log",
+
+    // === Packages ===
+    "pflannery.vscode-versionlens",
 
     // === Docs ===
     "yzhang.markdown-all-in-one",
