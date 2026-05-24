@@ -9,6 +9,7 @@ export default [
       '**/node_modules/**',
       '**/coverage/**',
       'apps/web/src/routeTree.gen.ts',
+      '.agents/skills/**',
     ],
   },
   js.configs.recommended,

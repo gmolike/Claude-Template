@@ -45,9 +45,47 @@ Wenn Oh My Claude Code (OMC) installiert ist, delegiere Orchestrierung:
 **Fallback:** Wenn OMC NICHT installiert ist, orchestriere wie bisher manuell.
 Model-Tiering wird von OMC NICHT überschrieben — unsere opusplan/sonnetplan/sonnet Regeln gelten immer.
 
+## Built-in Agent Types (Opus 4.7)
+
+Claude Code hat built-in `subagent_type` Parameter die EXAKT den Template-Agents entsprechen.
+Die Custom-Agent-Definitionen in `.claude/agents/` ERWEITERN die built-in Types mit projekt-spezifischen Regeln.
+
+| subagent_type        | Custom Agent          | Model      |
+| -------------------- | --------------------- | ---------- |
+| `product-owner`      | product-owner.md      | opusplan   |
+| `scrum-master`       | scrum-master.md       | opusplan   |
+| `animation-designer` | animation-designer.md | opusplan   |
+| `senior-frontend`    | senior-frontend.md    | sonnetplan |
+| `senior-backend`     | senior-backend.md     | sonnetplan |
+| `senior-qs`          | senior-qs.md          | sonnetplan |
+| `worker-frontend`    | worker-frontend.md    | sonnet     |
+| `worker-backend`     | worker-backend.md     | sonnet     |
+| `worker-qs`          | worker-qs.md          | sonnet     |
+| `debugger`           | debugger.md           | sonnet     |
+
+### Agent-Orchestrierung
+
+Beim Spawnen von Team-Agents:
+
+- **subagent_type** nutzen fuer korrekte Tool-Zugriffe und Model-Zuweisung
+- **isolation: "worktree"** fuer parallele Worker die am gleichen Code arbeiten
+- **run_in_background: true** fuer unabhaengige Tasks die parallel laufen koennen
+- **name** setzen fuer spaetere Kommunikation via SendMessage
+
+### Built-in Quality Skills
+
+Diese Skills stehen ALLEN Agents zur Verfuegung:
+
+- `/verify` — Feature im Browser testen, bevor als fertig gemeldet
+- `/code-review` — Diff auf Correctness-Bugs pruefen
+- `/security-review` — Security-Review der Branch-Aenderungen
+- `/run` — App starten und Screenshot machen
+- `/changelog-generator` — Release Notes aus Git-History generieren
+
 ## Token-Effizienz
 
 - Beziehe NUR relevante Seniors ein (nicht jedes Feature braucht Designer)
+- Animation Designer NUR bei expliziten Animation/3D/Video-Tasks
 - Workers sind IMMER `sonnet` — reiner Code, keine Diskussion
 - Seniors planen ERST, implementieren DANN
 - Bei Unsicherheit: Lite statt Full Scrum

@@ -65,22 +65,60 @@ Erstellt Design-Konzepte, reviewed UI auf Accessibility und Konsistenz.
 
 ## Impeccable Design-Skills
 
-Nutze folgende Skills für Design-Qualität:
+Nutze folgende Skills fuer Design-Qualitaet:
 
-- `/audit` — Design auf Anti-Patterns prüfen
+- `/impeccable` — Meta-Skill: Design, Redesign, Critique, Audit, Polish (Combined)
+- `/audit` — Design auf Anti-Patterns pruefen
 - `/polish` — Visuelles Fine-Tuning
 - `/normalize` — Design-Inkonsistenzen bereinigen
 - `/distill` — Komplexes UI vereinfachen
 - `/animate` — Motion-Design
 - `/bolder` / `/quieter` — Visuelles Gewicht anpassen
 - `/colorize` — Farbpalette optimieren
-- `/clarify` — UI-Verständlichkeit verbessern
+- `/clarify` — UI-Verstaendlichkeit verbessern
 - `/delight` — Micro-Interactions
 - `/adapt` — Responsive Anpassungen
 - `/extract` — Wiederverwendbare Komponenten extrahieren
 - `/critique` — Design-Kritik
 - `/harden` — Robustheit und Edge-Cases
 - `/optimize` — Performance-optimiertes Design
+- `/onboard` — Onboarding-Flows und Empty States
+
+## Emil Kowalski Design-Prinzipien
+
+Nutze den Emil Design Engineering Skill als Qualitaets-Framework fuer UI-Polish:
+
+- `/emil-design-eng` — Animations, Easing, Component Design, Sonner-Prinzipien
+- Animations unter 300ms fuer UI-Feedback
+- Custom Easing statt CSS-Defaults
+- Perceived Performance > Actual Performance
+
+## Taste & Design-Qualitaet
+
+Nutze Taste-Skills um generische AI-Aesthetik zu vermeiden:
+
+- `/design-taste-frontend` — Senior UI/UX Engineering, Anti-LLM-Bias
+- `/high-end-visual-design` — Agentur-Level Design Standards
+- `/frontend-design` — Production-Grade Interfaces ohne AI-Slop
+- `/redesign-existing-projects` — Bestehende Projekte upgraden
+
+## Image Generation Skills
+
+Fuer Design-Referenzen und Mockups:
+
+- `/brandkit` — Brand-Kit und Identity Boards
+- `/imagegen-frontend-web` — Premium Website Design References
+- `/imagegen-frontend-mobile` — Premium Mobile App Screen Concepts
+- `/image-to-code` — Design-Bilder zu Code Pipeline
+
+## Animation-Delegation
+
+Bei komplexen Animations-Anforderungen an den Animation Designer Agent delegieren:
+
+- 3D/WebGPU Szenen → Animation Designer
+- Video-Produktion (HyperFrames) → Animation Designer
+- Multi-Plattform Motion → Animation Designer
+- Einfache UI-Animationen → selbst mit `/animate` und `/emil-design-eng`
 
 ## shadcn/ui Skill
 

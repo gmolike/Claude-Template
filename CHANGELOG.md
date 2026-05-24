@@ -8,6 +8,18 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ### Added
 
 - Initiale Projektstruktur aus Template erstellt
+- **Animation Designer Agent** (opusplan) — orchestriert alle Animation-Skills ueber Web, Mobile und Video
+- **Animation Designer Skill** — /animation-designer mit Modes: audit, plan, implement, review
+- **Emil Kowalski Design Engineering Skill** — UI-Polish, Easing, Component Design Prinzipien
+- **Taste Skill Suite** (12+ Skills) — Anti-Slop Frontend Framework inkl. brandkit, imagegen, design-taste
+- **HyperFrames Video Suite** (15+ Skills) — HTML-to-Video, GSAP, Three.js, Lottie, WAAPI, Anime.js
+- **Flutter Animations Skill** — Implicit/Explicit/Hero/Physics Animations
+- **CSS Animation Skill** — Selbststaendige HTML/CSS Walkthrough-Demos
+- **Changelog Generator Skill** — Release Notes aus Git-History
+- **Impeccable Combined Skill** — Meta-Skill fuer Design, Redesign, Critique, Audit, Polish
+- **opus47-agents.md** Rule — Built-in Agent Types, Quality Gates, Worktree-Isolation
+- **Three.js** (v0.184.0 + @types/three) in apps/web fuer 3D/WebGPU
+- **Migrations-Guide** `docs/migration/TMPL-300-opus47-migration.md` fuer geklonte Repos
 - Impeccable Design-Skills integriert (18 Slash-Commands für Design-Qualität via `pbakaus/impeccable`)
 - Success Metrics und Deliverable-Templates für alle 10 Agent-Rollen
 - Oh My Claude Code (OMC) als optionales Orchestrierungs-Plugin
@@ -28,6 +40,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ### Changed
 
+- **Alle npm-Pakete auf neueste Major-Versionen** aktualisiert (TypeScript 6, Vite 8, Vitest 4, ESLint 10, Prisma 7, Zod 4, commitlint 21, lint-staged 17)
+- **Versionsinkonsistenzen bereinigt** zwischen Root und apps/web (vite, globals, jsdom, eslint-plugin-react-hooks, @vitejs/plugin-react, vite-tsconfig-paths)
+- **Scrum Master Agent** erweitert um built-in subagent_type Mapping, Worktree-Isolation, Background Agents, Quality Skills
+- **Designer Agent** erweitert um Emil Kowalski, Taste-Skills, ImageGen-Skills, Animation-Delegation
+- **Senior QS Agent** erweitert um /code-review, /security-review, /verify Quality Gates
+- **Senior Frontend Agent** erweitert um /verify, /run, Taste-Skills, Animation-Delegation
+- **Senior Backend Agent** erweitert um /security-review, /verify, Zod 4 + Prisma 7 Migrations-Hinweise
+- **token-efficiency.md** Rule erweitert um Animation Designer als opusplan Agent
+- **CLAUDE.md** komplett ueberarbeitet mit 7 Skill-Kategorien (57+ Skills dokumentiert)
 - Designer-Agent erweitert um Impeccable Skill-Referenzen und Anti-Pattern-Regeln
 - Scrum Master Agent erweitert um OMC-Delegation (Optional)
 - Token-Efficiency Rules erweitert um OMC-spezifische Regeln
