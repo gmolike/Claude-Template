@@ -49,6 +49,9 @@ interface AgentPanelData {
 const vscode = acquireVsCodeApi();
 let _data: AgentPanelData | null = null;
 let _durationTimerId: number | null = null;
+let _showCompleted = false;
+const _knownCompleted = new Set<string>();
+const _recentlyCompleted = new Set<string>();
 
 // ── DOM refs ──────────────────────────────────────────────────
 const $cardsContainer = document.getElementById('cards-container')!;
@@ -62,16 +65,24 @@ const $overviewIcon = document.querySelector('.overview-icon')!;
 const $flowSection = document.getElementById('flow-section')!;
 const $flowCanvas = document.getElementById('flow-canvas') as HTMLCanvasElement;
 const $btnRefresh = document.getElementById('btn-refresh')!;
+const $btnShowCompleted = document.getElementById('btn-show-completed')!;
 
 // ── Event Handlers ────────────────────────────────────────────
 $btnRefresh.addEventListener('click', () => {
   vscode.postMessage({ type: 'agentPanelRefresh' });
 });
 
+$btnShowCompleted.addEventListener('click', () => {
+  _showCompleted = !_showCompleted;
+  $btnShowCompleted.classList.toggle('active', _showCompleted);
+  if (_data) renderCards(_data.agents, _data.bottlenecks);
+});
+
 window.addEventListener('message', (event) => {
   const msg = event.data;
   if (msg.type === 'agentPanelUpdate') {
     _data = msg.data as AgentPanelData;
+    trackCompletions(_data.agents);
     render();
   }
 });
@@ -118,10 +129,28 @@ function renderOverview(data: AgentPanelData): void {
   } else {
     $overviewIcon.classList.add('inactive');
   }
+
+  if (data.completedCount > 0) {
+    $btnShowCompleted.classList.remove('hidden');
+    $btnShowCompleted.textContent = _showCompleted
+      ? `Hide ${data.completedCount} done`
+      : `Show ${data.completedCount} done`;
+  } else {
+    $btnShowCompleted.classList.add('hidden');
+  }
 }
 
 function renderCards(agents: TrackedAgent[], bottlenecks: string[]): void {
-  if (agents.length === 0) {
+  const activeAgents = agents.filter((a) => a.status !== 'completed' && a.status !== 'failed');
+  const completedAgents = agents.filter((a) => a.status === 'completed' || a.status === 'failed');
+  const justCompleted = completedAgents.filter((a) => _recentlyCompleted.has(a.id));
+  const visibleAgents = [
+    ...activeAgents,
+    ...justCompleted,
+    ...(_showCompleted ? completedAgents.filter((a) => !_recentlyCompleted.has(a.id)) : []),
+  ];
+
+  if (visibleAgents.length === 0 && completedAgents.length === 0) {
     $cardsContainer.style.display = 'none';
     $emptyState.classList.add('visible');
     return;
@@ -130,7 +159,7 @@ function renderCards(agents: TrackedAgent[], bottlenecks: string[]): void {
   $emptyState.classList.remove('visible');
   $cardsContainer.style.display = '';
 
-  const sorted = [...agents].sort((a, b) => {
+  const sorted = [...visibleAgents].sort((a, b) => {
     const statusOrder: Record<string, number> = {
       running: 0,
       spawning: 1,
@@ -147,6 +176,13 @@ function renderCards(agents: TrackedAgent[], bottlenecks: string[]): void {
   for (const agent of sorted) {
     const isBottleneck = bottlenecks.includes(agent.id);
     const card = createCard(agent, isBottleneck);
+    if (_recentlyCompleted.has(agent.id)) {
+      card.classList.add('fade-out');
+      card.addEventListener('animationend', () => {
+        card.classList.add('card-hidden');
+        _recentlyCompleted.delete(agent.id);
+      });
+    }
     $cardsContainer.appendChild(card);
   }
 }
@@ -320,8 +356,10 @@ function drawNode(
   isBottleneck: boolean,
 ): void {
   const r = 5;
-  const color = getStatusColor(node.status, 1);
-  const bgColor = getStatusColor(node.status, 0.12);
+  const isDone = node.status === 'completed' || node.status === 'failed';
+  const alpha = isDone && !_showCompleted ? 0.35 : 1;
+  const color = getStatusColor(node.status, alpha);
+  const bgColor = getStatusColor(node.status, isDone && !_showCompleted ? 0.05 : 0.12);
 
   // Rounded rect
   ctx.beginPath();
@@ -422,6 +460,18 @@ function getStatusColor(status: string, alpha: number): string {
 }
 
 // ── Duration Updater ──────────────────────────────────────────
+function trackCompletions(agents: TrackedAgent[]): void {
+  for (const agent of agents) {
+    if (
+      (agent.status === 'completed' || agent.status === 'failed') &&
+      !_knownCompleted.has(agent.id)
+    ) {
+      _knownCompleted.add(agent.id);
+      _recentlyCompleted.add(agent.id);
+    }
+  }
+}
+
 function startDurationUpdater(): void {
   if (_durationTimerId !== null) {
     clearInterval(_durationTimerId);

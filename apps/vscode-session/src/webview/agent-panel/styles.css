@@ -155,6 +155,38 @@ body {
   color: var(--fg);
 }
 
+.toggle-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 1px 8px;
+  border-radius: 10px;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  white-space: nowrap;
+}
+
+.toggle-btn:hover {
+  background: var(--card-hover);
+  color: var(--fg);
+  border-color: var(--fg-muted);
+}
+
+.toggle-btn.active {
+  background: rgba(78, 201, 176, 0.12);
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.toggle-btn.hidden {
+  display: none;
+}
+
 /* ── Agent Cards ───────────────────────────────────────────── */
 #agent-cards {
   padding: 8px 12px;
@@ -209,6 +241,41 @@ body {
 .agent-card.completed {
   border-left: 3px solid var(--success);
   opacity: 0.8;
+}
+
+.agent-card.fade-out {
+  animation: fadeOutCard 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation-delay: 1.5s;
+}
+
+@keyframes fadeOutCard {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+    max-width: 180px;
+    padding: 10px 12px;
+    margin-right: var(--gap);
+  }
+  60% {
+    opacity: 0;
+    transform: scale(0.92);
+    max-width: 180px;
+    padding: 10px 12px;
+    margin-right: var(--gap);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92);
+    max-width: 0;
+    padding: 0;
+    margin-right: 0;
+    border-width: 0;
+    overflow: hidden;
+  }
+}
+
+.agent-card.card-hidden {
+  display: none;
 }
 
 .agent-card.spawning {
