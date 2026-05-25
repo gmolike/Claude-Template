@@ -9,6 +9,7 @@ export interface AgentPanelData {
   completedCount: number;
   sessionTitle: string;
   workflowStage: string;
+  otherSessionCount: number;
 }
 
 export type ExtensionToAgentPanel =

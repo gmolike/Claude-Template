@@ -11,6 +11,10 @@ let sessionManager: SessionManager | undefined;
 let panel: Panel | undefined;
 let agentPanel: AgentPanel | undefined;
 
+function getWorkspacePaths(): string[] {
+  return (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+}
+
 export function activate(context: vscode.ExtensionContext) {
   panel = Panel.createProvider(context);
   agentPanel = AgentPanel.createProvider(context);
@@ -54,24 +58,28 @@ export function activate(context: vscode.ExtensionContext) {
   const usageTimer = setInterval(usageTick, 60_000);
 
   const agentTick = () => {
-    const activeEntry = sessionManager!.getMostRecentEntry();
+    const wsPaths = getWorkspacePaths();
+    const activeEntry = sessionManager!.getMostRecentEntry(wsPaths);
     if (activeEntry) {
       const summary = parseAgentsFromJsonl(activeEntry.filePath);
       const session = activeEntry.state;
+      const otherCount = sessionManager!.getOtherSessionCount(wsPaths);
       const stage =
         summary.agents.length > 5 ? 'Stufe 3' : summary.agents.length > 1 ? 'Stufe 2' : '';
       const data: AgentPanelData = {
         ...summary,
         sessionTitle: session.chatTitle || session.projectName || '',
         workflowStage: stage,
+        otherSessionCount: otherCount,
       };
       agentPanel!.sendAgentData(data);
     }
   };
 
   const envTick = () => {
+    const wsPaths = getWorkspacePaths();
     panel!.sendEnvData({
-      recentFiles: sessionManager!.getRecentFiles(),
+      recentFiles: sessionManager!.getRecentFiles(undefined, wsPaths),
       mcpServers: sessionManager!.getMcpServers(),
       recentSessions: sessionManager!.getRecentSessions(),
       skills: sessionManager!.getSkills(),
@@ -79,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
     panel!.sendProjectInfo();
     panel!.sendScrumTasks();
-    panel!.sendFsdActivity(sessionManager!.getRecentFilePaths());
+    panel!.sendFsdActivity(sessionManager!.getRecentFilePaths(undefined, wsPaths));
     panel!.sendAgentStatus();
     agentTick();
   };

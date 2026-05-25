@@ -51,35 +51,19 @@ export class SessionManager {
     return this.sessions;
   }
 
-  getRecentFiles(sessionId?: string): string[] {
-    const id = sessionId || this.getMostRecentSessionId();
-    if (!id) {
-      return [];
-    }
+  getRecentFiles(sessionId?: string, workspacePaths?: string[]): string[] {
+    const id = sessionId || this.getMostRecentSessionId(workspacePaths);
+    if (!id) return [];
     const entry = this.entries.get(id);
-    if (!entry) {
-      return [];
-    }
+    if (!entry) return [];
     return getRecentFilesFromLog(entry.filePath);
   }
 
-  /**
-   * Returns full file paths (not basenames) from the most recent session log.
-   * Used for FSD layer categorization where the full path is needed to detect
-   * which FSD layer a file belongs to.
-   *
-   * @param sessionId - Optional session ID; defaults to the most recently active session
-   * @returns Array of up to 50 full file paths
-   */
-  getRecentFilePaths(sessionId?: string): string[] {
-    const id = sessionId || this.getMostRecentSessionId();
-    if (!id) {
-      return [];
-    }
+  getRecentFilePaths(sessionId?: string, workspacePaths?: string[]): string[] {
+    const id = sessionId || this.getMostRecentSessionId(workspacePaths);
+    if (!id) return [];
     const entry = this.entries.get(id);
-    if (!entry) {
-      return [];
-    }
+    if (!entry) return [];
     return getRecentFilePathsFromLog(entry.filePath);
   }
 
@@ -115,7 +99,11 @@ export class SessionManager {
     return computeUsageFromLogsImpl();
   }
 
-  getMostRecentEntry(): SessionEntry | undefined {
+  getMostRecentEntry(workspacePaths?: string[]): SessionEntry | undefined {
+    if (workspacePaths && workspacePaths.length > 0) {
+      const match = this.findEntryForWorkspace(workspacePaths);
+      if (match) return match;
+    }
     let bestEntry: SessionEntry | undefined;
     let bestTime = 0;
     for (const entry of this.entries.values()) {
@@ -127,14 +115,61 @@ export class SessionManager {
     return bestEntry;
   }
 
-  private getMostRecentSessionId(): string | undefined {
-    let best: SessionState | undefined;
-    for (const s of this.sessions.values()) {
-      if (!best || s.lastSeen > best.lastSeen) {
-        best = s;
+  getOtherSessionCount(workspacePaths?: string[]): number {
+    if (!workspacePaths || workspacePaths.length === 0) return 0;
+    const primary = this.findEntryForWorkspace(workspacePaths);
+    if (!primary) return 0;
+    let count = 0;
+    const cutoff = Date.now() - 60 * 60 * 1000;
+    for (const entry of this.entries.values()) {
+      if (entry.state.sessionId !== primary.state.sessionId && entry.state.lastSeen > cutoff) {
+        count++;
       }
     }
-    return best?.sessionId;
+    return count;
+  }
+
+  private findEntryForWorkspace(workspacePaths: string[]): SessionEntry | undefined {
+    const normalized = workspacePaths.map((p) => normalizePath(p));
+    let bestEntry: SessionEntry | undefined;
+    let bestTime = 0;
+
+    for (const entry of this.entries.values()) {
+      const cwd = entry.state.cwd;
+      if (cwd) {
+        const normalCwd = normalizePath(cwd);
+        for (const wp of normalized) {
+          if (normalCwd === wp || normalCwd.startsWith(wp + '/')) {
+            if (entry.state.lastSeen > bestTime) {
+              bestTime = entry.state.lastSeen;
+              bestEntry = entry;
+            }
+            break;
+          }
+        }
+      }
+
+      if (!bestEntry) {
+        const slug = entry.state.slug.toLowerCase();
+        for (const wp of normalized) {
+          const folderName = wp.split('/').pop() || '';
+          if (folderName && slug.includes(folderName.toLowerCase())) {
+            if (entry.state.lastSeen > bestTime) {
+              bestTime = entry.state.lastSeen;
+              bestEntry = entry;
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    return bestEntry;
+  }
+
+  private getMostRecentSessionId(workspacePaths?: string[]): string | undefined {
+    const entry = this.getMostRecentEntry(workspacePaths);
+    return entry?.state.sessionId;
   }
 
   dispose(): void {
@@ -553,4 +588,8 @@ export class SessionManager {
   private nextHue(): number {
     return HUE_STEPS[this.hueIndex++ % HUE_STEPS.length];
   }
+}
+
+function normalizePath(p: string): string {
+  return p.replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase();
 }

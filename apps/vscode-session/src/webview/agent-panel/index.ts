@@ -42,6 +42,7 @@ interface AgentPanelData {
   completedCount: number;
   sessionTitle: string;
   workflowStage: string;
+  otherSessionCount: number;
 }
 
 // ── Init ──────────────────────────────────────────────────────
@@ -98,7 +99,12 @@ function renderOverview(data: AgentPanelData): void {
   $statActive.textContent = `${data.activeCount} active`;
   $statCompleted.textContent = `${data.completedCount} done`;
   $statTokens.textContent = formatTokens(data.totalTokens.input + data.totalTokens.output);
-  $overviewSession.textContent = data.sessionTitle || '';
+  const sessionLabel = data.sessionTitle || '';
+  const otherLabel =
+    data.otherSessionCount > 0
+      ? ` (+${data.otherSessionCount} other${data.otherSessionCount > 1 ? 's' : ''})`
+      : '';
+  $overviewSession.textContent = sessionLabel + otherLabel;
 
   if (data.workflowStage) {
     $statStage.textContent = data.workflowStage;
