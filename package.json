@@ -17,6 +17,10 @@
     "test": "vitest run --root apps/web",
     "test:watch": "vitest --root apps/web",
     "test:coverage": "vitest run --coverage --root apps/web",
+    "ext:build": "pnpm --filter claude-code-monitor compile",
+    "ext:watch": "pnpm --filter claude-code-monitor watch",
+    "ext:package": "pnpm --filter claude-code-monitor package",
+    "ext:deploy": "pnpm --filter claude-code-monitor deploy:ext",
     "prepare": "husky"
   },
   "dependencies": {

@@ -7,6 +7,7 @@
     { "name": "📦 Shared Types", "path": "packages/shared-types" },
     { "name": "📦 Shared UI", "path": "packages/shared-ui" },
     { "name": "📦 Shared API", "path": "packages/shared-api" },
+    { "name": "🔌 VS Code Ext", "path": "apps/vscode-session" },
     { "name": "📋 .scrum", "path": ".scrum" }
   ],
   "settings": {

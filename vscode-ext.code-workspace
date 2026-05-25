@@ -1,0 +1,19 @@
+{
+  "folders": [
+    { "name": "🔌 VS Code Extension", "path": "apps/vscode-session" },
+    { "name": "📋 .scrum/vscode-session", "path": ".scrum/vscode-session" }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "statusBar.background": "#6A1B9A",
+      "statusBar.foreground": "#ffffff",
+      "titleBar.activeBackground": "#6A1B9A",
+      "titleBar.activeForeground": "#ffffff"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "dotenv.dotenv-vscode"
+    ]
+  }
+}

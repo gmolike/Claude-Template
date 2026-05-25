@@ -1,5 +1,7 @@
 node_modules/
 dist/
+apps/vscode-session/out/
+apps/vscode-session/*.vsix
 .env
 .env.local
 .env.*.local

@@ -1,0 +1,37 @@
+<div id="agent-monitor">
+  <!-- Overview Bar -->
+  <header id="overview-bar">
+    <div class="overview-left">
+      <span class="overview-icon">&#x25C9;</span>
+      <span id="overview-title">Agent Monitor</span>
+      <span id="overview-session" class="overview-muted"></span>
+    </div>
+    <div class="overview-stats">
+      <span id="stat-active" class="stat-badge stat-active" title="Active agents">0 active</span>
+      <span id="stat-completed" class="stat-badge stat-completed" title="Completed agents">0 done</span>
+      <span id="stat-tokens" class="stat-badge stat-tokens" title="Total tokens">0 tok</span>
+      <span id="stat-stage" class="stat-badge stat-stage"></span>
+    </div>
+    <button id="btn-refresh" class="icon-btn" title="Refresh">&#x21BB;</button>
+  </header>
+
+  <!-- Agent Cards -->
+  <section id="agent-cards">
+    <div id="cards-container" class="cards-row"></div>
+    <div id="empty-state" class="empty-state">
+      <div class="empty-icon">&#x25C9;</div>
+      <div class="empty-text">No agents running</div>
+      <div class="empty-hint">Agent activity will appear here when Claude spawns sub-agents</div>
+    </div>
+  </section>
+
+  <!-- Dependency Flow -->
+  <section id="flow-section">
+    <div class="section-header">
+      <span class="section-label">Workflow</span>
+    </div>
+    <div id="flow-container">
+      <canvas id="flow-canvas"></canvas>
+    </div>
+  </section>
+</div>

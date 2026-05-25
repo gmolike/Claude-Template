@@ -1,0 +1,121 @@
+{
+  "name": "claude-code-monitor",
+  "publisher": "gmo",
+  "displayName": "Claude Code Monitor",
+  "description": "Live sidebar for Claude Code — pixel-art robot companion, per-session dashboards, pace-based usage meters, token-rate chart, scrum board, FSD layer monitor, and agent orchestration status.",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "icon": "assets/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madeby10am/claude-code-session",
+    "directory": "apps/vscode-session"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "anthropic",
+    "ai",
+    "session",
+    "monitor",
+    "pixel-art",
+    "sidebar",
+    "scrum",
+    "fsd"
+  ],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "claude-code-monitor.open",
+        "title": "Claude Code Monitor: Open as Split Panel"
+      },
+      {
+        "command": "claude-code-monitor.openAgentPanel",
+        "title": "Claude Code Monitor: Toggle Agent Panel"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "claude-code-monitor.open",
+        "key": "ctrl+shift+j",
+        "mac": "cmd+shift+j"
+      },
+      {
+        "command": "claude-code-monitor.openAgentPanel",
+        "key": "ctrl+shift+k",
+        "mac": "cmd+shift+k"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claude-code-monitor",
+          "title": "Claude Code Monitor",
+          "icon": "assets/icon-light.svg"
+        }
+      ],
+      "panel": [
+        {
+          "id": "claude-agent-monitor",
+          "title": "Agent Monitor",
+          "icon": "assets/icon-light.svg"
+        }
+      ]
+    },
+    "views": {
+      "claude-code-monitor": [
+        {
+          "type": "webview",
+          "id": "claude-code-monitor.sidebar",
+          "name": "Claude Monitor"
+        }
+      ],
+      "claude-agent-monitor": [
+        {
+          "type": "webview",
+          "id": "claude-code-monitor.agentPanel",
+          "name": "Agent Monitor"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm compile",
+    "compile": "tsc -p ./ && pnpm build:webview && pnpm build:agent-panel && pnpm copy:webview-static && pnpm copy:agent-panel-static",
+    "build:webview": "esbuild src/webview/index.ts --bundle --outfile=out/webview/bundle.js --format=iife --target=es2020",
+    "build:agent-panel": "esbuild src/webview/agent-panel/index.ts --bundle --outfile=out/webview/agent-panel/agent-panel.js --format=iife --target=es2020",
+    "copy:webview-static": "node -e \"const fs=require('fs'),p=require('path'),d='out/webview';fs.mkdirSync(d,{recursive:true});['styles.css','body.html'].forEach(f=>fs.copyFileSync(p.join('src/webview',f),p.join(d,f)))\"",
+    "copy:agent-panel-static": "node -e \"const fs=require('fs'),p=require('path'),d='out/webview/agent-panel';fs.mkdirSync(d,{recursive:true});['styles.css','body.html'].forEach(f=>fs.copyFileSync(p.join('src/webview/agent-panel',f),p.join(d,f)))\"",
+    "deploy:ext": "pnpm compile && for d in ~/.vscode/extensions/gmo.claude-code-monitor-*/; do [ -d \"$d\" ] || continue; mkdir -p \"$d/out/session\" \"$d/out/webview\" \"$d/out/webview/agent-panel\" \"$d/assets\" && cp out/*.js \"$d/out/\" && cp out/session/*.js \"$d/out/session/\" && cp out/webview/bundle.js out/webview/styles.css out/webview/body.html \"$d/out/webview/\" && cp out/webview/agent-panel/agent-panel.js out/webview/agent-panel/styles.css out/webview/agent-panel/body.html \"$d/out/webview/agent-panel/\" && cp -R assets/. \"$d/assets/\" && cp package.json \"$d/package.json\"; done",
+    "watch": "tsc -watch -p ./",
+    "watch:webview": "esbuild src/webview/index.ts --bundle --outfile=out/webview/bundle.js --format=iife --target=es2020 --watch",
+    "watch:agent-panel": "esbuild src/webview/agent-panel/index.ts --bundle --outfile=out/webview/agent-panel/agent-panel.js --format=iife --target=es2020 --watch",
+    "generate-sprites": "ts-node --project tsconfig.scripts.json scripts/generate-sprites.ts",
+    "test": "vitest run",
+    "clean": "rm -rf out .turbo",
+    "package": "npx --yes @vscode/vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.28.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  },
+  "optionalDependencies": {
+    "canvas": "^3.2.3"
+  }
+}

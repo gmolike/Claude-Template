@@ -10,6 +10,8 @@ export default [
       '**/coverage/**',
       'apps/web/src/routeTree.gen.ts',
       '.agents/skills/**',
+      'apps/vscode-session/out/**',
+      'apps/vscode-session/src/webview/**',
     ],
   },
   js.configs.recommended,

@@ -5,6 +5,7 @@
     { "path": "./apps/api" },
     { "path": "./packages/shared-types" },
     { "path": "./packages/shared-ui" },
-    { "path": "./packages/shared-api" }
+    { "path": "./packages/shared-api" },
+    { "path": "./apps/vscode-session" }
   ]
 }

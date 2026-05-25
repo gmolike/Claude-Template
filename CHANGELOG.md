@@ -7,6 +7,16 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ### Added
 
+- **Claude Code Monitor** — VS Code Sidebar-Extension als `apps/vscode-session` integriert (Fork von claude-code-session, MIT)
+  - Live Session-Monitoring mit Pixel-Art Robot Companion
+  - Token Usage Meters (5h Session + 7d Weekly) mit Pace-Based Coloring
+  - Token Activity Chart mit konfigurierbaren Zeitfenstern
+  - Git Status, MCP Servers, Skills Browser, CLI Tools
+  - **Scrum Board Integration** — `.scrum/` Tasks direkt in der Sidebar anzeigen und Status aendern
+  - **FSD Layer Monitor** — Zeigt welche Feature-Sliced Design Layer in der Session bearbeitet wurden
+  - **Agent Orchestration Status** — tmux Sessions und Agent-Status live anzeigen
+  - Workspace-File `vscode-ext.code-workspace` fuer Extension-Entwicklung
+  - Convenience-Scripts: `pnpm ext:build`, `pnpm ext:watch`, `pnpm ext:package`, `pnpm ext:deploy`
 - Initiale Projektstruktur aus Template erstellt
 - **Animation Designer Agent** (opusplan) — orchestriert alle Animation-Skills ueber Web, Mobile und Video
 - **Animation Designer Skill** — /animation-designer mit Modes: audit, plan, implement, review
