@@ -1,6 +1,6 @@
 ---
 name: designer
-model: sonnetplan
+model: sonnet
 tools:
   - Read
   - Write

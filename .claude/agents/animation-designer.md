@@ -1,6 +1,6 @@
 ---
 name: animation-designer
-model: opusplan
+model: opus
 tools:
   - Read
   - Write

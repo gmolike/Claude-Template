@@ -1,7 +1,7 @@
 ---
 name: senior-backend
 description: Plant und reviewed Backend-Architektur. Implementiert API-Endpunkte, Datenbankschema und Services.
-model: sonnetplan
+model: sonnet
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 color: green
 ---

@@ -1,7 +1,7 @@
 ---
 name: senior-backend
 description: Definiert und reviewed API Contracts. Plant OpenAPI Schemas und Codegen.
-model: sonnetplan
+model: sonnet
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 color: green
 ---

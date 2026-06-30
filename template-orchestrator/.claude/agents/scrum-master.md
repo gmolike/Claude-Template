@@ -1,7 +1,7 @@
 ---
 name: scrum-master
 description: Koordiniert das Team, verteilt Aufgaben als GitHub Issues, ueberwacht den Workflow repo-uebergreifend.
-model: opusplan
+model: opus
 tools: Read, Write, Edit, Glob, Grep, Task
 color: red
 ---

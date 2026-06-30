@@ -1,7 +1,7 @@
 ---
 name: senior-backend
 description: Plant und reviewed Backend-Architektur (.NET Clean Architecture + CQRS). Implementiert bei Lite-Features.
-model: sonnetplan
+model: sonnet
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 color: green
 ---
