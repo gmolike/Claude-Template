@@ -2,6 +2,7 @@
 name: product-owner
 description: Definiert Requirements, User Stories und Acceptance Criteria. Erstellt Arbeitspakete und reviewed fertige Features.
 model: opus
+effort: max
 tools: Read, Write, Edit, Glob, Grep
 color: purple
 ---

@@ -1,7 +1,8 @@
 ---
 name: debugger
 description: Root-Cause-Analyse und minimale Fixes.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Edit, Bash, Grep, Glob
 ---
 

@@ -1,7 +1,8 @@
 ---
 name: worker-frontend
 description: Implementiert Mobile-Code nach Tech-Spec. Reiner Code-Output.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

@@ -1,7 +1,8 @@
 ---
 name: worker-qs
 description: Schreibt Tests. Jest + React Native Testing Library.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

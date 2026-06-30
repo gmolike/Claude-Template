@@ -1,7 +1,8 @@
 ---
 name: senior-frontend
 description: Plant und reviewed Mobile-Architektur (React Native + Expo). Implementiert bei Lite-Features.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 color: blue
 ---

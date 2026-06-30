@@ -1,7 +1,8 @@
 ---
 name: senior-qs
 description: Plant Teststrategien, reviewed Code-Qualität, prüft FSD-Compliance und Code-Duplikation.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 color: orange
 ---

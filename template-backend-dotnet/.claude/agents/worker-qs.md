@@ -1,7 +1,8 @@
 ---
 name: worker-qs
 description: Schreibt Tests nach Testplan. xUnit + FluentAssertions. Reiner Test-Output.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

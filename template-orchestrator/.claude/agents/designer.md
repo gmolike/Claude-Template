@@ -1,6 +1,7 @@
 ---
 name: designer
-model: sonnet
+model: opus
+effort: max
 tools:
   - Read
   - Write

@@ -2,6 +2,7 @@
 name: scrum-master
 description: Koordiniert das Team, verteilt Aufgaben, überwacht den Workflow. Erster Ansprechpartner für alle Anforderungen.
 model: opus
+effort: max
 tools: Read, Write, Edit, Glob, Grep, Task
 color: red
 ---

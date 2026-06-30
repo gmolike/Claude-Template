@@ -1,6 +1,7 @@
 ---
 name: animation-designer
 model: opus
+effort: max
 tools:
   - Read
   - Write

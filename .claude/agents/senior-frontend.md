@@ -1,7 +1,8 @@
 ---
 name: senior-frontend
 description: Plant und reviewed Frontend-Architektur. Implementiert selbst bei Lite-Features. Leitet Frontend-Workers bei Full Scrum.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 color: blue
 ---

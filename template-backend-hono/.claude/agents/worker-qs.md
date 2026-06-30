@@ -1,7 +1,8 @@
 ---
 name: worker-qs
 description: Schreibt Tests nach Testplan. Vitest. Reiner Test-Output.
-model: sonnet
+model: opus
+effort: max
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
