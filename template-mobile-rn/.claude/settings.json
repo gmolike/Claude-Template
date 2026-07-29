@@ -1,5 +1,8 @@
 {
-  "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" },
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "allow": [
       "Read(*)",
@@ -15,8 +18,100 @@
       "Bash(expo *)",
       "Bash(mkdir *)",
       "Bash(ls *)",
-      "Bash(cat *)"
+      "Bash(cat *)",
+      "Read",
+      "Edit",
+      "Write",
+      "Grep",
+      "Glob"
     ],
-    "deny": ["Bash(rm -rf /)", "Bash(sudo *)"]
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo *)",
+      "Bash(rm -rf *)",
+      "Bash(curl *)",
+      "Bash(wget *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/template-mobile-rn/.claude/hooks/orchestrator-guard.ps1",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/template-mobile-rn/.claude/hooks/format-on-edit.ps1",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/template-mobile-rn/.claude/hooks/agent-core-sync.ps1",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp"
+      ]
+    },
+    "canva": {
+      "type": "http",
+      "url": "https://mcp.canva.com/mcp"
+    }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/template-mobile-rn/.claude/hooks/statusline-command.ps1",
+    "padding": 1
   }
 }
