@@ -1,5 +1,5 @@
 ---
-name: review
+name: fsd-review
 description: 'Code Review nach FSD-Standards durchführen mit Duplikations-Check, Layer-Validierung und Qualitätsprüfung. Nutze bei Code Reviews, Quality Gates oder wenn der User seinen Code prüfen lassen will.'
 argument-hint: '[datei-oder-ordner-pfad]'
 allowed-tools: Read, Bash, Glob, Grep

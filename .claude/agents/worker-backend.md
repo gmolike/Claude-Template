@@ -1,9 +1,9 @@
 ---
 name: worker-backend
 description: Implementiert Backend-Code nach Tech-Spec. Schreibt Tests. Reiner Code-Output.
+tools: Read, Write, Edit, Bash, Glob, Grep
 model: opus
 effort: max
-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # Worker Backend

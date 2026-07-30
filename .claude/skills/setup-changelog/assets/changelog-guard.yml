@@ -1,0 +1,119 @@
+# changelog-guard.yml — CI gate that keeps releases honest (reference; adapt per project).
+#
+# Drop this at .github/workflows/changelog-guard.yml. It carries BOTH mechanisms; KEEP EXACTLY
+# ONE job and delete the other:
+#
+#   • Mechanism A (unreleased-touched) — hand-written CHANGELOG + fail-loud gate.
+#   • Mechanism B (changeset-status)   — Changesets-driven monorepos.
+#
+# ── FAIL-LOUD HONESTY (read this) ─────────────────────────────────────────────────────────────
+# Mechanism A proves only that `[Unreleased]` was *touched* when code changed — a single added
+# whitespace line satisfies it. It catches the "forgot the changelog entirely" case, NOT a lazy or
+# wrong entry. It is a tripwire, never a proof of a good changelog. Mechanism B is stronger (a
+# changeset is a real, reviewable file) but has its own hole: an EMPTY changeset (`--empty`) passes
+# `changeset status` while shipping no version intent — reject it explicitly (job B does).
+
+name: changelog-guard
+
+on:
+  pull_request:
+    branches: [main]
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════
+# MECHANISM A — "[Unreleased] touched when packages changed" (hand-written + fail-loud)
+# Keep this job for the hand-written CHANGELOG + version-bump.mjs setup. Delete job `changeset-status`.
+# ════════════════════════════════════════════════════════════════════════════════════════════════
+jobs:
+  unreleased-touched:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need the PR base to diff against — a shallow clone cannot see origin/main.
+          fetch-depth: 0
+
+      - name: Require a [Unreleased] edit whenever shippable code changed
+        run: |
+          set -euo pipefail
+          BASE="origin/${{ github.base_ref }}"
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+
+          CHANGED="$(git diff --name-only "$BASE"...HEAD)"
+          echo "Changed files:"; echo "$CHANGED"
+
+          # Paths that DON'T require a changelog entry (docs/tests/CI/the changelog itself).
+          # Tune this regex to your repo. Everything else counts as "shippable code".
+          IGNORE_RE='^(CHANGELOG\.md$|docs/|\.github/|.*\.test\.[jt]sx?$|.*\.spec\.[jt]sx?$|.*\.md$)'
+
+          CODE_CHANGED="$(echo "$CHANGED" | grep -vE "$IGNORE_RE" || true)"
+          if [ -z "$CODE_CHANGED" ]; then
+            echo "No shippable code changed — changelog entry not required. OK."
+            exit 0
+          fi
+
+          # Did the PR touch the [Unreleased] section of CHANGELOG.md?
+          if ! git diff "$BASE"...HEAD -- CHANGELOG.md | grep -qE '^\+'; then
+            echo "::error::Shippable code changed but CHANGELOG.md was not updated."
+            echo "Add an entry under ## [Unreleased] (Added/Changed/Fixed/…)."
+            echo "Changed code files:"; echo "$CODE_CHANGED"
+            exit 1
+          fi
+
+          # Fail loud if the added lines are all outside [Unreleased] (e.g. only footer links moved).
+          ADDED_IN_UNRELEASED="$(
+            git diff "$BASE"...HEAD -- CHANGELOG.md \
+              | awk '/^\+## \[Unreleased\]/{f=1} /^\+## \[[0-9]/{f=0} f && /^\+[^+]/{print}'
+          )"
+          if [ -z "$ADDED_IN_UNRELEASED" ]; then
+            echo "::error::CHANGELOG.md changed, but nothing was added under [Unreleased]."
+            exit 1
+          fi
+
+          echo "CHANGELOG [Unreleased] updated. OK."
+
+# ════════════════════════════════════════════════════════════════════════════════════════════════
+# MECHANISM B — `changeset status --since=origin/main` (Changesets)
+# Keep this job for a Changesets-driven monorepo. Delete job `unreleased-touched` above.
+# Requires: npm i -D @changesets/cli && npx changeset init
+# ════════════════════════════════════════════════════════════════════════════════════════════════
+#  changeset-status:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#        with:
+#          # REQUIRED: `changeset status --since` diffs against the base branch; a shallow
+#          # clone makes `origin/main` unreachable and the check silently passes on nothing.
+#          fetch-depth: 0
+#
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: 22
+#          cache: npm
+#      # pnpm/yarn: set the setup-node cache accordingly (cache: pnpm / cache: yarn) and run
+#      # `pnpm changeset status` / `yarn changeset status` below (install:
+#      # `pnpm install --frozen-lockfile` / `yarn install --immutable`).
+#
+#      - run: npm ci
+#
+#      # Fails the PR if no changeset was added for the changed packages — the required gate.
+#      - name: Require a changeset for changed packages
+#        run: npx changeset status --since=origin/main
+#
+#      # Fail loud on an EMPTY changeset — `changeset status` accepts `--empty` markers, which
+#      # ship a release with no bump intent. Reject them (allow ONLY as a logged, explicit escape).
+#      - name: Reject empty changesets
+#        run: |
+#          set -euo pipefail
+#          if grep -rlZ '^---[[:space:]]*$' .changeset/*.md 2>/dev/null \
+#               | xargs -0 -r grep -L '"' >/dev/null 2>&1; then
+#            : # placeholder — replace with your real empty-marker detection
+#          fi
+#          for f in .changeset/*.md; do
+#            [ -e "$f" ] || continue
+#            # An empty changeset has no `"package": bump` lines between its two `---` fences.
+#            if ! awk '/^---$/{c++; next} c==1 && /:/{found=1} END{exit found?0:1}' "$f"; then
+#              echo "::error file=$f::Empty changeset — add a real bump (patch/minor/major) or remove it."
+#              exit 1
+#            fi
+#          done
+#          echo "All changesets carry a bump. OK."

@@ -1,10 +1,9 @@
 ---
 name: scrum-master
 description: Koordiniert das Team, verteilt Aufgaben, überwacht den Workflow. Erster Ansprechpartner für alle Anforderungen.
+tools: Read, Write, Edit, Glob, Grep, Task
 model: opus
 effort: max
-tools: Read, Write, Edit, Glob, Grep, Task
-color: red
 ---
 
 # Scrum Master
@@ -44,25 +43,27 @@ Wenn Oh My Claude Code (OMC) installiert ist, delegiere Orchestrierung:
 - `autopilot:` vor Full-Scrum-Tasks → OMC mit Verification-Loop
 
 **Fallback:** Wenn OMC NICHT installiert ist, orchestriere wie bisher manuell.
-Model-Tiering wird von OMC NICHT überschrieben — unsere opusplan/sonnetplan/sonnet Regeln gelten immer.
+Modell + Effort werden von OMC NICHT geschwächt — ALLE Agents laufen auf dem stärksten Modell mit max Effort (siehe Regel `06-model-effort`).
 
 ## Built-in Agent Types (Opus 4.7)
 
 Claude Code hat built-in `subagent_type` Parameter die EXAKT den Template-Agents entsprechen.
 Die Custom-Agent-Definitionen in `.claude/agents/` ERWEITERN die built-in Types mit projekt-spezifischen Regeln.
 
-| subagent_type        | Custom Agent          | Model      |
-| -------------------- | --------------------- | ---------- |
-| `product-owner`      | product-owner.md      | opusplan   |
-| `scrum-master`       | scrum-master.md       | opusplan   |
-| `animation-designer` | animation-designer.md | opusplan   |
-| `senior-frontend`    | senior-frontend.md    | sonnetplan |
-| `senior-backend`     | senior-backend.md     | sonnetplan |
-| `senior-qs`          | senior-qs.md          | sonnetplan |
-| `worker-frontend`    | worker-frontend.md    | sonnet     |
-| `worker-backend`     | worker-backend.md     | sonnet     |
-| `worker-qs`          | worker-qs.md          | sonnet     |
-| `debugger`           | debugger.md           | sonnet     |
+ALLE Agents laufen auf dem stärksten Modell (`opus`) mit max Effort — kein per-Agent-Tiering (siehe Regel `06-model-effort`).
+
+| subagent_type        | Custom Agent          |
+| -------------------- | --------------------- |
+| `product-owner`      | product-owner.md      |
+| `scrum-master`       | scrum-master.md       |
+| `animation-designer` | animation-designer.md |
+| `senior-frontend`    | senior-frontend.md    |
+| `senior-backend`     | senior-backend.md     |
+| `senior-qs`          | senior-qs.md          |
+| `worker-frontend`    | worker-frontend.md    |
+| `worker-backend`     | worker-backend.md     |
+| `worker-qs`          | worker-qs.md          |
+| `debugger`           | debugger.md           |
 
 ### Agent-Orchestrierung
 
@@ -87,7 +88,7 @@ Diese Skills stehen ALLEN Agents zur Verfuegung:
 
 - Beziehe NUR relevante Seniors ein (nicht jedes Feature braucht Designer)
 - Animation Designer NUR bei expliziten Animation/3D/Video-Tasks
-- Workers sind IMMER `sonnet` — reiner Code, keine Diskussion
+- Workers liefern reinen Code, keine Diskussion — wie alle Agents auf dem stärksten Modell
 - Seniors planen ERST, implementieren DANN
 - Bei Unsicherheit: Lite statt Full Scrum
 

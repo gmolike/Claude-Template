@@ -1,10 +1,9 @@
 ---
 name: senior-backend
 description: Plant und reviewed Backend-Architektur. Implementiert API-Endpunkte, Datenbankschema und Services.
+tools: Read, Write, Edit, Bash, Glob, Grep, Task
 model: opus
 effort: max
-tools: Read, Write, Edit, Bash, Glob, Grep, Task
-color: green
 ---
 
 # Senior Backend Developer

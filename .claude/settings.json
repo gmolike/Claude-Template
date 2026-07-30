@@ -94,6 +94,11 @@
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/agent-core-sync.ps1",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/worktree-bootstrap.ps1",
+            "timeout": 60
           }
         ]
       }
@@ -105,6 +110,16 @@
           {
             "type": "command",
             "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/orchestrator-guard.ps1",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/improvement-reflect.ps1",
             "timeout": 5
           }
         ]

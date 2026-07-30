@@ -1,0 +1,468 @@
+{
+  "generator": "@gmolike/agent-core",
+  "version": "1.6.0",
+  "generatedAt": "2026-07-30T09:11:00.249Z",
+  "scope": "project",
+  "selectedProfiles": [
+    "web-react",
+    "backend-node"
+  ],
+  "selectedInclude": [],
+  "selectedExclude": [],
+  "resolvedProfiles": [
+    "backend",
+    "backend-node",
+    "core",
+    "web-react"
+  ],
+  "owned": {
+    "skills": [
+      {
+        "name": "adapt",
+        "hash": "8416416c94c499022de42f9390ac2d0e57bb443bdc9a6511415f013b47699dc2"
+      },
+      {
+        "name": "animate",
+        "hash": "87462a48f5d46847b0b8c461f492d390c0baa608fc52afc06bd568299ca76cb3"
+      },
+      {
+        "name": "animejs",
+        "hash": "073ae06abd6a6c35463d11ca1dfec9389aa24904c46fad0b5a05390131fdf4fd"
+      },
+      {
+        "name": "audit",
+        "hash": "f02ef867067d2e03b586cc79651f9f25725a37349ed8d4b11b402d55e41edc03"
+      },
+      {
+        "name": "bolder",
+        "hash": "8092e700d52d0fb24c32819ba7a6709294ba0abdf2f767381ba5c1f94bb96c97"
+      },
+      {
+        "name": "brandkit",
+        "hash": "793eca83dffabb2370a47bf03c1867c889f100f1fb349024e01f950bcb57ce6a"
+      },
+      {
+        "name": "changelog-generator",
+        "hash": "d29827746ac49fb763cc3962a4b6ad84542f74d95f8136ebbfb402b1b0e23a4f"
+      },
+      {
+        "name": "clarify",
+        "hash": "b2d5f971bc665d9bff1482cb717dd191b3344b2490438c10691a3274e50fc230"
+      },
+      {
+        "name": "code-audit",
+        "hash": "d556f701e7679f09c120393e23cf179741ce7dc6448a6625fe79b54178d94884"
+      },
+      {
+        "name": "colorize",
+        "hash": "41678bbf7b43cdce60d0b67a612551075f34af345cdb156c16e323cd5509d249"
+      },
+      {
+        "name": "commit",
+        "hash": "6eaebc5ce89021ab4c3b4f6bca0c22a2aef43f4c92df525deb84b666d7cb0e57"
+      },
+      {
+        "name": "contribute-catalog",
+        "hash": "bfae812b3e4b6c0dff55d82cdea4464df2aebea9d8e2ee9b0b63b00cd3e969db"
+      },
+      {
+        "name": "critique",
+        "hash": "77f511faff5124515e976e8700de6adcdd677215f4346284e8a77a5d2449107c"
+      },
+      {
+        "name": "css-animation",
+        "hash": "41f284dbcd02bf938743431a7715a569d3fbeab30d3494e430e3d5cf595226c2"
+      },
+      {
+        "name": "css-animations",
+        "hash": "a8239c96ac9400e40b806ad0b14a059cf643c58fcef4bfdc630723fa130f93ef"
+      },
+      {
+        "name": "delight",
+        "hash": "cfccb819f1d096eff7d3a15226f3d3b598847884eaccba64944a216f168cd6cb"
+      },
+      {
+        "name": "design",
+        "hash": "2f9278960f6f4c2a334b880e7d9f04bc0c5661a21061e5047b6404cc2a284517"
+      },
+      {
+        "name": "design-briefing",
+        "hash": "9ccf24bddb6f0ee02c42a1a5da68ac63b7a82557df53bec65eb7d3214f8fb3de"
+      },
+      {
+        "name": "design-taste-frontend",
+        "hash": "3bebe215dd7f345ea341da0ed60b7e2cddadf70a96d6ffe0f5973e2d573b1da3"
+      },
+      {
+        "name": "designer",
+        "hash": "5c89945291abff13bbd88ea9a0080497e1d67eede1c45448e825039f667ae714"
+      },
+      {
+        "name": "distill",
+        "hash": "29056e47641fac0272bd29b28faee2eabcbdd4fc8419dfae34a3b35d9606e30b"
+      },
+      {
+        "name": "emil-design-eng",
+        "hash": "7cae333032940e9df7b9a64e1315e2556772b4b5c794fed23c9266f80a454fee"
+      },
+      {
+        "name": "extract",
+        "hash": "641368733056b6abcdb03395ec03d4e3e2dfd1e2bb7e0fe85f30d4fd1c1cf59d"
+      },
+      {
+        "name": "flutter-animations",
+        "hash": "8a54fd91b5d409e9212d184b7be62c48d5a396bccc9179d202f3f0773f059cbb"
+      },
+      {
+        "name": "frontend-design",
+        "hash": "724f46207327a76ce542cbdc77836a8d58a298f7885492c7b967a236d6438d87"
+      },
+      {
+        "name": "fsd-3d-fal-pipeline",
+        "hash": "cb63fe6f52c2e86ed30fb0dde4ae77ac53aaef1162b95a6976e3f54d723d979f"
+      },
+      {
+        "name": "fsd-review",
+        "hash": "f4027fc12828152dfbe0c5bcd4e7be3ec698e0001259a9b257deb0133e5f7a71"
+      },
+      {
+        "name": "fsd-slice",
+        "hash": "bc05876b416dd8be47a27873fc5accdb41085cc1f6186fcce4f958d28256a486"
+      },
+      {
+        "name": "full-output-enforcement",
+        "hash": "c2b4e83654452815221c8e82eb1b831e527b2d54bdbbf1533f88db1394a75a9b"
+      },
+      {
+        "name": "gitnexus-cli",
+        "hash": "dcaaa26d8e13e234c1a1631d4450ab450630b560ada97aae6c9334663352b8f1"
+      },
+      {
+        "name": "gitnexus-debugging",
+        "hash": "edc8739ff0ea19da3f3eb8d3def241e3ed719d70b49e179c55d4c1834c40f069"
+      },
+      {
+        "name": "gitnexus-exploring",
+        "hash": "41ca9b58615761899f6b19370969700ea39482c7ae47f10da6f212ef2ba0c655"
+      },
+      {
+        "name": "gitnexus-guide",
+        "hash": "ebbce43a43283e12f204998b5c9edfedcfd58deafb309e9971e2fa3f38719a50"
+      },
+      {
+        "name": "gitnexus-impact-analysis",
+        "hash": "62b319b5ff2e1bef4f42fb1850e404d2003239045794a211c38c5115433d6a16"
+      },
+      {
+        "name": "gitnexus-pr-review",
+        "hash": "248dcad5866cde88d0359426bb89732ee1d115dfd07707ed7193cad00676527e"
+      },
+      {
+        "name": "gitnexus-refactoring",
+        "hash": "05e1f5c5c5139d3adcbc09586db268266739679baca4fc01c5d20fe1320ac02d"
+      },
+      {
+        "name": "gpt-taste",
+        "hash": "d9ceaabac9962a17778a2e41435a7b1296390cc93bf1c478db7c8b5479e22b6c"
+      },
+      {
+        "name": "gsap",
+        "hash": "ffd192e158f13a5eac6d28d76447927c2b8041d96b7f069a941b75f8bef61267"
+      },
+      {
+        "name": "harden",
+        "hash": "91e51bff19e3197101c7287ec3f9374293e50faa70919a235c718407425cc548"
+      },
+      {
+        "name": "high-end-visual-design",
+        "hash": "90bf8044b40a099ae067881b91235ce734ef9b90be2fcf0e289e5ce904718cfa"
+      },
+      {
+        "name": "hyperframes",
+        "hash": "004400c61328564543e2a01ac7d28cbe3b914e6cddb639432d4dbf973ef87d4c"
+      },
+      {
+        "name": "hyperframes-cli",
+        "hash": "a7b870543b0b86f71cd2a0c57de80ba5bd3d40616f92a3f9d6b230180780f4d9"
+      },
+      {
+        "name": "hyperframes-media",
+        "hash": "8716eaeef8e36a21ba727a3d955c22c58f403b236a94e8900cd785fcd67343df"
+      },
+      {
+        "name": "hyperframes-registry",
+        "hash": "0248bfb9968d53ea8f9e4b5f7f5a8eb9e72f21108022580f7eba2fba7e26b234"
+      },
+      {
+        "name": "image-to-code",
+        "hash": "696878d839da81205ebf3c1eb7dc85191571b6dbfb63fae710b70d00cf7d7781"
+      },
+      {
+        "name": "imagegen-frontend-mobile",
+        "hash": "8220866a80306c31cefad84c4311dfec2474c883904ff1360b66735970c7fdc0"
+      },
+      {
+        "name": "imagegen-frontend-web",
+        "hash": "6f41a5fcf64b3e461dcc9fbfaef1d5faadd98cbc0c2d7c6aed669715fd7be9a8"
+      },
+      {
+        "name": "impeccable",
+        "hash": "a371f06d4f2504d4d434f37476a8a253638d4de3ea2adb481d77760ff2bbb502"
+      },
+      {
+        "name": "industrial-brutalist-ui",
+        "hash": "9b068bf1a7d7c030367ad3d647a6773ebb4a85d523c057c99ae49bce8f49f7b4"
+      },
+      {
+        "name": "integration",
+        "hash": "4de08de37d764fe04cedc2c8ea065d715b08bfd5522e09c9a80572735817418b"
+      },
+      {
+        "name": "llm-council",
+        "hash": "b932c9954e9a16143151bef47942013c80f10e6f7b69f94e08d9ad0dd025ef10"
+      },
+      {
+        "name": "lottie",
+        "hash": "74edf6fc1ffa80b3ff2f012269f5fe3c29689f005529effdc5e2be8d9eb6203a"
+      },
+      {
+        "name": "minimalist-ui",
+        "hash": "505a473b7e1a7ffdff1254f309d691b96422af21f4ef73550a15dab209e2ccec"
+      },
+      {
+        "name": "new-feature",
+        "hash": "5d0ecdbbacb29f96df3669c2395571751f3ea7e8c849bc01a3a0e7ff5cb8b4c9"
+      },
+      {
+        "name": "normalize",
+        "hash": "3cfaf67413851b3e922a3bc9303e296ef2b975a6401cfc2691184fca908f2930"
+      },
+      {
+        "name": "onboard",
+        "hash": "d9fe9de477a194655841068bb8cfabc384446b755aa87363698977f83b99f5bc"
+      },
+      {
+        "name": "optimize",
+        "hash": "34b9ccbe49cf21f3707202c36c038c625e759d9e99733be9901825c41f00d2e8"
+      },
+      {
+        "name": "orchestrate",
+        "hash": "9c8615087253039b15d6eb736b9f31ee039f3c6d810be7da0907a5d59c618d3e"
+      },
+      {
+        "name": "polish",
+        "hash": "b673bec9cf5f5e5e9ed11df3ce88172ead7906586e3c4ac07b421253a19180db"
+      },
+      {
+        "name": "port-registry",
+        "hash": "0b11b1e15b7ba5520a63e5fec37535eaeb4235df51f4645bf3eb23271648fc5f"
+      },
+      {
+        "name": "quieter",
+        "hash": "5a3a663269f7b478fc724358dfc93b6b7fe2deaff83c4b2b2e54f3d622c58114"
+      },
+      {
+        "name": "react-doctor",
+        "hash": "ca3c72a711729b93881db5d20d37c430da7eb83ae3617de73f259613dd9f9ada"
+      },
+      {
+        "name": "redesign-existing-projects",
+        "hash": "d4d1cf5414ce8473a07ce4c90afb48f546fdba124e242e9a18db34d5df6fc1b4"
+      },
+      {
+        "name": "remotion-to-hyperframes",
+        "hash": "1f02264b42290b4e170edaba7d6d1d04b7ae399b4b5e4b43ecc9c1d9e8b2a34b"
+      },
+      {
+        "name": "research-decide",
+        "hash": "2274cf41c45e6f15cbaf0d9d3cbecdab51a31bd66e508a7a8eeb12e8b81f134d"
+      },
+      {
+        "name": "scroll-world",
+        "hash": "8380109e93e652d0ffee839b6150c0f015ebfb7a94f77996dfcec39cdd297885"
+      },
+      {
+        "name": "scrum",
+        "hash": "68a670c99ee3b22ab9bbf3da086a040f4ea75eeb86b53e5e3d664b640c8fa197"
+      },
+      {
+        "name": "setup-changelog",
+        "hash": "e3db040566b7dcddfaa6af3ca389ad7b2587901d6b5ff11bc4e2642696dc52f7"
+      },
+      {
+        "name": "shadcn",
+        "hash": "89ae3bdf17a08fb30dff8571fcbc0918e57821d6aedb6339d147b143f25157cc"
+      },
+      {
+        "name": "stitch-design-taste",
+        "hash": "2ea9319d4219ed181fa0ca88f99f326f21ee294f2b49099f2e4acbe5e608ddc5"
+      },
+      {
+        "name": "tailwind",
+        "hash": "81da2a04c5a13b2df5dc1e4d93ec8b17719a8237972c6360e19e8caedf349da6"
+      },
+      {
+        "name": "teach-impeccable",
+        "hash": "c8516ceb60e3e53193577aefcb37234161139521f529e18cbaa194927f9af9d0"
+      },
+      {
+        "name": "three",
+        "hash": "21b45ca20421e0dc33eb7f6d3ee10bb29a7838bf92668d6a40025abcab9e6782"
+      },
+      {
+        "name": "typegpu",
+        "hash": "6994090b2830384a5ebd64b21c975c4e123ca9b1ba05b7d50ec29ab368a7975e"
+      },
+      {
+        "name": "waapi",
+        "hash": "b8722c26ae578ab8d1935c12d01ed878daed79d95bdb487645bd02b026831084"
+      },
+      {
+        "name": "web-design-guidelines",
+        "hash": "c2bd6243267c97f5a735156649e17422233fe1c081c2556cb398e2362b12e936"
+      },
+      {
+        "name": "website-to-hyperframes",
+        "hash": "10e8656eaea164207afba99bdb504b6a28e6ab710688659c6cf66a3bd0a57c0a"
+      }
+    ],
+    "agents": [
+      {
+        "name": "animation-designer.md",
+        "hash": "0815cbdcaa6ce7db2163677b721230d2862fb145b56af430887b785f1d2f60e5"
+      },
+      {
+        "name": "debugger.md",
+        "hash": "eda4fe30dd78e32c13d69bed9a020fac9e787197c91d8aa9c8e137de293bf77b"
+      },
+      {
+        "name": "designer.md",
+        "hash": "12de0be1380b8f8ed5abe7c4ade5f061ebf50e04609233d8cb45c9b59e5e4aa9"
+      },
+      {
+        "name": "integration-setup.md",
+        "hash": "527a6bffa810168b2f267081bd870fe5e40d317be44916ad7a01e46ea749ffbe"
+      },
+      {
+        "name": "product-owner.md",
+        "hash": "bac482de874f168d183db0c74a327691f477dbcbfa6a2fc81944c433dea4fd7e"
+      },
+      {
+        "name": "reviewer.md",
+        "hash": "6188fb4207c43e11ddecb26dbc918e5ef5a589aaffb1e0f4fc80cbc9bdda840a"
+      },
+      {
+        "name": "scrum-master.md",
+        "hash": "8c1051f046188ffd5206a3db82af6907bcb8585de84e81aac561b6e48a7885e9"
+      },
+      {
+        "name": "senior-backend.md",
+        "hash": "0ea944a5bf173f077064775668652b6f246a11d6c18f55a1259c3e3e8d4c3b10"
+      },
+      {
+        "name": "senior-frontend.md",
+        "hash": "654c91373054239282a9757d9872c0f24edc2f42fcb778e6965b367f936990ae"
+      },
+      {
+        "name": "senior-qs.md",
+        "hash": "18f07f8a66c4429668e8c33cecabd47e31454301022b7067febbf22eaea38d52"
+      },
+      {
+        "name": "worker-backend.md",
+        "hash": "bdd3aba5842a8c268e68907126a3509ffbb4a6f70ab59b39b2225b24ef45ac5b"
+      },
+      {
+        "name": "worker-frontend.md",
+        "hash": "b36ed0fb906ebddfa7fd0f82e1a8d391d079e06aefad8db90f0d2bdb9163bf28"
+      },
+      {
+        "name": "worker-qs.md",
+        "hash": "f686da056cac23b17b302ec7eb754c038112b518301f2df111a9dc936e0e3524"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "agent-core-sync.ps1",
+        "hash": "3ad24f6b4466ac96ea2b20e8974d1e9e164f3f2d6570ad77a15d473ba8f4af09"
+      },
+      {
+        "name": "agent-core-sync.sh",
+        "hash": "cd2cfd5400f287617ec39c015901bcf80ad804149be0469ca39993105589884f"
+      },
+      {
+        "name": "format-on-edit.ps1",
+        "hash": "acff3af77bb4f55091846cd9e5c97c991267a38d636b8359cd57eb2f18bdd546"
+      },
+      {
+        "name": "format-on-edit.sh",
+        "hash": "47c1d0c5dcb94fd334ddb7bb0f21ab3a7f20c855a6c3382bf8a440049a3bc23f"
+      },
+      {
+        "name": "improvement-reflect.ps1",
+        "hash": "fff254b2d9b428011f94f30e1e81ffd11e5fc6a3ccef5c28aeb541c045170a09"
+      },
+      {
+        "name": "improvement-reflect.sh",
+        "hash": "6467d022347c17e9b368a857ad7615356726cdb599ce749974ab0057708a3069"
+      },
+      {
+        "name": "orchestrator-guard.ps1",
+        "hash": "53330a942eb11970a741ca575acb97f75bb522644ca6a037c76801047bab08c1"
+      },
+      {
+        "name": "orchestrator-guard.sh",
+        "hash": "62e392863dd2bab4733a45292fec08e3962c3a12f0d540247d9dd1bb912ed8cc"
+      },
+      {
+        "name": "statusline-command.ps1",
+        "hash": "69a2290dae5c789f2c4fdf6478108289bead356e33c6a51d4006f3b1a6bd1cdf"
+      },
+      {
+        "name": "statusline-command.sh",
+        "hash": "b0c09c62fe0c93320b03166a79b152dc7cec42b282b481bfbaa56a802b9192fc"
+      },
+      {
+        "name": "worktree-bootstrap.ps1",
+        "hash": "3e509c74722014ee7a2c7a5a248f36ed60a73be674dc9585014cb2f549ed3d5b"
+      },
+      {
+        "name": "worktree-bootstrap.sh",
+        "hash": "cd4965195cce8bf1bd7accc4f60b1d525c6132335c7b7f0133b8b423f7cab132"
+      }
+    ],
+    "rules": [
+      {
+        "name": "01-role-web-react.md",
+        "hash": "4dd2ab74e133511e4acacc01635bc4221562e979783c571e00b8fc4df871a363"
+      },
+      {
+        "name": "04-backend.md",
+        "hash": "017ae504721650169064b6728d137a10867c9a133c5d65a43cdef22fbab98e62"
+      },
+      {
+        "name": "07-stack-backend-node.md",
+        "hash": "4078e48e4b3917d24ba2e95a3c2008c6b2f8d8e108d8ac79ab62609352147fe7"
+      },
+      {
+        "name": "10-fsd.md",
+        "hash": "0ad5b17355e100cd208b7d0551b46930fbe4e2c582a5fe965f559a83e88d2a07"
+      },
+      {
+        "name": "15-frontend.md",
+        "hash": "7c5e767061f06b3da6f287b2317476b11b37a6da3a7e486d19d15f0df06e84af"
+      },
+      {
+        "name": "31-quality-web.md",
+        "hash": "b79c1c08b4ddece6e70c2f419bc9dca3a9861b2a1aa40e75d9621946f128bf41"
+      },
+      {
+        "name": "35-design.md",
+        "hash": "d8155ab6b58d1893144067f2a900b83f0234b17dbbb82d9258c70feccebebd0c"
+      },
+      {
+        "name": "55-templates.md",
+        "hash": "7013f296976a53d1233c286f90524426c0429fd438b34639ee56abd70c0e113d"
+      }
+    ]
+  }
+}

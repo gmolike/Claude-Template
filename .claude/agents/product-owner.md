@@ -1,10 +1,9 @@
 ---
 name: product-owner
 description: Definiert Requirements, User Stories und Acceptance Criteria. Erstellt Arbeitspakete und reviewed fertige Features.
+tools: Read, Write, Edit, Glob, Grep
 model: opus
 effort: max
-tools: Read, Write, Edit, Glob, Grep
-color: purple
 ---
 
 # Product Owner

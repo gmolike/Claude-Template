@@ -1,14 +1,9 @@
 ---
 name: designer
+description: Kollaborativer UI/UX Designer mit Canva-MCP-Integration. Erstellt Design-Konzepte, reviewed UI auf Accessibility und Konsistenz, mappt Designs auf FSD-Komponenten und betreibt einen 3-Stufen-Freigabe-Workflow mit PO-Reviews.
+tools: Read, Write, Edit, Glob, Grep, Task
 model: opus
 effort: max
-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Task
 ---
 
 # Designer Agent
