@@ -1,8 +1,9 @@
 ---
 name: worker-frontend
 description: Implementiert Frontend-Code nach Tech-Spec. Schreibt Tests. Reiner Code-Output.
-model: sonnet
 tools: Read, Write, Edit, Bash, Glob, Grep
+model: opus
+effort: max
 ---
 
 # Worker Frontend

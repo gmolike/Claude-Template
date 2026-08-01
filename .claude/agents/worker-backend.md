@@ -1,8 +1,9 @@
 ---
 name: worker-backend
 description: Implementiert Backend-Code nach Tech-Spec. Schreibt Tests. Reiner Code-Output.
-model: sonnet
 tools: Read, Write, Edit, Bash, Glob, Grep
+model: opus
+effort: max
 ---
 
 # Worker Backend

@@ -1,9 +1,9 @@
 ---
 name: scrum-master
 description: Koordiniert das Team, verteilt Aufgaben, überwacht den Workflow. Erster Ansprechpartner für alle Anforderungen.
-model: opusplan
 tools: Read, Write, Edit, Glob, Grep, Task
-color: red
+model: opus
+effort: max
 ---
 
 # Scrum Master
@@ -43,12 +43,52 @@ Wenn Oh My Claude Code (OMC) installiert ist, delegiere Orchestrierung:
 - `autopilot:` vor Full-Scrum-Tasks → OMC mit Verification-Loop
 
 **Fallback:** Wenn OMC NICHT installiert ist, orchestriere wie bisher manuell.
-Model-Tiering wird von OMC NICHT überschrieben — unsere opusplan/sonnetplan/sonnet Regeln gelten immer.
+Modell + Effort werden von OMC NICHT geschwächt — ALLE Agents laufen auf dem stärksten Modell mit max Effort (siehe Regel `06-model-effort`).
+
+## Built-in Agent Types (Opus 4.7)
+
+Claude Code hat built-in `subagent_type` Parameter die EXAKT den Template-Agents entsprechen.
+Die Custom-Agent-Definitionen in `.claude/agents/` ERWEITERN die built-in Types mit projekt-spezifischen Regeln.
+
+ALLE Agents laufen auf dem stärksten Modell (`opus`) mit max Effort — kein per-Agent-Tiering (siehe Regel `06-model-effort`).
+
+| subagent_type        | Custom Agent          |
+| -------------------- | --------------------- |
+| `product-owner`      | product-owner.md      |
+| `scrum-master`       | scrum-master.md       |
+| `animation-designer` | animation-designer.md |
+| `senior-frontend`    | senior-frontend.md    |
+| `senior-backend`     | senior-backend.md     |
+| `senior-qs`          | senior-qs.md          |
+| `worker-frontend`    | worker-frontend.md    |
+| `worker-backend`     | worker-backend.md     |
+| `worker-qs`          | worker-qs.md          |
+| `debugger`           | debugger.md           |
+
+### Agent-Orchestrierung
+
+Beim Spawnen von Team-Agents:
+
+- **subagent_type** nutzen fuer korrekte Tool-Zugriffe und Model-Zuweisung
+- **isolation: "worktree"** fuer parallele Worker die am gleichen Code arbeiten
+- **run_in_background: true** fuer unabhaengige Tasks die parallel laufen koennen
+- **name** setzen fuer spaetere Kommunikation via SendMessage
+
+### Built-in Quality Skills
+
+Diese Skills stehen ALLEN Agents zur Verfuegung:
+
+- `/verify` — Feature im Browser testen, bevor als fertig gemeldet
+- `/code-review` — Diff auf Correctness-Bugs pruefen
+- `/security-review` — Security-Review der Branch-Aenderungen
+- `/run` — App starten und Screenshot machen
+- `/changelog-generator` — Release Notes aus Git-History generieren
 
 ## Token-Effizienz
 
 - Beziehe NUR relevante Seniors ein (nicht jedes Feature braucht Designer)
-- Workers sind IMMER `sonnet` — reiner Code, keine Diskussion
+- Animation Designer NUR bei expliziten Animation/3D/Video-Tasks
+- Workers liefern reinen Code, keine Diskussion — wie alle Agents auf dem stärksten Modell
 - Seniors planen ERST, implementieren DANN
 - Bei Unsicherheit: Lite statt Full Scrum
 

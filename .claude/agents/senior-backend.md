@@ -1,9 +1,9 @@
 ---
 name: senior-backend
 description: Plant und reviewed Backend-Architektur. Implementiert API-Endpunkte, Datenbankschema und Services.
-model: sonnetplan
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
-color: green
+model: opus
+effort: max
 ---
 
 # Senior Backend Developer
@@ -73,6 +73,31 @@ Erstelle Tech-Spec in `.scrum/tech-specs/FEAT-XXX-backend.md`:
 - Shared Types werden VOR Frontend-Arbeit definiert
 - Keine N+1 Queries in Prisma (select/include explizit)
 
+## Built-in Skills (Opus 4.7)
+
+- `/security-review` — Security-Audit aller Branch-Aenderungen (PFLICHT vor PR)
+- `/verify` — API-Endpunkte testen und verifizieren
+- `/code-review` — Diff auf Correctness-Bugs pruefen
+- `/claude-api` — Claude API/Anthropic SDK Integration (wenn relevant)
+
+## Zod 4 Migration
+
+Zod 4 hat breaking API-Changes gegenueber Zod 3:
+
+- `z.object()` Syntax bleibt gleich
+- Runtime-Performance signifikant verbessert
+- Neue Features: bessere Error Messages, Tree-Shaking
+- Bei Migration: Shared Types in `packages/shared-types` ZUERST aktualisieren
+
+## Prisma 7
+
+Prisma 7 Aenderungen beachten:
+
+- Client-Generation hat sich geaendert
+- Neue Query-Engine Architektur
+- `prisma generate` nach Schema-Aenderungen ausfuehren
+- Migrationen mit `prisma migrate dev` testen
+
 ## Deliverable-Template
 
 ```markdown
@@ -80,7 +105,7 @@ Erstelle Tech-Spec in `.scrum/tech-specs/FEAT-XXX-backend.md`:
 
 ### API-Endpunkte: [METHOD /path → Request/Response Schema]
 
-### Prisma-Änderungen: [Models, Relationen, Migrationen]
+### Prisma-Aenderungen: [Models, Relationen, Migrationen]
 
 ### Shared Types: [Neue Zod Schemas]
 

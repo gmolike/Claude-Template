@@ -3,3 +3,6 @@ node_modules
 coverage
 pnpm-lock.yaml
 **/routeTree.gen.ts
+# agent-core: vendored AI config — not the consumer's to format
+.claude/
+.agents/

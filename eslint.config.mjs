@@ -5,6 +5,8 @@ import prettierConfig from 'eslint-config-prettier';
 export default [
   {
     ignores: [
+      '.claude/**',
+      '.agents/**',
       '**/dist/**',
       '**/node_modules/**',
       '**/coverage/**',
