@@ -1,3 +1,33 @@
+// Claude-Template -- designer workspace (role `designer`).
+//
+// ONE COLOUR KEY, NOT FOUR. THE REGISTRY DECIDES, PEACOCK APPLIES.
+// The four `workbench.colorCustomizations` keys this file used to carry are
+// gone. That is not tidying up -- it is the only arrangement that WORKS while
+// Peacock is installed. `johnpapa.vscode-peacock` activates on
+// `"activationEvents": ["*"]`, i.e. in EVERY window, owns titleBar/statusBar/
+// activityBar by default, and on `onDidChangeConfiguration` runs, in substance:
+//
+//     const t = getEnvironmentAwareColor();          // `peacock.color` -> "" when unset
+//     const o = getCurrentColorBeforeAdjustments();  // the EXISTING customizations
+//     if (peacockSettingsChanged && (t || o)) { await applyColor(t); ... }
+//
+// Those four keys made `o` truthy while `t` was empty, so Peacock applied "no
+// colour" -- and DELETED them. The symptom is a colour that flashes up once and
+// vanishes. Two owners for one fact, and the other owner wins every time.
+//
+// One owner now: the registry decides WHICH colour, `peacock.color` hands it
+// over, Peacock applies it. Without the extension nothing reads that key and the
+// window stays grey -- the accepted price for not having two writers on one
+// surface, and the reason Peacock is a declared prerequisite.
+//
+// THIS BELONGS IN A `*.code-workspace`, NOT IN `.vscode/settings.json`, because
+// this file is OPT-IN: it binds whoever opens THIS file, and nothing else. A
+// committed folder setting would colour every teammate's window on clone, and
+// opting out would mean editing a versioned file.
+//
+// SEE: `claude-skills/claude-skills.code-workspace` -- the canonical file, with
+//      every measurement written out -- plus the `color-registry` skill and
+//      ADR-0043 (Nachtrag 2026-08-03).
 {
   "folders": [
     { "name": "🎨 Web App", "path": "apps/web" },
@@ -6,12 +36,61 @@
     { "name": "📄 Docs", "path": "docs" }
   ],
   "settings": {
-    "workbench.colorCustomizations": {
-      "statusBar.background": "#be185d",
-      "statusBar.foreground": "#ffffff",
-      "titleBar.activeBackground": "#db2777",
-      "titleBar.activeForeground": "#ffffff"
-    },
+    // Generated -- do not hand-edit. Regenerate with:
+    //   npx tsx -e "import {windowColors} from 'C:/Entwicklung/claude-skills/src/colorRegistry.ts'; console.log(JSON.stringify(windowColors('Claude-Template','designer')))"
+    // color-registry: project=Claude-Template (slot 2, hue 60) x role=designer (rung 5, L 39%)
+    // oklch(39% 0.0915 60) -> #683700 -- contrast against #ffffff = 9.84:1
+    //
+    // HEX ONLY. Peacock validates with tinycolor and VS Code parses colour
+    // customizations with `fromHex(i){ return parseHex(i) || red }` -- an
+    // `oklch(...)`, `hsl(...)` or colour name ends up PURE RED with no error, no
+    // log line and no theme fallback. oklch is the authoring space, hex is the
+    // delivery format.
+    //
+    // THE ONE COLOUR FACT. Peacock derives every surface it is allowed to touch
+    // from this single value: titleBar (`affectTitleBar`, default true) and
+    // statusBar (`affectStatusBar`, default true). The activity bar would be the
+    // third -- it is switched OFF at the end of this block, and that is measured,
+    // not taste.
+    "peacock.color": "#683700",
+
+    // The registry's own foreground, handed to Peacock. Peacock picks one with
+    // `isLight(bg) ? darkForegroundColor : lightForegroundColor`, and the whole
+    // palette is dark by construction (highest YIQ brightness 110.3), so the
+    // LIGHT candidate is what 99 of 99 windows get -- the dark one is never
+    // reached and is therefore not the problem. Peacock's own default #e7e7e7
+    // puts 14 of those 99 below 4.5:1 (minimum 3.86, at global-login/project);
+    // #ffffff puts the minimum at 4.77 and none below.
+    "peacock.lightForegroundColor": "#ffffff",
+
+    // A ratchet, not a no-op, even though it equals the default: workspace beats
+    // user, so this line is what stops a `true` in somebody's USER settings from
+    // voiding the one above. `true` is the DANGEROUS value here, not the safe
+    // one -- in `prepareColors` the foreground keys are written only under
+    // `if (!keepForegroundColor)`, so Peacock would write BACKGROUNDS ONLY and
+    // leave the foreground to the theme. Against this VS Code's own default
+    // themes that is 36 of 99 failing (Dark Modern #cccccc, min 2.97) up to
+    // 99 of 99 (Dark 2026 #8c8c8c, Light Modern #3b3b3b, Light 2026 #606060) --
+    // i.e. a theme switch would silently take the colour contract with it.
+    "peacock.keepForegroundColor": false,
+
+    // WE DO NOT COLOUR A SURFACE WHOSE CONTRAST WE CANNOT PROMISE -- decided
+    // 2026-08-03. Peacock lightens the activity bar via
+    // `elementAdjustments.activityBar: "lighten"` (its own default), BY 10 AND
+    // NOT BY 5: `getAdjustedColorHex` calls the lighten helper WITHOUT an amount,
+    // so it falls back to `defaultAmountToDarkenLighten = 10`, while
+    // `peacock.darkenLightenPercentage` (default 5) is read ONLY by the manual
+    // Darken/Lighten commands and never touches this path. Measured with +10 HSL
+    // lightness that surface runs 2.62 .. 10.91 with 30 of 99 combinations below
+    // 4.5:1. Coloured and covered instead: titleBar + statusBar, 4.77 .. 14.44
+    // over all 99 combinations, none below 4.5:1.
+    "peacock.affectActivityBar": false,
+
+    // ---- KEPT, AND NOT PART OF THE COLOUR PATTERN ------------------------
+    // Pre-existing project configuration below this line. It carries no colour
+    // and touches no surface Peacock owns, so it was left exactly as it was --
+    // for the same reason `folders` and `extensions` were left alone. This
+    // change owns the window colour and nothing else.
     "workbench.iconTheme": "material-icon-theme",
     "workbench.productIconTheme": "material-product-icons"
   },
