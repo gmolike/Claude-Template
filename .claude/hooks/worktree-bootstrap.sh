@@ -15,7 +15,7 @@
 # in a repo at all) there is nothing to bootstrap.
 #
 # Receives the session event as JSON on stdin (Claude Code convention; not
-# evaluated here). C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core is replaced by the sync adapter with the
+# evaluated here). C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core is replaced by the sync adapter with the
 # absolute PKG_ROOT path at install time, so the node fallback never depends on
 # CWD. This is the Claude-only path — OpenCode has no 1:1 session-startup hook.
 #
@@ -54,8 +54,8 @@ fi
 #                             CLAUDE.md still absent: mirror the main worktree
 if command -v agent-core >/dev/null 2>&1; then
   ( cd "$_top" && agent-core sync --scope project >/dev/null 2>&1 || true )
-elif [ -f "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js" ]; then
-  ( cd "$_top" && node "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js" sync --scope project >/dev/null 2>&1 || true )
+elif [ -f "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js" ]; then
+  ( cd "$_top" && node "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js" sync --scope project >/dev/null 2>&1 || true )
 fi
 
 # Fallback: if config is still missing, copy it from the primary worktree.

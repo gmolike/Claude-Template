@@ -1,7 +1,7 @@
 {
   "generator": "@gmolike/agent-core",
-  "version": "1.7.0",
-  "generatedAt": "2026-08-01T17:20:20.844Z",
+  "version": "1.8.0",
+  "generatedAt": "2026-08-03T01:04:46.544Z",
   "scope": "project",
   "selectedProfiles": [
     "web-react",
@@ -52,6 +52,10 @@
       {
         "name": "code-audit",
         "hash": "d556f701e7679f09c120393e23cf179741ce7dc6448a6625fe79b54178d94884"
+      },
+      {
+        "name": "color-registry",
+        "hash": "c8342392406a4cb9d548234d9571686dd19e16253807808baf9f6737807ea06b"
       },
       {
         "name": "colorize",
@@ -259,7 +263,7 @@
       },
       {
         "name": "port-registry",
-        "hash": "0b11b1e15b7ba5520a63e5fec37535eaeb4235df51f4645bf3eb23271648fc5f"
+        "hash": "3e44ba97ad0b5df889b9f9d580392c80f3dfadcf87d411ba5089500f3707694a"
       },
       {
         "name": "quieter",
@@ -391,11 +395,11 @@
     "hooks": [
       {
         "name": "agent-core-sync.ps1",
-        "hash": "11c62d4b7bcf5333ece9975ac668509f09bc5de155a8240ead0d0768cf5e8c71"
+        "hash": "a44f7b02866ec5d4328653c0aedf750dc7476cc37936ec9d9b6b16f566a31f15"
       },
       {
         "name": "agent-core-sync.sh",
-        "hash": "4ce9c65948faf0ad52ebfa41fc4cec8ee21c007620edcfc10c664809b43a9bc6"
+        "hash": "e62bb8da94d4fc92840cff480acbda71806476e829e5183233e074a22ea8109d"
       },
       {
         "name": "format-on-edit.ps1",
@@ -439,45 +443,45 @@
       },
       {
         "name": "worktree-bootstrap.ps1",
-        "hash": "a8c306e91dc50970f1f181b64bb96e6ce27411f111a594a880e056fb2dd0ebda"
+        "hash": "43387c93a9b95922b59c4748707215bc3e0c683731b94d5943dc49d7d729b081"
       },
       {
         "name": "worktree-bootstrap.sh",
-        "hash": "b3e0d8772bfff6dc08e3630b668475d39eb20238472ca4872f326f65c01462ea"
+        "hash": "5429875d7b3fc3a39acba999ed8df0acdea137f4c11546c09d34c71e8dcb81dd"
       }
     ],
     "rules": [
       {
         "name": "01-role-web-react.md",
-        "hash": "a9b94d2bb70cdfe11bfabcacdf3c5651091d015c73d0c5e1e2edec2ec8e0075a"
+        "hash": "e4c5910f22a0169839cb8557e3f10820d75dd0dc9d404734ab20bb29e5c8f3d2"
       },
       {
         "name": "04-backend.md",
-        "hash": "879b485f2618a2720b2071b434dbec29b47a665451ea1a400cebae9cff40db99"
+        "hash": "389dac6a8382000332efe51391be4296580a42923d5268955384959772715535"
       },
       {
         "name": "07-stack-backend-node.md",
-        "hash": "b76b4459139afadbd7e4f79f775060e79178b02b24d37de9fe0af187dcf1a851"
+        "hash": "c7d0aa361a87d6e4f478da473e101cf3068b19e53d8aa6953243983d159ff91d"
       },
       {
         "name": "10-fsd.md",
-        "hash": "02f1a45f6981a603e4a1a5d61f02ae2018a01b7b96b24a28006622dd0856c617"
+        "hash": "6cdea4e81867d4d3aac47b30cdff1fe35fd3b60b57a83558c9310aea56990144"
       },
       {
         "name": "15-frontend.md",
-        "hash": "1429a511b70b2badef0c989cab366e3ed301620a3f11d3371e9254dcdebf3d4e"
+        "hash": "edf422f7f86b9508af75a3ce09418b9d70361286befbd54708063001cc863566"
       },
       {
         "name": "31-quality-web.md",
-        "hash": "810cf211ff67d27c190aeb09fea971eb5fe223d40508630b63e9c98112b1ce00"
+        "hash": "3cde3d1a432e92a6de8539e68d6e39b7685f06635cf8a0370e4b97d021ffb531"
       },
       {
         "name": "35-design.md",
-        "hash": "67e6b445bfe25645fbd691d920c14580124cde0cda94f3a2259526c7bcaebc73"
+        "hash": "b7042058056b6eaa1ca7944da448677546963573aa978b09078368c4c9e55064"
       },
       {
         "name": "55-templates.md",
-        "hash": "cf786e0537762f3b25aa9d64366a516902a2481239f357d801693590f176eb01"
+        "hash": "555eecc36e5ec75b1449960caa43e6bc88886b65731144d410b67be5739d4809"
       }
     ]
   }

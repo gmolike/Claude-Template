@@ -23,7 +23,7 @@
 # the MAIN worktree they are identical.
 #
 # Receives the session event as JSON on stdin (not evaluated here).
-# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute
+# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute
 # PKG_ROOT path at install time. This is the Claude-only path.
 #
 # FAIL-OPEN: this hook must NEVER fail a session - the body is wrapped in
@@ -233,7 +233,7 @@ try {
     #   c. copy from primary   ->  locked-down env (no npm/token), or a/b left
     #                              CLAUDE.md still absent: mirror the main worktree
     $agentCore = Get-Command agent-core -ErrorAction SilentlyContinue
-    $cliPath = "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js"
+    $cliPath = "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js"
     if ($agentCore) {
         Push-Location $top
         try { agent-core sync --scope project 2>$null | Out-Null } catch {} finally { Pop-Location }

@@ -7,7 +7,7 @@
 # target machines. Since ADR-0027 the sync adapter also writes every .ps1 with a UTF-8 BOM, so a
 # shebang would sit BEHIND those three bytes and could not work even if something did exec it.
 # Receives the session event as JSON on stdin (Claude Code convention; not evaluated here).
-# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute PKG_ROOT path at
+# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute PKG_ROOT path at
 # install time, so the path is baked into the deployed script and never depends on CWD.
 #
 # NO UTF-8 PROLOGUE HERE, deliberately - and the reason is measured, not assumed (the sibling hooks
@@ -20,7 +20,7 @@
 #     file with USERPROFILE set to a directory holding an umlaut: run 1 invoked node once and wrote
 #     the throttle marker INTO that directory, run 2 read it back and skipped the sync (nodeCalls
 #     stayed 1). Join-Path / Test-Path / Get-Content / Set-Content all handled the umlaut correctly.
-#   - The one thing that DOES break here is the C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core literal below when the checkout
+#   - The one thing that DOES break here is the C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core literal below when the checkout
 #     path holds a non-ASCII character. That is a PARSE-time defect - Windows PowerShell 5.1 reads a
 #     BOM-less UTF-8 file as the legacy ANSI code page - and NO runtime prologue can repair a string
 #     the parser already mis-decoded. It is fixed where it happens, at write time: the sync adapter
@@ -54,8 +54,8 @@ $synced = $false
 if (Get-Command agent-core -ErrorAction SilentlyContinue) {
     & agent-core sync --scope global *> $null
     $synced = $true
-} elseif (Test-Path -LiteralPath 'C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js') {
-    & node 'C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js' sync --scope global *> $null
+} elseif (Test-Path -LiteralPath 'C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js') {
+    & node 'C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js' sync --scope global *> $null
     $synced = $true
 }
 

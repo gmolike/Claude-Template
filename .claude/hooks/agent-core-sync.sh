@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Claude Code SessionStart hook: auto-sync agent-core global config on every chat start.
 # Receives the session event as JSON on stdin (Claude Code convention; not evaluated here).
-# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute PKG_ROOT path at
+# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute PKG_ROOT path at
 # install time, so the path is baked into the deployed script and never depends on CWD.
 # This is the Claude-only path — OpenCode uses a separate bundle distribution mechanism
 # with no 1:1 equivalent for session-startup shell hooks.
@@ -30,8 +30,8 @@ _SYNCED=0
 if command -v agent-core >/dev/null 2>&1; then
   agent-core sync --scope global >/dev/null 2>&1 || true
   _SYNCED=1
-elif [ -f "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js" ]; then
-  node "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0174d06561286187/node_modules/@gmolike/agent-core/dist/cli.js" sync --scope global >/dev/null 2>&1 || true
+elif [ -f "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js" ]; then
+  node "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js" sync --scope global >/dev/null 2>&1 || true
   _SYNCED=1
 fi
 

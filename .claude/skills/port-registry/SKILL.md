@@ -52,8 +52,17 @@ Nachbarprojekte:
 | 3000 / 3001 / 3002 | faninitiative-platform `apps/web` / `apps/dashboard` / `apps/scanner` | `faninitiative-platform/apps/{web,dashboard,scanner}/vite.config.ts:21`, `:65`, `:79` |
 | 3000 | smart-home-app `apps/web` | `smart-home-app/apps/web/vite.config.ts:84` |
 | 6345 | doppelklick `apps/shell`, `strictPort: true` | `doppelklick/apps/shell/vite.config.ts:10` |
+| 40900 / 40903 | canu-camp-hennig `apps/web` — Dev bzw. Preview, beide `strictPort: true` | `canu-camp-hennig/apps/web/vite.config.ts:140`, `:141` |
+| 40901 | canu-camp-hennig `apps/api` (`next dev` / `next start --port`) | `canu-camp-hennig/apps/api/package.json:11`, `:13` |
+| 40905 | canu-camp-hennig `apps/mobile` (`expo start --port`, vier Skripte) | `canu-camp-hennig/apps/mobile/package.json:8`–`:11` |
 
 **Fünf Projekte wollen 3000, drei wollen 3001, zwei wollen 3002.** Das ist der Grund für diesen Skill.
+
+`canu-camp-hennig` ist die Ausnahme und zugleich der Beleg: es ist das einzige Nachbarprojekt, das
+seine Ports **aus dem Vergabeplan unten** bezieht — `40900 = 30000 + 10·1000 + 90·10 + 0`, also Web im
+Hauptbaum (Slot 90) — und folgerichtig das einzige, das mit niemandem kollidiert. `+5` ist im Plan
+frei und wird dort faktisch für `apps/mobile` (Expo) belegt; wer als nächstes eine Mobile-App
+aufsetzt, nimmt sinnvollerweise denselben Offset, statt einen neuen zu erfinden.
 
 ## Der harte Fall: Port 3000 ist nicht verschiebbar
 
@@ -114,9 +123,28 @@ Hash-Kollision (siehe unten).
 | 2 | Claude-Template | 32000 | 7 | San | 37000 |
 | 3 | doppelklick | 33000 | 8 | claude-code-session-source | 38000 |
 | 4 | faninitiative-platform | 34000 | 9 | Projects | 39000 |
+| 10 | canu-camp-hennig | 40000 | | | |
 
-Index 10–18 (40000–48999) sind frei für neue Projekte. **Bestehende Indizes werden nie umnummeriert** —
+Index 11–18 (41000–48999) sind frei für neue Projekte. **Bestehende Indizes werden nie umnummeriert** —
 eine Umnummerierung verschiebt still jeden Port jedes Worktrees dieses Projekts.
+
+> **Index 10 ist Bestand, kein Vorrat — und war es schon, bevor er hier stand.** `canu-camp-hennig`
+> fährt seine vier Dev-Server längst nach diesem Plan (40900 · 40901 · 40903 · 40905, Fundstellen in
+> der Nachbar-Tabelle oben), tauchte in dieser Tabelle aber nie auf; sie endete bei 9. Aufgefallen ist
+> die Lücke erst von der anderen Seite: `color-registry` führt den Projekt-Slot **als** diesen
+> `PROJECT_INDEX` und trug `"canu-camp-hennig": 10` ein (`src/colorRegistry.ts:113`) — die zugesagte
+> eine Tabelle war damit zwei. Ohne diesen Nachtrag hätte das nächste regulär aufgenommene Projekt
+> Index 10 bekommen und wäre in Ports **und** Fensterfarbe kollidiert.
+>
+> Verifiziert am 2026-08-03: `canu-camp-hennig` ist ein echtes Git-Repo unter `C:/Entwicklung`
+> (`git rev-parse --is-inside-work-tree` → `true`, Remote `github.com/gmolike/canu-camp-hennig.git`,
+> vier Commits) mit einem Worktree — `canu-camp-hennig-worktrees/ultraplan-w0-w1`, Slot 54, also
+> 40540 ff. Eine ältere Erhebung, die es als bloßes Verzeichnis ohne Repo führte, ist damit überholt.
+>
+> **Asymmetrie, die hier stehen muss:** dieser Plan reicht bis Index 18, die geteilte Farb-Tabelle nur
+> bis Slot 11 (zwölf Farbtöne, gemessene Kapazität). Ein Projekt ab Index 12 bekommt also einen Port,
+> aber keinen Farbton mehr — das ist dann eine Entscheidung, kein Eintrag
+> (`shared/skills/color-registry/SKILL.md`).
 
 ### Beispiel — die realen claude-skills-Worktrees
 
