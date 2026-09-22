@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { healthRoute } from './routes/health';
+import { healthRoute } from './routes/health.js';
 
 export const app = new Hono().basePath('/api');
 
