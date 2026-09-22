@@ -1,0 +1,89 @@
+# .gitattributes — the working tree gets LF, whatever `core.autocrlf` says.
+#
+# THE BUG THIS EXISTS FOR
+#   Without this file every checkout on a machine with `core.autocrlf=true` — the Windows default,
+#   written system-wide by the Git for Windows installer — puts CRLF into the working tree. Measured
+#   on a template monorepo: 997 of 1045 files carry at least one CR byte and `prettier --check .`
+#   reports 207 files at exit 1. From the first clone, forever, for everyone on Windows.
+#
+# WHAT IS LOAD-BEARING
+#   The single line `* text=auto eol=lf`. `*.sh text eol=lf` is NOT the fix and naming it as one
+#   makes the repair ~29x too small: measured, `*.sh` covers 34 of 989 text files, and the
+#   extension-less husky hooks are not among them. Every explicit line below is documentation and
+#   hardening — with the `*` line present they change the attr column, not the bytes.
+#
+# WHO ACTUALLY GETS HURT
+#   A CR in a hook BODY only bites a POSIX host running a repo checked out under Windows. Git-Bash's
+#   own bash 5.2.37 swallows it (`ARG=[lint-staged]`, byte-identical to the LF variant), which is
+#   exactly why this stays invisible where it is created; a real POSIX `sh` carries it into the last
+#   argument (`dash -e` -> `ARG=[lint-staged\r]`). A Linux CI runner clones with
+#   `core.autocrlf=false` and never sees CRLF at all — do not sell this as a CI fix.
+
+# ── the load-bearing line ─────────────────────────────────────────────────────────────────────────
+* text=auto eol=lf
+
+# ── hooks and shell scripts ───────────────────────────────────────────────────────────────────────
+# The husky hooks have no extension, so `*.sh` never matches them. The `*` line above already covers
+# them; these lines pin `text` instead of leaving it to the binary heuristic.
+.husky/*                     text eol=lf
+*.sh                         text eol=lf
+*.bash                       text eol=lf
+
+# ── Windows-only scripts ──────────────────────────────────────────────────────────────────────────
+# PowerShell reads LF, so `.ps1` stays LF. `.bat`/`.cmd` are the only files that may want CRLF —
+# uncomment those two lines ONLY if the repo really carries such files.
+# NEVER write this as a brace glob: git does not expand braces in attribute patterns. Measured —
+# `*.{cmd,bat,ps1} text eol=crlf` then `git check-attr text eol -- a.cmd` answers `text: auto` /
+# `eol: lf`, i.e. it fell straight through to the `*` line; the same file with `*.cmd text eol=crlf`
+# answers `text: set` / `eol: crlf`. A brace line is a silent no-op, and no path-based acceptance
+# criterion can see it.
+*.ps1                        text eol=lf
+# *.bat                      text eol=crlf
+# *.cmd                      text eol=crlf
+
+# ── text formats (documentation; the `*` line already covers them) ────────────────────────────────
+*.ts                         text eol=lf
+*.tsx                        text eol=lf
+*.js                         text eol=lf
+*.jsx                        text eol=lf
+*.mjs                        text eol=lf
+*.cjs                        text eol=lf
+*.json                       text eol=lf
+*.jsonc                      text eol=lf
+*.md                         text eol=lf
+*.css                        text eol=lf
+*.html                       text eol=lf
+*.yml                        text eol=lf
+*.yaml                       text eol=lf
+*.toml                       text eol=lf
+*.sql                        text eol=lf
+*.prisma                     text eol=lf
+*.py                         text eol=lf
+*.dart                       text eol=lf
+*.code-workspace             text eol=lf
+.gitkeep                     text eol=lf
+.editorconfig                text eol=lf
+.env.example                 text eol=lf
+
+# ── binaries: never converted, never diffed as text ───────────────────────────────────────────────
+# A PNG signature contains a literal 0x0D byte. Without these lines the `text=auto` heuristic is the
+# only thing standing between it and a rewrite.
+*.png                        binary
+*.jpg                        binary
+*.jpeg                       binary
+*.gif                        binary
+*.webp                       binary
+*.avif                       binary
+*.ico                        binary
+*.mp4                        binary
+*.webm                       binary
+*.woff                       binary
+*.woff2                      binary
+*.ttf                        binary
+*.pdf                        binary
+*.zip                        binary
+
+# ── generated: keep them out of review diffs ──────────────────────────────────────────────────────
+# Adjust the second path to whatever your router actually generates; delete the line if nothing does.
+pnpm-lock.yaml               text eol=lf linguist-generated=true -diff
+apps/web/src/routeTree.gen.ts text eol=lf linguist-generated=true -diff
