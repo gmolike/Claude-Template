@@ -1,0 +1,9 @@
+# git fires THIS hook, not pre-commit, when a conflict-free `git merge` commits on its own. Without
+# this file husky's shim (.husky/_/h) finds no user hook and exits 0 without a word, so incoming
+# foreign work lands in the merge commit unchecked. A merge finished by hand after a conflict
+# (`git commit`) fires pre-commit instead.
+#
+# Spelled out on purpose -- never `. "$(dirname "$0")/pre-commit"`: sourcing runs whatever pre-commit
+# grows into. Where agent-core's setup-changelog hook is in place that is a version bump, which would
+# then write into a live merge. This hook runs the check and nothing else.
+pnpm exec lint-staged
