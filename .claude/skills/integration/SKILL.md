@@ -22,7 +22,7 @@ trenne sie sauber, sonst formulierst du Prüfungen, die im jeweils anderen Targe
 - Bestehendes Repo (`package.json` / `.git` vorhanden) oder frisches Projekt? Frisches Projekt → vom
   **Claude-Template-Monorepo** bootstrappen (separates Repo: klonen/initialisieren, NICHT aus diesem Repo ableiten).
 - agent-core als installiertes Bin (`agent-core <cmd>`) oder lokaler Checkout (`pnpm dev <cmd>` /
-  `tsx src/cli.ts <cmd>`)? Prüfe mit `agent-core --version`.
+  `npx tsx src/cli.ts <cmd>`, beides **im Checkout** ausführen)? Prüfe mit `agent-core --version`.
 
 ### Schritt 2: Scope bestimmen
 
@@ -32,14 +32,26 @@ trenne sie sauber, sonst formulierst du Prüfungen, die im jeweils anderen Targe
 
 ### Schritt 3: Claude-Code-Target erzeugen (`sync`)
 
-Nicht-destruktiv und idempotent. Genau einen Befehl wählen:
+Idempotent; nicht-destruktiv nur für die gemergten Senken — was in den Datei-Eimern gilt, steht unter „Regeln". Genau einen Befehl wählen:
 
 - installiert, global: `agent-core sync --scope global`
-- installiert, projekt: `agent-core sync --scope project --dir .`
-- lokaler Checkout, global: `pnpm sync` — Achtung: `pnpm sync` läuft IMMER global
-- lokaler Checkout, projekt: `pnpm dev sync --scope project --dir .`
+- installiert, projekt: `agent-core sync --scope project --dir .` (im Projekt ausführen)
+- lokaler Checkout, global: `pnpm sync` — ohne Flags ist der Scope global
+- lokaler Checkout, projekt: im Checkout `pnpm dev sync --scope project --dir <projektpfad>`. `--dir` gilt relativ zum **Checkout**, nicht zum Aufrufort: pnpm fährt jedes Script in der Paketwurzel, `--dir .` synct also in agent-core selbst. **Nur mit pnpm** — `npm run dev sync --scope project …` verschluckt `--scope project` still (`scope` ist ein npm-Config-Schlüssel; übrig bleibt `sync <pfad>`, und die überzählige Angabe ignoriert die CLI) und fährt einen **globalen** Sync. Unter npm nur mit `--` vor `sync`; paketmanagerfrei: `npx tsx src/cli.ts sync --scope project --dir <projektpfad>`.
 
 `sync` schreibt: `CLAUDE.md` (+ `.claude/skills|agents|hooks`, gemergte `settings.json`, im project-Scope zusätzlich `.mcp.json`).
+
+Ist der Arbeitsbaum nicht sauber, gilt vor einem `sync --scope project`:
+
+- **WIP-Commit statt Stash.** `sync` erzeugt genau die Dateien neu, die ein Stash mitnimmt. Gemessen
+  am 2026-08-05 in einem Wegwerf-Repo: Stash → Generat neu geschrieben → `git stash apply` endet mit
+  Exit 1 und `UU CLAUDE.md` (1 unmerged path); derselbe Ablauf mit WIP-Commit statt Stash ergibt
+  `unmerged-count=0` bei erhaltener Arbeit. Generierte Dateien von Hand zu mergen ist der falsche
+  Weg — der richtige ist, den Sync erneut zu erzeugen.
+- **Nie den Branch wechseln, um zu syncen.** Der Default-Branch ist bei Cloudflare Pages / Vercel /
+  Netlify ein Auto-Deploy-Target; ein Checkout dorthin plus ein späterer Commit ist ein Schritt in
+  Richtung ungewollter Veröffentlichung. `sync` selbst wechselt nichts — das ist die Auflage an den,
+  der es aufruft.
 
 ### Schritt 4: OpenCode installieren — Bundle beziehen, KEIN sync
 
@@ -92,11 +104,21 @@ Deutsche Zusammenfassung: gewähltes Target + geschriebene Pfade + welche Env-Va
 ## Regeln
 
 - agent-core ist **kanonisch**: Rules/Skills/Agents upstream hier fixen und dann syncen — NIE Regeltext ins Projekt forken.
-- Standard ist nicht-destruktiv & idempotent. Vor `--overwrite` oder jeder destruktiven bzw. scope-ändernden Aktion erst fragen.
-- Eine handgeschriebene `CLAUDE.md` (ohne `<!-- GENERATED`-Kopf) wird nie überschrieben.
-- `pnpm sync` ist immer global; für ein Projekt `--scope project --dir <pfad>` nutzen.
+- Nicht-destruktiv & idempotent gilt für die **gemergten** Senken: `CLAUDE.md` / `AGENTS.md` (nur eine Datei mit `<!-- GENERATED`-Kopf wird ersetzt), `settings.json` (Deep-Merge, `env` und `permissions` additiv, Session-Defaults seed-only) und `.mcp.json` (eigene Server hinein, fremde bleiben, solange die Datei lesbar ist). Vor `--overwrite` oder jeder destruktiven bzw. scope-ändernden Aktion erst fragen.
+- **Für die Datei-Eimer gilt sie je Eimer verschieden.** Unter `.claude/skills/<name>/` wird eine **fremde** Fassung nicht überschrieben: eine gleichnamige, projekteigene `SKILL.md` bleibt stehen, der Sync meldet `skills/foreign-name-collision`, und agent-cores Fassung dieses Skills kommt dort nicht an; ein Skill-Verzeichnis, das ein Link (Symlink/Junction) ist, wird nie durchgeschrieben (`skills/linked-target`). Beide behalten: die eigene Fassung **umbenennen — Verzeichnis UND `name:`-Feld** (z. B. `<projekt-präfix>-<name>`); agent-cores Fassung wollen: `--replace-foreign-skills` — **nicht** `--overwrite`, das ersetzt nur `CLAUDE.md`, `AGENTS.md` und `settings.json`. `.claude/agents/<name>.md` und `.claude/hooks/*` werden dagegen weiter **bedingungslos** geschrieben: Hooks sind agent-cores eigene Sicherheitsfläche. Und eine eigene Datei **neben** einer unveränderten agent-core-`SKILL.md` schützt nichts — ein verengender Sync löscht das ganze Verzeichnis mitsamt ihr. Die Meldungen gehen nicht mehr verloren: ein Sync druckt sie auf stderr und legt sie zusätzlich als Datei ab — global `~/.claude/.agent-core-warnings.json`, im Projekt `agent-core-warnings.json` im Git-Verzeichnis, wenn `--dir` eine Repo-Wurzel ist, sonst `.claude/.agent-core-warnings.json`; der SessionStart-Hook spielt die globale Datei in die Sitzung ein, `worktree-bootstrap` die seines Worktree-Syncs. Die übrige Sync-Ausgabe geht weiter nach `/dev/null`.
+- **Ein einzelnes ausgeliefertes Artefakt lösen:** `agent-core sync --exclude agent:<slug>` (analog `skill:` / `rule:` / `mcp:` / `memory:`; kommasepariert und wiederholbar, `sync --help` führt es). Die Abwahl wird ins Manifest geschrieben und bei jedem weiteren blanken `sync` klebrig nachgespielt; eine **unveränderte** Kopie entfernt schon dieser Lauf, eine **hand-geänderte** bleibt als `preserved: user-modified` stehen. Für ein core/ungetaggtes Artefakt zusätzlich `--allow-core-exclude`. Die Abwahl wirkt **pro Scope**: ein Projekt-Manifest berührt die globale Kopie unter `~/.claude/` nicht — der SessionStart-Hook syncht global weiter.
+- Eine handgeschriebene `CLAUDE.md` (ohne `<!-- GENERATED`-Kopf) wird ohne `--overwrite` nie überschrieben.
+- `pnpm sync` ohne Flags ist global (Default-Scope); für ein Projekt `--scope project --dir <pfad>` anhängen — mit pnpm, nicht mit npm (siehe Schritt 3).
 - OpenCode hat keinen `sync`: das Target wird als consume-only `.tgz`-Bundle bezogen (Release-Download oder selbst
   via `agent-core bundle`) und nach `~/.config/opencode/` entpackt — kein Materialisieren wie bei Claude Code.
 - Keine Secrets in Code oder Config — nur Env-Var-Namen.
 - Windows: Pfade in JSON erst parsen, dann Token ersetzen und auf Forward-Slashes normalisieren.
 - Conventional Commits; niemals `main` ohne Freigabe pushen.
+
+### Worktree — welcher Skill-Satz gilt
+
+Ein Worktree löst **Projekt-Skills ausschließlich aus seinem eigenen `.claude/skills` auf**: der Harness läuft von `cwd` aufwärts und bricht an der Worktree-Wurzel ab. Anders als `agents/`, `commands/` und `output-styles/` haben Skills **keinen Rückfall** auf die Hauptarbeitskopie — es ist eine Ersetzung, keine Ergänzung. Beide Lagen sind gleich betroffen: `.claude/worktrees/<agent-id>/` (Agent-Werkzeug) und die Geschwisterlage `<repo>-worktrees/<slug>` aus ADR-0030.
+
+- **`CLAUDE.md` liegt im Worktree (getrackt) ⇒ der eingefrorene Satz gewinnt.** `worktree-bootstrap` steigt bei der bloßen **Anwesenheit** von `CLAUDE.md` aus, und Anwesenheit ist nicht Frische; er sagt zum Sitzungsbeginn nur an, welcher Zustand gilt — getrackte Skill-Dateien, eingefroren auf den Commit dieses Worktrees, oder gar kein `.claude/skills` —, und repariert nichts. Gemessener Fall: 23 Skills im Stand vom 2026-04-13 gegen 82 in der Hauptarbeitskopie desselben Repos — darunter einer unter seinem Namen von **vor** einer Umbenennung.
+- **`CLAUDE.md` fehlt ⇒ der Bootstrap-Zweig synct agent-core hinein.** Eine getrackte, projekteigene `SKILL.md` gleichen Namens bleibt dabei stehen und wird gemeldet (Datei-Eimer-Punkt oben); ohne diesen Schutz wurde sie ersetzt, und der Worktree war danach dirty (gemessen gegen v2.0.0). Ein älteres, installiertes `agent-core` ohne den Schutz ersetzt sie weiterhin.
+- **Nachsehen statt raten:** `claude --debug --debug-file d.log -p "ok"`, dann `grep "Loading skills from" d.log` — die Zeile nennt den Pfad, den die Sitzung wirklich benutzt, und `Loaded … project: N` die Zahl. Zweiter Einfrier-Vektor ohne jedes Liegenbleiben: `worktree.baseRef` steht per Default auf `fresh`, ein frisch angelegter Agent-Worktree zweigt also von `origin/<default-branch>` ab, nicht vom lokalen HEAD.

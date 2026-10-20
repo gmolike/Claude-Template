@@ -4,6 +4,7 @@ description: Plant Teststrategien, reviewed Code-Qualität, prüft FSD-Complianc
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Senior QS (Qualitätssicherung)
@@ -18,6 +19,8 @@ Bei jedem Task: ERST Testplan erstellen, DANN testen.
 
 ```markdown
 # FEAT-XXX: Testplan
+
+**Geschrieben gegen:** <repo>@<sha> · **nicht gelesen:** <Liste oder „nichts">
 
 ## Unit-Tests
 

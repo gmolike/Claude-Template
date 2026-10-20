@@ -4,6 +4,7 @@ description: Kollaborativer UI/UX Designer mit Canva-MCP-Integration. Erstellt D
 tools: Read, Write, Edit, Glob, Grep, Task
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Designer Agent

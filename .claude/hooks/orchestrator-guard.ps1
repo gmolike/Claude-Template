@@ -71,6 +71,21 @@
 #
 # FAIL-OPEN: on any parse/IO problem, allow - but loudly (never deadlock edits because of a guard
 # defect, and never pretend the guard checked when it did not).
+#
+# THE FOURTH FAIL-OPEN PATH, and the only SILENT one: the harness TIMEOUT. Claude Code CANCELS a
+# PreToolUse hook that outruns the `timeout` in settings.json and then proceeds with the tool call -
+# so a guard that is merely too slow ALLOWS the edit. It cannot say so out loud like the three paths
+# above, because the process is killed before it can print anything; the only trace is in the session
+# transcript (`hook_cancelled`, `timedOut: true`, `durationMs` vs `timeoutMs`). Consequence for
+# anyone editing this file: RUNTIME IS A CORRECTNESS PROPERTY HERE, not a comfort one. The guard is
+# essentially two to three process starts (the shell host, the node classifier, `git rev-parse`) and
+# was measured at 385-2816 ms (.ps1) and 155-8380 ms (.sh) over four series - against a budget that
+# was 5 s until 2026-08-04 and is 20 s since (settings.partial.json). Two known multipliers are NOT
+# fixed: the guard is registered TWICE (global + project settings both carry the group), and the node
+# stage runs BEFORE the agent_id early exit, so every subagent edit pays for it. Do NOT cure the
+# latter by letting the tolerant stage decide the ALLOW - measured 2026-08-04 against both variants,
+# a nested agent_id then flips deny -> allow-silent and a numeric top-level agent_id flips
+# allow -> deny.
 $ErrorActionPreference = 'SilentlyContinue'
 $TtlSeconds = 3600
 $MarkerName = 'agent-core-emergency-inline'

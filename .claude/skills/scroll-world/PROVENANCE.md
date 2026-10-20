@@ -53,6 +53,17 @@ ist der inhaltliche Index dazu.
 - **Gekürzte `SKILL.md`:** Die `SKILL.md` wurde gegenüber dem Upstream gestrafft;
   schwere Details liegen in `references/` (Repo-Konvention: schlanke `SKILL.md`,
   Tiefe in `references/`).
+- **curl-freier HTTP-Weg (2026-09-17, Issue #72):** `SKILL.md` führt node-`fetch` aus einer
+  `.mjs`-Datei als gleichrangigen Default-Weg neben `@fal-ai/client` und `curl`; der Helfer-Block
+  (`falQueue` / `download` / `dataUri` — eine Bibliothek, die Stufen-Skripte portiert der Nutzer
+  selbst; Kommentare 2026-09-22 auf Englisch) lebt genau einmal in `SKILL.md`, der Spiegel
+  `i18n/skills/scroll-world/en.md` zeigt darauf statt ihn zu wiederholen. `cwebp` ist von Pflicht
+  auf optional zurückgestuft (ffmpeg-Ersatz benannt); `jq` + `curl` bleiben **Pflicht für das
+  Shell-Rezept** in `references/pipeline.md`, weil `jq -n` dort die Request-Bodies aller drei
+  fal-Stufen baut — sie entfallen nur beim vollständigen Wechsel auf den `.mjs`-Weg. Grund:
+  agent-core liefert `Bash(curl *)` und `Bash(wget *)` selbst in `permissions.deny` aus
+  (`targets/claude/settings.partial.json`, **Claude-only** — OpenCode hat diese Sperre nicht).
+  Diese Datei ist von keinem Test gelesen: der Eintrag ist Doku-Disziplin, keine Absicherung.
 
 Die wortgetreu übernommenen Dateien (`references/index-template.html`,
 `references/knockout.py`) sind von diesen Änderungen **nicht** betroffen.

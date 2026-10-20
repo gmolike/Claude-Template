@@ -44,6 +44,7 @@ Welle-0-Audit im Refactor 2026-05 hatte 10 Misslesungen mit teilweise destruktiv
 - [ ] **Asset-Loader:** Pattern `dynamic-import + placeholder.json` erkannt? → KEEP, Sound-Curation getrennt
 - [ ] **Slice-Konsumenten:** wirklich keiner? `grep -rn "from.*<slice>" --include="*.ts" --include="*.tsx"` in jedem Frontend
 - [ ] **Test-Konsumenten:** kein Test importiert das? (`grep` mit `*.test.ts*` + `e2e/*`)
+- [ ] **Kontrolltreffer aus DEMSELBEN Kommando:** der Kontrollbegriff steht als Alternative im selben Muster — `grep -rnE "<X>|<Kontrollbegriff>" <repo>/` —, und der Aufruf, der für `<X>` `0 Treffer` meldet, hat den Kontrollbegriff gefunden. Kontrollbegriff = ein Bezeichner, der in diesem Repo nachweislich vorkommt, in derselben Dateiart. Nur so prüft die Kontrolle Werkzeug, Flags, Pfad und Muster-Syntax der Suche, die den Befund trägt; ein zweiter Aufruf mit anderem Muster oder Werkzeug sieht deren Defekt nicht (gemessen an agent-core@1d8817d: `grep -arin 'nullable|breaking'` ohne `-E` — in BRE ist `|` ein Literal — liefert 0 Treffer bei Exit 1, dem Signal eines echten Nichtvorkommens, als `| wc -l`-Zählung sogar bei Exit 0; dieselbe Zeile mit `-E` 21). Und der Stand: bei einem **geteilten** Gegenstand (fremdes Repo, geteilte DB, Registry) ist ein lokaler Klon keine Quelle — gegen Remote bzw. DB messen und den gelesenen Stand (sha/Datum) nennen.
 
 ### Vor jeder "FSD-Layer-Inversion"-Flag
 
@@ -74,12 +75,13 @@ Welle-0-Audit im Refactor 2026-05 hatte 10 Misslesungen mit teilweise destruktiv
 - **Status:** KEEP / REFACTOR / DROP
 - **Confidence:** high / medium / low / skeptical
 - **Details:** [Was wurde gefunden, wo, in welchem Kontext]
-- **Cross-Code-Verifikation:**
-  - `grep "<X>" in api/` → N Treffer in M Files
-  - `grep "<X>" in shared/` → N Treffer
-  - `grep "<X>" in lore-admin/` → 0 Treffer
-  - `grep "<X>" in session-gm/` → 0 Treffer
-  - `grep "<X>" in session-player/` → N Treffer
+- **Cross-Code-Verifikation** (jede Zeile trägt ihren Kontrollbegriff im SELBEN Muster; `Kontrolle: 0` heißt: die Zeile belegt nichts):
+  - `grep -rnE "<X>|<Kontrollbegriff>" api/` → `<X>`: N Treffer in M Files · Kontrolle: N
+  - `grep -rnE "<X>|<Kontrollbegriff>" shared/` → `<X>`: N Treffer · Kontrolle: N
+  - `grep -rnE "<X>|<Kontrollbegriff>" lore-admin/` → `<X>`: 0 Treffer · Kontrolle: N
+  - `grep -rnE "<X>|<Kontrollbegriff>" session-gm/` → `<X>`: 0 Treffer · Kontrolle: N
+  - `grep -rnE "<X>|<Kontrollbegriff>" session-player/` → `<X>`: N Treffer · Kontrolle: N
+  - Stand der gelesenen Quelle: <repo>@<sha> bzw. DB <projekt>@<datum> — bei geteilten Gegenständen der Remote, nicht der lokale Klon
 - **Begründung:** [Warum dieser Status]
 - **Empfohlener Fix (falls REFACTOR):** [konkreter Plan]
 
@@ -99,4 +101,5 @@ Welle-0-Audit im Refactor 2026-05 hatte 10 Misslesungen mit teilweise destruktiv
 - ❌ "Layer-Inversion" auf `widgets → features` flaggen (ist FSD-erlaubt)
 - ❌ "Library-Migration" pauschal empfehlen ohne POC + Bundle-Vergleich + Konsumer-Audit
 - ❌ Auf einem Repo gegrept → Empfehlung gegeben (immer Cross-Repo)
+- ❌ `→ 0 Treffer` als Beleg für DROP schreiben, ohne dass dieselbe Kommandoform im selben Aufruf einen Kontrolltreffer geliefert hat — ein kaputtes Werkzeug und ein leerer Suchraum sehen identisch aus, und nur bei DROP ist der Irrtum destruktiv
 - ❌ Confidence-Level weglassen — Glenn muss skeptische Befunde von confident-Befunden trennen können

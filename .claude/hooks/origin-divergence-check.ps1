@@ -20,10 +20,22 @@
 #   PRIMARY: the current branch's UPSTREAM (@{upstream}) - the ref this push actually updates.
 #   INFO   : origin/<default-branch>, only when it is not already the primary ref AND holds commits
 #            HEAD lacks AND there is a primary finding to attach it to - or when the branch has NO
-#            upstream, where it is the only thing that can be said. A routine feature push whose
-#            upstream is in sync stays SILENT even after the default branch moved.
-# WHAT IT CLAIMS - only what it measured: which ref, how many commits, taken after a fetch. Never WHO
-# pushed or WHY: that reading belongs to the human.
+#            upstream, where it is the only thing that can be said.
+#
+# A COUNT IS NOT CONTENT - identical to the .sh, see there for the full reasoning. In short: until
+# this change the two branches above were the only ones that could speak, so a feature branch whose
+# OWN upstream is in sync while origin/<default> moved fell through both and the hook exited 0 with
+# no output - which is exactly the reported incident shape. Semantic duplication is invisible to a
+# COUNT by construction; it is visible in the FILE SET. So a third question is asked of the ref this
+# message is about: which paths did BOTH sides change since they diverged (`git diff --name-only
+# HEAD...<ref>` vs `<ref>...HEAD`). A non-empty answer is reported, and is on its own a reason to
+# speak when no counter found anything. A routine feature push into an untouched area stays SILENT.
+# THE ONE PATH THAT IS NOT CONTENT - identical to the .sh, see there for the measurement: the root
+# CHANGELOG.md, which rule 20-workflow makes EVERY change touch. The in-sync case speaks only when a
+# path OTHER than CHANGELOG.md is shared; once it speaks, the list still names every shared path.
+# WHAT IT CLAIMS - only what it measured: which ref, how many commits, which paths both sides changed,
+# all of it after a fetch. Never WHO pushed or WHY, and never that the overlap IS a duplication - only
+# that a count cannot see one and these paths are where one would be: that reading belongs to the human.
 #
 # NEVER BLOCKS - by construction, and the choice is deliberate (live hook docs, fetched 2026-07-23):
 #   - nothing to say -> exit 0 with NO output. "Exit code 0 with no output means the hook has no
@@ -408,6 +420,65 @@ function Get-BehindCount([string]$Repo, [string]$Ref) {
   return [int]$n
 }
 
+<#
+.SYNOPSIS
+Run git in a repository and return ALL its output lines (Invoke-Git deliberately yields only the
+first one, which is all every count/ref call needs).
+.DESCRIPTION
+Same failure contract as Invoke-Git: a missing git, a non-zero exit or unreadable output yields an
+EMPTY array, never a partial one - the caller is on a fail-open path and an empty answer costs a
+hint, never a block. Lines are NOT trimmed: a path is whatever git printed.
+.PARAMETER Repo
+Repository directory, taken from the PAYLOAD.
+.PARAMETER GitArgs
+Git arguments (no shell involved - nothing is word-split or expanded).
+.OUTPUTS
+System.String[] - the output lines, or an empty array.
+#>
+function Invoke-GitLines([string]$Repo, [string[]]$GitArgs) {
+  $run = Invoke-NativeUtf8 'git' (@('-C', $Repo) + $GitArgs)
+  if ((-not $run) -or ($run.ExitCode -ne 0)) { return , @() }
+  # `, <array>` and NOTHING else - the SAME call convention Invoke-Git uses on ConvertTo-NativeLines.
+  # Measured 2026-09-17 against the .sh over one payload table: `@(ConvertTo-NativeLines ...)` here,
+  # or `@(Invoke-GitLines ...)` at a call site, wraps the array in a SECOND array, so `.Count` is 1
+  # for EVERY answer - the empty one included - and `-join` renders "System.Object[]". Both variants
+  # then read one shared path that does not exist, on a repo where the .sh stayed silent.
+  $lines = ConvertTo-NativeLines $run.Stdout
+  return , $lines
+}
+
+<#
+.SYNOPSIS
+Paths BOTH sides changed since HEAD and `Ref` diverged (mirrors overlap_paths() in the .sh variant).
+.DESCRIPTION
+`git diff --name-only HEAD...Ref` is merge-base(HEAD,Ref)..Ref, i.e. what THEY changed; `Ref...HEAD`
+is the mirror, what WE changed. Both lists come out of the same git in the same sorted order, so the
+intersection is order-stable and identical to the .sh variant - nothing is sorted here, because
+`sort`/`Sort-Object` follow the locale resp. the culture and the two variants would then disagree on
+a non-ASCII path. core.quotePath=false keeps a non-ASCII path a readable path in both variants.
+THE MEMBERSHIP TEST IS ORDINAL ON PURPOSE: a PowerShell hashtable and `-contains` compare
+case-INSENSITIVELY by default, while git paths and the .sh variant's awk are case-SENSITIVE - a
+default hashtable here would make `README.md` and `readme.md` the same file in one copy only.
+.PARAMETER Repo
+Repository directory from the payload.
+.PARAMETER Ref
+Fully qualified ref to compare HEAD against.
+.OUTPUTS
+System.String[] - the shared paths in git's own order, or an empty array.
+#>
+function Get-OverlapPaths([string]$Repo, [string]$Ref) {
+  $theirs = Invoke-GitLines $Repo @('-c', 'core.quotePath=false', 'diff', '--name-only', "HEAD...$Ref")
+  if ($theirs.Count -eq 0) { return , @() }
+  $ours = Invoke-GitLines $Repo @('-c', 'core.quotePath=false', 'diff', '--name-only', "$Ref...HEAD")
+  if ($ours.Count -eq 0) { return , @() }
+  $mine = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::Ordinal)
+  foreach ($o in $ours) { if ($o -ne '') { [void]$mine.Add([string]$o) } }
+  $both = New-Object 'System.Collections.Generic.List[string]'
+  foreach ($t in $theirs) { if (($t -ne '') -and $mine.Contains([string]$t)) { $both.Add([string]$t) } }
+  $shared = $both.ToArray()
+  return , $shared
+}
+
 # --- payload: cwd AND command, via the shared cascade --------------------------------------------------
 # Read stdin through the explicit UTF-8 reader from the prologue - never [Console]::In.
 $raw = $StdInUtf8.ReadToEnd()
@@ -453,6 +524,29 @@ if ($primaryRef -cne $defaultRef) {
   if ($infoN -lt 0) { $infoN = 0 }
 }
 
+# --- the CONTENT question, asked of the ref this message is about --------------------------------------------
+# One ref, never two: whichever ref the sentence below names is the one whose file set is compared, so
+# the message can never point at an overlap it did not report a divergence for.
+$overlapRef = ''
+if ($primaryRef -and $primaryN -gt 0) { $overlapRef = $primaryRef }
+elseif ($infoN -gt 0) { $overlapRef = $defaultRef }
+$overlapN = 0
+$overlapContentN = 0
+$overlapHead = ''
+if ($overlapRef) {
+  $overlap = Get-OverlapPaths $cwd $overlapRef   # NEVER @(...) here - see Invoke-GitLines
+  $overlapN = $overlap.Count
+  if ($overlapN -gt 0) {
+    # What may make the in-sync case speak: every shared path except the root CHANGELOG.md (see the
+    # header). A plain loop, not @(... | Where-Object): one wrapper fewer to get wrong. -cne = exact.
+    foreach ($sharedPath in $overlap) { if ([string]$sharedPath -cne 'CHANGELOG.md') { $overlapContentN++ } }
+    # At most three names plus a remainder count: an unbounded list would push the real sentence off
+    # the top of the reminder.
+    $overlapHead = (@($overlap | Select-Object -First 3) -join ', ')
+    if ($overlapN -gt 3) { $overlapHead = "$overlapHead and $($overlapN - 3) more" }
+  }
+}
+
 # --- report observable facts, decide nothing ----------------------------------------------------------------
 $facts = ''
 if ($primaryRef -and $primaryN -gt 0) {
@@ -462,9 +556,19 @@ if ($primaryRef -and $primaryN -gt 0) {
 elseif ((-not $primaryRef) -and $infoN -gt 0) {
   $facts = "this branch has no upstream on origin, so the ref this push updates cannot be named here; $defaultRef holds $infoN commit(s) that HEAD does not, measured after fetching origin."
 }
-if (-not $facts) { exit 0 }                             # push target in sync (or ahead) -> nothing to say
+elseif ($primaryRef -and $infoN -gt 0 -and $overlapContentN -gt 0) {
+  # THE CASE THAT USED TO BE SILENT: the push target itself is untouched, so no count here is a push
+  # conflict - and that is precisely why the old two-branch form said nothing at all. It speaks now
+  # only because the file sets overlap beyond CHANGELOG.md; without that it still stays silent.
+  $facts = "$primaryRef (the upstream of this branch) is in sync, so this push has no ref conflict; $defaultRef holds $infoN commit(s) that HEAD does not, measured after fetching origin."
+}
+if (-not $facts) { exit 0 }         # push target in sync (or ahead), no shared path beyond the changelog -> nothing to say
 
-$msg = "[agent-core] ORIGIN AHEAD: $facts Observed counts only - this hook cannot tell who pushed or why. If a second session may share this branch, the living status log and its session-ownership section are the shared state (rule 26-autonomy). Reminder only: this hook never blocks."
+if ($overlapN -gt 0) {
+  $facts = "$facts Observed paths, not a verdict: $overlapN file(s) were changed on BOTH sides since HEAD and $overlapRef diverged ($overlapHead) - a commit COUNT cannot see that, so read the foreign SUBJECTS: 'git log HEAD..$overlapRef --oneline'. A subject naming work you also did is a semantic conflict even when nothing collides in the merge (rule 25-orchestration decides which version survives)."
+}
+
+$msg = "[agent-core] ORIGIN AHEAD: $facts Observed counts and paths only - this hook cannot tell who pushed or why. If a second session may share this branch, the living status log and its session-ownership section are the shared state (rule 26-autonomy). Reminder only: this hook never blocks."
 $reason = "$facts Advisory only: this hook defers to the normal permission flow and never blocks."
 Write-Stdout ('{"systemMessage":"' + (Format-JsonString $msg) + '","hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"defer","permissionDecisionReason":"' + (Format-JsonString $reason) + '"}}')
 exit 0

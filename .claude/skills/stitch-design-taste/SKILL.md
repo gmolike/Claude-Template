@@ -11,10 +11,57 @@ This skill generates `DESIGN.md` files optimized for Google Stitch screen genera
 
 The generated `DESIGN.md` serves as the **single source of truth** for prompting Stitch to generate new screens that align with a curated, high-agency design language. Stitch interprets design through **"Visual Descriptions"** supported by specific color values, typography specs, and component behaviors.
 
-## Prerequisites
+## Prerequisites — how Stitch reaches the agent
 
-- Access to Google Stitch via [labs.google.com/stitch](https://labs.google.com/stitch)
-- Optionally: Stitch MCP Server for programmatic integration with Cursor, Antigravity, or Gemini CLI
+There are two paths, and only the second one needs wiring:
+
+- **Web UI — no setup at all.** Open [labs.google.com/stitch](https://labs.google.com/stitch) and paste the generated `DESIGN.md` in. This skill's product IS that file, so this path is complete on its own; everything below is optional.
+- **MCP proxy — the agent talks to Stitch directly.** This needs the `stitch` MCP server. In agent-core it is deliberately **not** in the default set: it is defined once in `shared/mcp/servers.json` and tagged for the **opt-in profile `stitch`** (`shared/profiles.json`), so it materializes only under `agent-core sync --profile stitch`. A bare sync leaves it out on purpose — the server is useless before the one-time interactive setup below, and on Claude a server that once shipped cannot be withdrawn by a later sync (the strike list knows top-level keys only, never `mcpServers.<name>`).
+
+### The package — and the name that does not exist
+
+- **`@_davideast/stitch-mcp`**, latest **0.9.0**, `bin: stitch-mcp`. Self-verified 2026-08-05: `npm view @_davideast/stitch-mcp version` → `0.9.0`, `time.modified` → `2026-05-28`, so an unpinned `npx` resolves to 0.9.0. Every version-specific claim below was read out of that exact tarball; re-check them before trusting them against a newer release.
+- **`@google/stitch-mcp` does not exist.** Self-verified 2026-08-05: `npm view @google/stitch-mcp version` → `npm error code E404`. Several blog write-ups name it. It is not a Google package, and no amount of retrying will install it.
+- **This is a third-party, experimental tool** — its own README carries a warning block: *"NOT affiliated with, endorsed by, or sponsored by Google LLC"*, *"NOT guaranteed to be maintained, secure, or compatible with future API versions"*, Apache-2.0 © David East. That is the reason for the opt-in profile, not just the interactive setup.
+- Clients its README lists: VS Code, Cursor, **Claude Code**, Gemini CLI, Codex, **OpenCode** — both agent-core targets, which is why the server lives in the shared bucket rather than under one target.
+
+### One-time setup — a HUMAN step, not an agent step
+
+1. `npx -y @_davideast/stitch-mcp init` — a wizard: it resolves gcloud, then does Google-Cloud OAuth in a browser. No API key needed. One is possible, though, and it is the only non-interactive path: `STITCH_API_KEY` skips OAuth entirely (README, "Authentication"). Because it is optional rather than required, `env` stays empty in `servers.json`.
+2. **Restart the session.** A server registered while a session runs does not load its tools into it.
+3. `npx -y @_davideast/stitch-mcp doctor` — the package's own health check. Run it instead of guessing why the tools are missing.
+
+An agent cannot do step 1: it needs a browser and, on Windows, a UAC prompt. Hand the command to a human and stop. Do not retry — fail loud rather than loop silently (`30-quality`).
+
+### The Windows gcloud trap — the error names the wrong cause
+
+`init` on a machine without a usable gcloud fails with these two strings (both verified present in v0.9.0's `dist/chunk-7ryqstaa.js`; the surrounding step label is from the observed run):
+
+```text
+Failed to install gcloud locally
+suggestion: "Check your internet connection and try again"
+```
+
+**The suggestion is wrong.** Read out of that bundle's `GcloudInstallService.ensureInstalled`, the resolution order is: system gcloud on `PATH` (`where gcloud.cmd`) → the bundled SDK at `~/.stitch-mcp/google-cloud-sdk/bin/gcloud.cmd` → system gcloud once more → download `https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-windows-x86_64-bundled-python.zip`. Only that last step yields `DOWNLOAD_FAILED`, and on Windows it fails while the same host `dl.google.com` serves `winget` an installer moments later, hash verified. The network is not the problem; that download path is.
+
+- **The fix is the FIRST step, not the last** — install a system gcloud and `init` never reaches the broken download. Note the order: system-first, so one install short-circuits the whole chain.
+- **Mind the version floor.** A system gcloud is only accepted at **>= 400.0.0** (`minVersion: "400.0.0"` in the same bundle). An older one is skipped in silence and you land back on the broken download, with the same misleading message.
+- **`--source winget` is not optional** when the `msstore` source breaks with `0x8a15005e` ("Serverzertifikat stimmte mit keinem der erwarteten Werte überein"); without the restriction winget refuses with "Geben Sie eine Option für --source an".
+- **No winget?** `GoogleCloudSDKInstaller.exe` from `https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe` — "Install for single user" needs no admin rights.
+- **Already have a gcloud you want it to use?** Set `STITCH_USE_SYSTEM_GCLOUD=1` for the proxy; the README documents that as the supported way to use an existing installation instead of the isolated one.
+
+```powershell
+winget install Google.CloudSDK --source winget   # interactive terminal, confirm the UAC prompt
+npx -y @_davideast/stitch-mcp init               # same window, so the PATH is fresh
+```
+
+### What the proxy hands over
+
+Alongside the upstream Stitch tools the proxy exposes three virtual tools (names verified in the v0.9.0 bundle). The last two are the actual handover point into the code workflow — screenshot plus HTML, per screen:
+
+- `build_site` — builds a site from a project by mapping screens to routes; returns each page's design HTML.
+- `get_screen_code` — retrieves a screen and downloads its HTML code content.
+- `get_screen_image` — retrieves a screen and downloads its screenshot image as base64.
 
 ## The Goal
 
@@ -57,7 +104,7 @@ For each color provide: **Descriptive Name** + **Hex Code** + **Functional Role*
 - **Display/Headlines:** Track-tight, controlled scale. Not screaming. Hierarchy through weight and color, not just massive size
 - **Body:** Relaxed leading, max 65 characters per line
 - **Font Selection:** `Inter` is BANNED for premium/creative contexts. Force unique character: `Geist`, `Outfit`, `Cabinet Grotesk`, or `Satoshi`
-- **Serif Ban:** Generic serif fonts (`Times New Roman`, `Georgia`, `Garamond`, `Palatino`) are BANNED. If serif is needed for editorial/creative contexts, use only distinctive modern serifs: `Fraunces`, `Gambarino`, `Editorial New`, or `Instrument Serif`. Serif is always BANNED in dashboards or software UIs
+- **Serif Ban:** Generic serif fonts (`Times New Roman`, `Georgia`, `Garamond`, `Palatino`) are BANNED. If serif is needed for editorial/creative contexts, use only distinctive modern serifs: `Fraunces`, `Gambarino`, `Editorial New`, or `Instrument Serif`. Serif is always BANNED in dashboards or software UIs — unless a binding project design brief says otherwise; see the precedence note in step 9
 - **Dashboard Constraint:** Use Sans-Serif pairings exclusively (`Geist` + `Geist Mono` or `Satoshi` + `JetBrains Mono`)
 - **High-Density Override:** When density exceeds 7, all numbers must use Monospace
 
@@ -113,6 +160,8 @@ Every design must work across all viewports:
 ### 9. List Anti-Patterns (AI Tells)
 
 Encode these as explicit "NEVER DO" rules in the DESIGN.md:
+
+**Precedence.** A binding, project-owned design brief beats these defaults — a brand design language is a requirement, not a taste question, and the serif ban is where the two collide most often. When the brief wins, write the deviation into the `DESIGN.md` explicitly (which ban, and on whose authority) instead of passing over it in silence. Everything the brief does not address stays banned.
 
 - No emojis anywhere
 - No `Inter` font

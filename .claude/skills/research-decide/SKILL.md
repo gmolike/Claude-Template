@@ -25,6 +25,15 @@ If none of these hold — the task is small, fully specified, and reversible —
 6. **Verify the result.** Run the real gate — build, the full test suite, and the actual behavior (drive the flow, grep-prove the claim, do a real run) — not just "tests are green." Fix what verification surfaces before calling it done.
 7. **Document & gate.** Update the changelog / decision record / memory. Ship in dependency order. Outward or irreversible steps — releases, pushes, publishes — wait for an explicit go; confirm before firing, and say plainly when a change takes effect.
 
+## Who gets counter-checked — decided before the answer exists
+
+Step 3 says a second pass must try to refute. This says **when it is due and who picks** — otherwise "adversarially verified" is a label, and the loop reports a step it never ran.
+
+- **The trigger never comes from the checked party, and the counter-reader is never its author.** A self-reported confidence is a reading aid, never a switch: measured in agent-core's own issue triage of 2026-08-03, 25 of 25 first opinions reported `confidence: high`, exactly one counter-check was run, and of the 24 first findings re-examined later **none** survived unchanged (2 cores fell, 22 held only with corrections; 39 of 394 individual pieces of evidence — 9.9 % — did not reproduce). The counter-reader is a second agent reading against the **starting position**, not against the first opinion's summary; a summary carries the first reading's blind spots along.
+- **Trigger on what the dispatcher already knows.** Three features, all available before any answer exists: the work touches a **shared contract, protocol or algorithm** (`25-orchestration`, "Consolidate shared semantics"); the change carries real **rebuild risk** — a rename, a signature change, moving a shared contract — for which `skill:gitnexus-guide` already owes "an adversarial second review, disclosed in the PR body"; or the finding rests on **more than a handful of individual pieces of evidence**, which is where a shifted line reference hides.
+- **No feature matched ⇒ a fixed sample with a bounded `n` — for findings that are not load-bearing.** A load-bearing finding is always counter-checked (step 3), and where a target's own rule binds a higher rate — OpenCode's `60-orchestration-opencode` verifies every result — the higher rate applies. Name `n` before dispatch and keep it at **3 or lower**. An unbounded "every n-th check" is satisfied literally by `n = 100` and counter-checks nothing — the shape of a safe default that is never filled in.
+- **The rate goes into the result, never into a footnote:** one line, `counter-checked: N of M · trigger: <feature | sample n=…>`. A run that cannot state it did not counter-check; it only says so.
+
 ## Principles
 
 - **Verify, don't trust.** A claim about a moving API is a hypothesis until a primary source confirms it.

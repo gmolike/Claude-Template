@@ -15,7 +15,7 @@
 # in a repo at all) there is nothing to bootstrap.
 #
 # Receives the session event as JSON on stdin (Claude Code convention; not
-# evaluated here). C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core is replaced by the sync adapter with the
+# evaluated here). C:/Entwicklung/claude-skills is replaced by the sync adapter with the
 # absolute PKG_ROOT path at install time, so the node fallback never depends on
 # CWD. This is the Claude-only path — OpenCode has no 1:1 session-startup hook.
 #
@@ -42,7 +42,33 @@ if [ -z "$_top" ]; then
   exit 0
 fi
 if [ -f "$_top/CLAUDE.md" ]; then
-  # Config already present in this worktree — nothing to bootstrap.
+  # Config PRESENT is not config FRESH, and in a worktree the difference is silent AND total.
+  # Measured with `claude --debug`: Claude Code resolves project skills by walking UP from cwd and
+  # stopping at the worktree root, and skills — unlike agents/commands/output-styles, which do fall
+  # back — have NO fallback to the main checkout. So this worktree's own `.claude/skills` is the
+  # whole truth: TRACKED ⇒ the set frozen at this worktree's commit wins (measured in the field:
+  # 23 skills from 2026-04-13 against 82 live, five months of drift); ABSENT ⇒ the session runs with
+  # zero project skills. Either way a mandatory gate can simply be missing, with nothing turning red.
+  #
+  # This branch used to `exit 0` in silence — in exactly the repos that need it, because they all
+  # track CLAUDE.md, which is what makes "present" permanently true here. It now SAYS which of the
+  # two states holds and still repairs nothing: a `sync --scope project` in a tracked tree is the
+  # sibling branch below, and that is a write, not a diagnosis.
+  #
+  # Reach is the WORKTREE, not the directory `.claude/worktrees/`: the detection above is
+  # `--git-dir` != `--git-common-dir`, so a sibling worktree `<repo>-worktrees/<slug>` — the
+  # ADR-0030 default — is covered identically. Measured there too.
+  #
+  # Both messages are byte-identical to the .ps1 twin's (a parity test compares the BYTES). The
+  # umlauts are JSON escapes because the .ps1 source must stay ASCII (ADR-0027); `\\u00e4` in a
+  # printf FORMAT prints the six characters `ä`, which the JSON reader turns into a real "ä".
+  _n="$(git -C "$_top" ls-files -- .claude/skills 2>/dev/null | wc -l | tr -d ' ')"
+  _n="${_n:-0}"
+  if [ "$_n" -gt 0 ] 2>/dev/null; then
+    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"agent-core: Dieser Worktree tr\\u00e4gt %s git-getrackte Dateien unter .claude/skills. Projekt-Skills kommen NUR von hier, eingefroren auf den Commit dieses Worktrees, ohne R\\u00fcckfall auf die Hauptarbeitskopie. Vor dem Verlass auf ein Pflicht-Gate den Stand pr\\u00fcfen: git log -1 -- .claude/skills"}}\n' "$_n"
+  elif [ ! -d "$_top/.claude/skills" ]; then
+    printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"agent-core: Dieser Worktree hat kein .claude/skills. Projekt-Skills fallen NICHT auf die Hauptarbeitskopie zur\\u00fcck, diese Sitzung l\\u00e4uft also mit 0 Projekt-Skills. Beheben: agent-core sync --scope project --dir . in diesem Worktree."}}\n'
+  fi
   exit 0
 fi
 
@@ -52,10 +78,22 @@ fi
 #   b. node dist/cli.js    →  same, via the baked-in PKG_ROOT path
 #   c. copy from primary   →  locked-down env (no npm/token), or a/b left
 #                             CLAUDE.md still absent: mirror the main worktree
+#
+# THIS BRANCH WRITES INTO A CONSUMER REPO, and until ADR-0050 that was not bounded: measured, ONE
+# session in a worktree whose `.claude/skills/fsd-review/SKILL.md` was the PROJECT's own, tracked
+# version replaced it with agent-core's (`disable-model-invocation: true`) and left the worktree
+# dirty — i.e. agent-core's own bootstrap hook produced the symptom issue #66 reported, with no
+# frozen tree and no left-over worktree involved at all. The fix is not in this file: the sync's
+# skills write path now preserves a foreign same-named SKILL.md and reports it (see
+# `classifySkillTarget` in src/targets/claude.ts). What IS this file's job is not to swallow that
+# report — see the block after the fallback.
+_SYNCED=0
 if command -v agent-core >/dev/null 2>&1; then
   ( cd "$_top" && agent-core sync --scope project >/dev/null 2>&1 || true )
-elif [ -f "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js" ]; then
-  ( cd "$_top" && node "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js" sync --scope project >/dev/null 2>&1 || true )
+  _SYNCED=1
+elif [ -f "C:/Entwicklung/claude-skills/dist/cli.js" ]; then
+  ( cd "$_top" && node "C:/Entwicklung/claude-skills/dist/cli.js" sync --scope project >/dev/null 2>&1 || true )
+  _SYNCED=1
 fi
 
 # Fallback: if config is still missing, copy it from the primary worktree.
@@ -71,6 +109,24 @@ if [ ! -f "$_top/CLAUDE.md" ]; then
     if [ -d "$_main/.claude" ]; then
       cp -R "$_main/.claude" "$_top/" >/dev/null 2>&1 || true
     fi
+  fi
+fi
+
+# --- THE LOUD CHANNEL, DURABLE HALF (ADR-0050) -------------------------------
+# The sync above is run with `>/dev/null 2>&1 || true`, so everything it could NOT do — a preserved
+# foreign skill above all, which is exactly what this branch used to destroy — went to /dev/null.
+# The sync leaves those warnings as a ready-made SessionStart envelope in THIS WORKTREE'S GIT
+# DIRECTORY (a linked worktree has its own) — never under .claude/, where a consumer that tracks
+# .claude/ would see it as untracked noise and commit it into every clone. Resolved through git,
+# never as the literal `.git/<x>`: in a worktree `.git` is a FILE. Replayed only when THIS run
+# attempted a sync: without one the file could be a leftover of an earlier session. Identical
+# mechanism and guard as in agent-core-sync.sh, including the "no non-whitespace byte" emptiness
+# test, because a `-s` there made the .sh and .ps1 twins disagree on a whitespace-only file (measured).
+if [ "$_SYNCED" -eq 1 ]; then
+  _gd="$(git -C "$_top" rev-parse --absolute-git-dir 2>/dev/null || true)"
+  _WARN="$_gd/agent-core-warnings.json"
+  if [ -n "$_gd" ] && [ -s "$_WARN" ] && grep -qa '[^[:space:]]' "$_WARN" 2>/dev/null; then
+    cat "$_WARN" 2>/dev/null || true
   fi
 fi
 

@@ -4,6 +4,7 @@ description: Definiert Requirements, User Stories und Acceptance Criteria. Erste
 tools: Read, Write, Edit, Glob, Grep
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Product Owner
@@ -35,6 +36,10 @@ created: [Datum]
 ---
 
 # FEAT-XXX: [Feature-Name]
+
+## Herkunft
+
+Geschrieben gegen: <repo>@<sha>, <repo>@<sha>. Nicht gelesene Repos: <keine|Liste>.
 
 ## User Story
 
@@ -76,11 +81,14 @@ Web, API und Mobile nutzen DIESELBEN Types. Keine Duplikation.
 - Keine unklaren User Stories ("als User möchte ich..." ist konkret, nicht vage)
 - Shared Types sind in jedem Arbeitspaket identifiziert
 - PO-Review findet mindestens 1 Gap pro Feature
+- Im PO-Review nennt jede AC ihren Beleg (`Datei:Zeile`) oder trägt NICHT AUSGELIEFERT — nie stillschweigend gestrichen
 
 ## Deliverable-Template
 
 ```markdown
 ## PO-Deliverable: FEAT-XXX
+
+### Geprüft gegen: [<repo>@<sha> · nicht gelesen: <Liste oder „nichts">]
 
 ### User Story: [Als... möchte ich... damit...]
 

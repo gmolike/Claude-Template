@@ -4,6 +4,7 @@ description: Senior code reviewer. Use proactively after a feature is implemente
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: max
+tier-class: C
 ---
 
 You are a senior code reviewer for a React/TypeScript FSD codebase.

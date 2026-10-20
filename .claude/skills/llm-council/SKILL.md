@@ -26,14 +26,14 @@ A three-stage deliberation engine for a single hard question. Members answer the
 
 Standard per ADR-0031. Three members across distinct tiers, one chairman:
 
-- **Opus 5** (`opus`) — the canonical model; strongest agentic reasoning and broad synthesis.
-- **Opus 4.8** (`claude-opus-4-8`) — the previous generation; deep and careful, with a different failure profile.
-- **Sonnet 5** (`claude-sonnet-5`) — fast, pragmatic tier; catches over-engineering and surfaces the plain reading.
-- **Chairman: Opus 5** (`opus`) — the strongest freely-available synthesis model compiles the final answer.
+- **Opus 5.5** (`opus`) — the canonical model; strongest agentic reasoning and broad synthesis. The seat keeps the floating `opus` alias, which resolves to the newest Opus on its own.
+- **Opus 5** (`claude-opus-5`) — the previous generation; deep and careful, with a different failure profile.
+- **Sonnet 5.5** (`claude-sonnet-5-5`) — fast, pragmatic tier; catches over-engineering and surfaces the plain reading.
+- **Chairman: Opus 5.5** (`opus`) — the strongest freely-available synthesis model compiles the final answer.
 
 The point of the line-up is **tier diversity → diverse failure modes**. Members that fail differently make the peer-ranking stage informative; three copies of one model would just agree with themselves.
 
-**No seat is Fable 5.** Fable costs double (10/50 vs 5/25 USD per MTok) and runs in no path automatically — seating it, in any seat or as chairman, needs the user's explicit prior consent first (`06-model-effort`, ADR-0037). The line-up above needs no such ask.
+**No seat is Fable 5.1.** Fable costs multiples (10/50 vs Opus 5.5's 4/20 USD per MTok) and runs in no path automatically — seating it, in any seat or as chairman, needs the user's explicit prior consent first (`06-model-effort`, ADR-0037). The line-up above needs no such ask.
 
 ## The three stages
 
@@ -41,7 +41,7 @@ The point of the line-up is **tier diversity → diverse failure modes**. Member
 
 **Stage 2 — Review (anonymized ranking).** Each member receives the *other* members' answers with identity stripped — no model names, presented only as **Response A / Response B / Response C** — and ranks them by **accuracy + insight**, each with a short justification. Anonymization is load-bearing: it stops a member playing favorites by brand or tier, and a member never sees which answer is its own beyond its position in the shuffled set. Every member reviews; collect all rankings.
 
-**Stage 3 — Final Response (Chairman synthesis).** The chairman (**Opus 5**) receives all first opinions plus all rankings and compiles one final answer — taking the strongest supported points, resolving conflicts on the merits, and **explicitly noting where the council disagreed** rather than papering over it. The disagreement map is part of the deliverable: it tells the user where the answer is solid and where it is a judgment call.
+**Stage 3 — Final Response (Chairman synthesis).** The chairman (**Opus 5.5**) receives all first opinions plus all rankings and compiles one final answer — taking the strongest supported points, resolving conflicts on the merits, and **explicitly noting where the council disagreed** rather than papering over it. The disagreement map is part of the deliverable: it tells the user where the answer is solid and where it is a judgment call.
 
 ## Running it via Workflow
 
@@ -52,17 +52,17 @@ Shape:
 ```
 # Stage 1 — First Opinions (independent, parallel)
 opinions = parallel(
-  agent(model: opus,             effort: max, task: "Answer independently: $QUESTION"),
-  agent(model: claude-opus-4-8,  effort: max, task: "Answer independently: $QUESTION"),
-  agent(model: claude-sonnet-5,  effort: max, task: "Answer independently: $QUESTION"),
+  agent(model: opus,              effort: max, task: "Answer independently: $QUESTION"),
+  agent(model: claude-opus-5,     effort: max, task: "Answer independently: $QUESTION"),
+  agent(model: claude-sonnet-5-5, effort: max, task: "Answer independently: $QUESTION"),
 )
 
 # Stage 2 — Review (blind peer ranking, parallel)
 # For each member, pass the OTHER two answers with identities stripped -> Response A/B/C
 rankings = parallel(
-  agent(model: opus,             effort: max, task: rank(anonymize(others_of(opinions, opus5)))),
-  agent(model: claude-opus-4-8,  effort: max, task: rank(anonymize(others_of(opinions, opus48)))),
-  agent(model: claude-sonnet-5,  effort: max, task: rank(anonymize(others_of(opinions, sonnet)))),
+  agent(model: opus,              effort: max, task: rank(anonymize(others_of(opinions, opus55)))),
+  agent(model: claude-opus-5,     effort: max, task: rank(anonymize(others_of(opinions, opus5)))),
+  agent(model: claude-sonnet-5-5, effort: max, task: rank(anonymize(others_of(opinions, sonnet)))),
 )
 
 # Stage 3 — Chairman synthesis (single)

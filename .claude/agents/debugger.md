@@ -4,6 +4,7 @@ description: Root-Cause-Analyse und minimale Fixes für Bugs. Einzelner fokussie
 tools: Read, Edit, Bash, Grep, Glob
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Debugger

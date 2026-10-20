@@ -144,13 +144,30 @@ no text, no people, no signature
 
 ---
 
-## Hero-Video-Loops — `fal-ai/veo3.1` (5s seamless)
+## Hero-Video-Loops — `fal-ai/veo3.1` (Einzelclip, 4/6/8 s)
 
-Top-5-Splash-Pages × $1.00 pro 5-s-Loop ($0.20/s @720p und @1080p ohne Audio). Mit Audio waeren es
-$0.40/s = $2.00 pro Loop, die NO-audio-Variante spart also genau 50 %. @4K kostet der Loop $2.00 ohne
-Audio bzw. $3.00 mit Audio. Guenstigere Tiers derselben Familie: `fal-ai/veo3.1/fast` ($0.10/s bzw.
+Top-5-Splash-Pages × $0.20/s @720p und @1080p ohne Audio. **Einen 5-s-Clip gibt es bei veo3.1
+nicht:** `duration` kennt nur `4s`, `6s` und `8s` (Default `8s`; gemessen am 2026-09-22 über die
+OpenAPI-Route, für die Basis-ID wie für `/first-last-frame-to-video` und `/fast/...`). Die früher
+hier gerechneten „$1.00 pro 5-s-Loop" waren also kein bestellbarer Clip — ein Loop kostet $0.80 (4 s)
+bis $1.60 (8 s). Mit Audio $0.40/s, die NO-audio-Variante spart also genau 50 %; @4K $0.40/s ohne
+bzw. $0.60/s mit Audio. Günstigere Tiers derselben Familie: `fal-ai/veo3.1/fast` ($0.10/s bzw.
 $0.15/s @720p und @1080p) und `fal-ai/veo3.1/lite` ($0.03/s @720p ohne Audio bis $0.08/s @1080p mit
-Audio). Use first-frame-equals-last-frame for seamless loop.
+Audio). Die Länge setzt das Feld `duration`, nicht das „5 seconds" im Prompt des Master Templates.
+
+**Nahtlos wird der Clip erst mit einem Endpoint, der Start- und Endbild getrennt annimmt — die
+Basis-ID dieses Abschnitts kann das nicht.** `fal-ai/veo3.1` ist `text-to-video`: gemessen am
+2026-09-22 über die OpenAPI-Route trägt sein Input-Schema (`Veo31Input`) kein einziges Bildfeld
+(`prompt`, `negative_prompt`, `duration`, `resolution`, `aspect_ratio`, `generate_audio`, `seed`,
+`auto_fix`, `safety_tolerance`). „first-frame-equals-last-frame" im Prompt des Master Templates unten
+ist deshalb nur ein Stilwunsch an das Modell, keine Naht. Für `A -> A` denselben Clip über
+`fal-ai/veo3.1/first-last-frame-to-video` (ebenso `/fast/...`, `/lite/...`) rendern — dort sind
+`first_frame_url` und `last_frame_url` Pflichtfelder — und in beide dasselbe Bild setzen.
+
+**Die 4–8 s sind das Budget DIESES Rezepts, keine Obergrenze für Loops.** Ein Loop beliebiger Länge
+wird aus N Clips an EINEM Anker komponiert (`A -> A` je Clip, Anker aus dem Pilot-Video, nie aus dem
+Original-Still); Rezept, Endpoint-Anforderung und Nahtprüfung stehen in `01-fal-models.md`,
+Abschnitt „Seamless Video Loops".
 
 Die frueher hier stehende Wildcard `fal-ai/veo3.1/...` ist durch die konkrete Basis-ID ersetzt —
 eine Platzhalter-ID laesst sich nicht gegen die Live-API pruefen (SKILL.md, Hard Rule 9).
@@ -233,11 +250,11 @@ stylization, no text
 | House-Sigils | `fal-ai/hyper3d/rodin` | 4 | 30 each | $0.40 pro Generation | $48 |
 | Pergament-Textures | `fal-ai/flux-2-pro` | 30 | 1 each | $0.03 (1. MP) +$0.015/MP | ≥$0.90 |
 | House-Panoramas | `fal-ai/flux-2-pro` | 4 | 20 each | $0.03 (1. MP) +$0.015/MP | ≥$2.40 |
-| Hero-Loops | `fal-ai/veo3.1` (no audio) | 5 | 3 each | $1.00 pro 5-s-Loop @720p/1080p | $15 |
+| Hero-Loops | `fal-ai/veo3.1/first-last-frame-to-video` (no audio) | 5 | 3 each | $0.80 (4 s) – $1.60 (8 s) pro Loop @720p/1080p | $12–24 |
 | Wax-Seals | `fal-ai/flux-2-pro` | 8 | 3 each | $0.03 (1. MP) +$0.015/MP | ≥$0.72 |
 | Char-Tokens | `fal-ai/hunyuan-3d/v3.1/rapid/text-to-3d` | 50 | 1 each | $0.225 pro Generation | $11.25 |
 | A/B-Reserve | mixed | — | — | — | ~$30 |
-| **Total budget** | | | | | **≥~$108** |
+| **Total budget** | | | | | **≥~$105** |
 
 Die drei `fal-ai/flux-2-pro`-Zeilen sind Untergrenzen: sie rechnen mit 1 Megapixel Output. 2K-Texturen
 und 2048×1024-Panoramas liegen darueber, jedes weitere angefangene MP kostet +$0.015 (Input **und**

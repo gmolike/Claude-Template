@@ -1,6 +1,5 @@
 {
   "env": {
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "permissions": {
@@ -80,8 +79,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/orchestrator-guard.ps1",
-            "timeout": 5
+            "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/orchestrator-guard.sh",
+            "timeout": 20
           }
         ]
       },
@@ -90,12 +89,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/improvement-reflect.ps1",
-            "timeout": 5
+            "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/improvement-reflect.sh",
+            "timeout": 20
           },
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/origin-divergence-check.ps1",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/origin-divergence-check.sh",
             "timeout": 20
           }
         ]
@@ -107,7 +106,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/format-on-edit.ps1",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/format-on-edit.sh",
             "timeout": 30
           }
         ]
@@ -119,12 +118,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/agent-core-sync.ps1",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/agent-core-sync.sh",
             "timeout": 60
           },
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/worktree-bootstrap.ps1",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/worktree-bootstrap.sh",
             "timeout": 60
           }
         ]
@@ -171,7 +170,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Entwicklung/Claude-Template/.claude/hooks/statusline-command.ps1",
+    "command": "bash \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/statusline-command.sh",
     "padding": 1
   }
 }

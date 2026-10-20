@@ -23,7 +23,7 @@
 # the MAIN worktree they are identical.
 #
 # Receives the session event as JSON on stdin (not evaluated here).
-# C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core is replaced by the sync adapter with the absolute
+# C:/Entwicklung/claude-skills is replaced by the sync adapter with the absolute
 # PKG_ROOT path at install time. This is the Claude-only path.
 #
 # FAIL-OPEN: this hook must NEVER fail a session - the body is wrapped in
@@ -45,9 +45,10 @@ $StdInUtf8 = New-Object System.IO.StreamReader([Console]::OpenStandardInput(), $
 # pinned by the same lockstep test. THIS hook is the textbook case for it: every path it acts on comes
 # out of `git rev-parse` / `git worktree list`, and under the old `(git ... | Out-String)` form those
 # were decoded with [Console]::OutputEncoding - so a worktree under C:/Users/Joerg-with-an-umlaut came
-# back as CP850 mojibake, Test-Path was False, and the bootstrap silently did nothing. It writes no
-# stdout of its own, so Write-Stdout is unused here; the block is carried whole because a partial hand
-# copy is exactly how the two forms drift apart.
+# back as CP850 mojibake, Test-Path was False, and the bootstrap silently did nothing. Since ADR-0050
+# it also writes a stdout of its own - the SessionStart envelopes of the worktree notice and of the
+# sync's warning artifact - and does so through Write-Stdout, as raw UTF-8 bytes. The block is carried
+# whole because a partial hand copy is exactly how the two forms drift apart.
 
 <#
 .SYNOPSIS
@@ -222,24 +223,73 @@ try {
     $top = Get-GitLine @('rev-parse', '--show-toplevel')
     if (-not $top) { exit 0 }
     if (Test-Path -LiteralPath (Join-Path $top 'CLAUDE.md')) {
-        # Config already present in this worktree - nothing to bootstrap.
+        # Config PRESENT is not config FRESH, and in a worktree the difference is silent AND total.
+        # Measured with `claude --debug`: Claude Code resolves project skills by walking UP from cwd
+        # and stopping at the worktree root, and skills - unlike agents/commands/output-styles, which
+        # do fall back - have NO fallback to the main checkout. So this worktree's own
+        # .claude/skills is the whole truth: TRACKED => the set frozen at this worktree's commit wins
+        # (measured in the field: 23 skills from 2026-04-13 against 82 live, five months of drift);
+        # ABSENT => the session runs with zero project skills. Either way a mandatory gate can simply
+        # be missing, with nothing turning red.
+        #
+        # This branch used to exit 0 in silence - in exactly the repos that need it, because they all
+        # track CLAUDE.md, which is what makes "present" permanently true here. It now SAYS which of
+        # the two states holds and still repairs nothing.
+        #
+        # Reach is the WORKTREE, not the directory .claude/worktrees/: the detection above is
+        # --git-dir != --git-common-dir, so a sibling worktree <repo>-worktrees/<slug> - the ADR-0030
+        # default - is covered identically. Measured there too.
+        #
+        # The two messages below are byte-identical to the .sh twin's, and a parity test runs both
+        # over the same table and compares the emitted BYTES. Only a decimal integer is interpolated,
+        # so neither variant has to escape anything - which is the whole reason they can stay in step.
+        # The umlauts travel as JSON escapes (backslash-u00e4 etc.): this SOURCE must stay pure ASCII
+        # (ADR-0027 - PS 5.1 parses a BOM-less file as the ANSI code page), while the reader of the
+        # parsed envelope still gets real German text. The .sh writes the same six bytes per umlaut.
+        $lsRun = Invoke-NativeUtf8 'git' @('-C', $top, 'ls-files', '--', '.claude/skills')
+        # Assign FIRST, count second. ConvertTo-NativeLines returns its array behind a unary comma
+        # (so PowerShell does not unroll it); wrapping the CALL in @(...) nests that array one level
+        # deeper and .Count is then ALWAYS 1 - measured: 1 for two tracked files, 1 for none, 1 for an
+        # untracked tree, while the .sh said 2 / absent / silent. The parity table caught it.
+        $trackedSkills = 0
+        if ($lsRun -and $lsRun.ExitCode -eq 0) {
+            $lsLines = ConvertTo-NativeLines $lsRun.Stdout
+            $trackedSkills = $lsLines.Count
+        }
+        if ($trackedSkills -gt 0) {
+            Write-Stdout ('{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"agent-core: Dieser Worktree tr\u00e4gt ' + $trackedSkills + ' git-getrackte Dateien unter .claude/skills. Projekt-Skills kommen NUR von hier, eingefroren auf den Commit dieses Worktrees, ohne R\u00fcckfall auf die Hauptarbeitskopie. Vor dem Verlass auf ein Pflicht-Gate den Stand pr\u00fcfen: git log -1 -- .claude/skills"}}' + "`n")
+        } elseif (-not (Test-Path -LiteralPath (Join-Path $top '.claude/skills'))) {
+            Write-Stdout ('{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"agent-core: Dieser Worktree hat kein .claude/skills. Projekt-Skills fallen NICHT auf die Hauptarbeitskopie zur\u00fcck, diese Sitzung l\u00e4uft also mit 0 Projekt-Skills. Beheben: agent-core sync --scope project --dir . in diesem Worktree."}}' + "`n")
+        }
         exit 0
     }
 
     # --- Config missing -> bootstrap ----------------------------------------
+    # THIS BRANCH WRITES INTO A CONSUMER REPO, and until ADR-0050 that was not bounded: measured,
+    # ONE session in a worktree whose .claude/skills/fsd-review/SKILL.md was the PROJECT's own,
+    # tracked version replaced it with agent-core's (disable-model-invocation: true) and left the
+    # worktree dirty - i.e. agent-core's own bootstrap hook produced the symptom issue #66 reported,
+    # with no frozen tree and no left-over worktree involved at all. The fix is not in this file: the
+    # sync's skills write path now preserves a foreign same-named SKILL.md and reports it (see
+    # classifySkillTarget in src/targets/claude.ts). What IS this file's job is not to swallow that
+    # report - see the block after the fallback.
+    #
     # Strategy - try in order, all output suppressed, never fail the session:
     #   a. agent-core on PATH  ->  regenerate config in-place for this worktree
     #   b. node dist/cli.js    ->  same, via the baked-in PKG_ROOT path
     #   c. copy from primary   ->  locked-down env (no npm/token), or a/b left
     #                              CLAUDE.md still absent: mirror the main worktree
     $agentCore = Get-Command agent-core -ErrorAction SilentlyContinue
-    $cliPath = "C:/Users/Anwender/AppData/Local/npm-cache/_npx/0e26d8a440c77845/node_modules/@gmolike/agent-core/dist/cli.js"
+    $cliPath = "C:/Entwicklung/claude-skills/dist/cli.js"
+    $synced = $false
     if ($agentCore) {
         Push-Location $top
         try { agent-core sync --scope project 2>$null | Out-Null } catch {} finally { Pop-Location }
+        $synced = $true
     } elseif (Test-Path -LiteralPath $cliPath) {
         Push-Location $top
         try { node $cliPath sync --scope project 2>$null | Out-Null } catch {} finally { Pop-Location }
+        $synced = $true
     }
 
     # Fallback: if config is still missing, copy it from the primary worktree.
@@ -262,6 +312,28 @@ try {
             $mainClaude = Join-Path $main '.claude'
             if (Test-Path -LiteralPath $mainClaude) {
                 try { Copy-Item -LiteralPath $mainClaude -Destination $top -Recurse -Force 2>$null } catch {}
+            }
+        }
+    }
+
+    # --- THE LOUD CHANNEL, DURABLE HALF (ADR-0050) --------------------------
+    # The sync above suppresses every stream, so everything it could NOT do - a preserved foreign
+    # skill above all, which is exactly what this branch used to destroy - went nowhere. The sync
+    # leaves those warnings as a ready-made SessionStart envelope in THIS WORKTREE'S GIT DIRECTORY (a
+    # linked worktree has its own) - never under .claude/, where a consumer that tracks .claude/ would
+    # see it as untracked noise and commit it into every clone. Resolved through git, never as the
+    # literal .git/<x>: in a worktree .git is a FILE. Replayed only when THIS run attempted a sync:
+    # without one the file could be a leftover of an earlier session. Identical mechanism and guard as
+    # in agent-core-sync.ps1, including the trim before deciding, because the .sh twin's `-s` test and
+    # this trim disagreed on a whitespace-only file until both test "has a non-whitespace byte".
+    if ($synced) {
+        $gd = Get-GitLine @('-C', $top, 'rev-parse', '--absolute-git-dir')
+        if ($gd) {
+            $warn = Join-Path $gd 'agent-core-warnings.json'
+            if (Test-Path -LiteralPath $warn) {
+                $warnText = ''
+                try { $warnText = [IO.File]::ReadAllText($warn, $Utf8NoBom) } catch { $warnText = '' }
+                if ($warnText.Trim()) { Write-Stdout $warnText }
             }
         }
     }

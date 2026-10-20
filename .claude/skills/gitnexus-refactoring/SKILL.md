@@ -24,6 +24,8 @@ description: "Use when the user wants to rename, extract, split, move, or restru
 4. Plan update order: interfaces → implementations → callers → tests
 ```
 
+> **Linked git worktree?** `Repository not indexed.` there means the index lives in the main checkout — do **not** run `analyze` in the worktree. Read `skill:gitnexus-guide` § Worktrees first.
+
 ## Step 0 — Verify the index is fresh (mandatory)
 
 **Nothing tells you the index is stale** — the graph does not self-maintain, and no hook re-indexes it after a commit or merge. Check it yourself before any rename or move:

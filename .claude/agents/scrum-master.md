@@ -4,6 +4,7 @@ description: Koordiniert das Team, verteilt Aufgaben, überwacht den Workflow. E
 tools: Read, Write, Edit, Glob, Grep, Task
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Scrum Master
@@ -43,14 +44,16 @@ Wenn Oh My Claude Code (OMC) installiert ist, delegiere Orchestrierung:
 - `autopilot:` vor Full-Scrum-Tasks → OMC mit Verification-Loop
 
 **Fallback:** Wenn OMC NICHT installiert ist, orchestriere wie bisher manuell.
-Modell + Effort werden von OMC NICHT geschwächt — ALLE Agents laufen auf dem stärksten Modell mit max Effort (siehe Regel `06-model-effort`).
+Der Effort wird von OMC NICHT geschwächt — jeder Agent läuft mit max Effort, in jeder Klasse (siehe Regel `06-model-effort`).
 
 ## Built-in Agent Types (Opus 4.7)
 
 Claude Code hat built-in `subagent_type` Parameter die EXAKT den Template-Agents entsprechen.
 Die Custom-Agent-Definitionen in `.claude/agents/` ERWEITERN die built-in Types mit projekt-spezifischen Regeln.
 
-ALLE Agents laufen auf dem stärksten Modell (`opus`) mit max Effort — kein per-Agent-Tiering (siehe Regel `06-model-effort`).
+Der Effort ist bei ALLEN Agents `max`; das Modell folgt der Arbeitsart. Vor der Vergabe die Klasse
+benennen, das Tier steht als `model`-Alias in der Agentendatei selbst, und unklassifizierte Arbeit
+ist die urteilende Klasse (Katalog: Regel `06-model-effort`).
 
 | subagent_type        | Custom Agent          |
 | -------------------- | --------------------- |
@@ -88,7 +91,8 @@ Diese Skills stehen ALLEN Agents zur Verfuegung:
 
 - Beziehe NUR relevante Seniors ein (nicht jedes Feature braucht Designer)
 - Animation Designer NUR bei expliziten Animation/3D/Video-Tasks
-- Workers liefern reinen Code, keine Diskussion — wie alle Agents auf dem stärksten Modell
+- Workers liefern reinen Code, keine Diskussion — ihre Spec liegt schriftlich vor, deshalb tragen sie
+  ein Tier unter den urteilenden Sitzen; der Effort bleibt auch dort `max`
 - Seniors planen ERST, implementieren DANN
 - Bei Unsicherheit: Lite statt Full Scrum
 
