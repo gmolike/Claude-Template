@@ -30,7 +30,23 @@ git diff --stat
 
 Frage den User ob alles oder bestimmte Dateien gestaged werden sollen.
 
-### Schritt 2: Pre-Commit Checks
+### Schritt 2: Abgleich mit dem Remote — zählen UND lesen
+
+Vor jedem Commit und vor jedem Push (`26-autonomy`, „Two sessions are two agents"):
+
+```bash
+git fetch
+git rev-list --count HEAD..@{upstream}               # eigenes Upstream: Push-Konflikt?
+git rev-list --count HEAD..origin/main               # Default-Branch: bewegte Basis?
+git log HEAD..@{upstream}   --no-merges --oneline    # und jetzt die Betreffs lesen
+git log HEAD..origin/main   --no-merges --oneline
+```
+
+- **Beide Refs, nie nur einer.** Commits auf dem eigenen Upstream sind ein Push-Konflikt, ein bewegter Default-Branch ist nur eine bewegte Basis — verschiedene Befunde, verschiedene Reaktionen. Nur gegen den Default-Branch zu vergleichen ist zugleich zu laut und blind.
+- **Eine Zahl ist kein Inhalt.** Lies die fremden Commit-Betreffs, bevor du weiter obendrauf stapelst. Ein Betreff, der Arbeit benennt, die du auch gemacht hast, ist ein **semantischer Konflikt**: keine Datei kollidiert, kein Test wird rot, beide Fassungen sind für sich korrekt — und trotzdem existiert dieselbe Regel zweimal. Welche überlebt, entscheidet die Rangfolge aus `25-orchestration` („Consolidate shared semantics": serialisieren → generieren → Golden-Test → Konsolidierungsstufe), nicht der Merge-Zeitpunkt.
+- **Das Schweigen des Push-Hooks ist keine Entwarnung.** `origin-divergence-check` feuert ausschließlich auf `git push` — nicht auf merge, pull, rebase oder commit —, und er meldet nur, was er zählen kann: Commits, die das Push-Ziel hält, und bei bewegtem Default-Branch die Dateien, die **beide** Seiten geändert haben. Ein Feature-Branch mit synchronem eigenem Upstream, dessen Dateien `origin/main` nicht berührt hat, läuft absichtlich still durch — und eine Doppelung, die in **verschiedenen** Dateien landet (dieselbe Regel zweimal, anders formuliert), sieht er nie. Dieser Schritt ersetzt den Hook nicht, er deckt die Lücke, in der der Hook schweigt.
+
+### Schritt 3: Pre-Commit Checks
 
 Führe die Qualitäts-Checks aus:
 
@@ -45,7 +61,7 @@ Wenn Fehler auftreten:
 - Frage ob der User sie fixen will bevor committed wird
 - Bei Lint-Fehlern: Biete `pnpm run lint:fix` an
 
-### Schritt 3: Commit-Message generieren
+### Schritt 4: Commit-Message generieren
 
 Analysiere die Änderungen und generiere eine Conventional Commit Message:
 
@@ -97,7 +113,7 @@ Analysiere die Änderungen und generiere eine Conventional Commit Message:
 Wenn `$ARGUMENTS` angegeben: Nutze es als Basis für die Message.
 Wenn nicht: Generiere automatisch aus dem Diff.
 
-### Schritt 4: CHANGELOG.md aktualisieren
+### Schritt 5: CHANGELOG.md aktualisieren
 
 Prüfe ob `CHANGELOG.md` bereits aktualisiert wurde (im Diff).
 Wenn nicht, füge unter `## [Unreleased]` den passenden Eintrag hinzu:
@@ -122,12 +138,12 @@ Stage die CHANGELOG-Änderung mit:
 git add CHANGELOG.md
 ```
 
-### Schritt 5: Scrum-Board prüfen
+### Schritt 6: Scrum-Board prüfen
 
 Prüfe ob es einen passenden Task in `.scrum/in-progress/` gibt.
 Wenn ja: Frage ob der Task nach `review/` oder `done/` verschoben werden soll.
 
-### Schritt 6: Commit ausführen
+### Schritt 7: Commit ausführen
 
 Zeige dem User die vollständige Zusammenfassung:
 
@@ -158,6 +174,7 @@ git commit -m "<message>"
 ## Regeln
 
 - NIEMALS ohne User-Bestätigung committen
+- IMMER vor dem Commit gegen **beide** Refs abgleichen — und dabei die fremden Betreffs lesen, nicht nur ihre Anzahl
 - IMMER Pre-Commit Checks ausführen
 - CHANGELOG.md MUSS aktualisiert sein
 - Commit-Message MUSS Conventional Commits Format haben

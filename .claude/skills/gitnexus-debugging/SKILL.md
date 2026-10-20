@@ -24,6 +24,8 @@ description: "Use when the user is debugging a bug, tracing an error, or asking 
 4. gitnexus_cypher({query: "MATCH path..."})                 → Custom traces if needed
 ```
 
+> **Linked git worktree?** `Repository not indexed.` there means the index lives in the main checkout — do **not** run `analyze` in the worktree. Read `skill:gitnexus-guide` § Worktrees first.
+
 ## Step 0 — Verify the index is fresh (mandatory)
 
 **Nothing tells you the index is stale** — the graph does not self-maintain, and no hook re-indexes it after a commit or merge. None of the tools above check freshness. Check it yourself:

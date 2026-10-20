@@ -4,6 +4,7 @@ description: Plant und reviewed Backend-Architektur. Implementiert API-Endpunkte
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Senior Backend Developer

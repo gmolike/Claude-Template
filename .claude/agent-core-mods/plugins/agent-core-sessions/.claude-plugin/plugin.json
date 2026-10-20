@@ -1,0 +1,12 @@
+{
+  "name": "agent-core-sessions",
+  "version": "0.1.0",
+  "description": "Zeigt alle lokalen Claude-Code-Sitzungen in einer Pane: Name, Status, Arbeitsverzeichnis und Alter aus dem Sitzungsregister der Engine, dazu Kontextfüllung und laufende Agenten der eigenen Sitzung.",
+  "author": {
+    "name": "agent-core"
+  },
+  "homepage": "https://github.com/gmolike/agent-core",
+  "license": "UNLICENSED",
+  "keywords": ["mod", "pane", "sessions", "agent-core"],
+  "types": "./types/index.d.ts"
+}

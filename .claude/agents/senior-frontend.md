@@ -4,6 +4,7 @@ description: Plant und reviewed Frontend-Architektur. Implementiert selbst bei L
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Senior Frontend Developer

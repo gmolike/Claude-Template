@@ -72,6 +72,26 @@ fal jobs take minutes — every `fal_run` below polls the queue and is meant to 
 a **backgrounded** script. Launch the whole script with your tool's background/detached
 mode and poll the progress log; never block the foreground.
 
+**Wo `curl` per Berechtigung gesperrt ist, trägt dieses Shell-Rezept nicht — und zwar
+vollständig nicht.** agent-core liefert `Bash(curl *)` und `Bash(wget *)` selbst in
+`permissions.deny` aus (`targets/claude/settings.partial.json`, **Claude-only** — auf dem
+OpenCode-Ziel existiert diese Sperre nicht): ein direkt aufgerufenes `curl` wird auf einer
+Standard-Claude-Installation verweigert; ob die Sperre auch das `curl` in diesem per
+`bash script.sh` gestarteten Rezept erreicht, ist nicht gemessen — der `.mjs`-Weg braucht die
+Antwort nicht. Wichtig ist dabei der Teil, den ein Blick auf `fal_run` allein verfehlt: **`jq` ist
+hier nicht nur der Parser, sondern der Body-Bauer aller drei Stufen** — `gen_still` (§1),
+`gen_dive` (§2) und `gen_conn` (§4) rufen `jq -n`, **bevor** `fal_run` überhaupt läuft —, und
+`img_datauri()` braucht `base64` + `tr`. Ein Ersatz nur für `fal_run` reicht deshalb nicht.
+
+Der vollständige Ersatz der **HTTP-Schicht** ist der `.mjs`-Weg aus `SKILL.md` (Abschnitt
+„Asset-Generierung", Block „Aufruf per node `fetch`" — er lebt genau einmal, dort): `falQueue()`
+ersetzt `fal_run`, `JSON.stringify` die drei `jq -n`-Aufrufe, `dataUri()` das `img_datauri()`,
+`download()` das `curl -fsSL`. Der Block ist eine Bibliothek, keine Pipeline: die Stufen selbst
+(`gen_still`, `gen_dive`, `gen_conn`, die Schleifen darüber) portierst du auf diesem Weg in dein
+eigenes `.mjs`-Skript, `ffmpeg`/`ffprobe` bleiben Pflicht. **Entweder das ganze Shell-Rezept oder
+der ganze `.mjs`-Weg** — eine Mischung lässt `jq` an drei Stellen zwingend und fällt in einem
+gebackgroundeten Skript nur als Logzeile `jq: command not found` auf.
+
 ## Qualitäts-Rezept — die live-verifizierte Modell-Kette (empfohlen)
 
 Dies ist die in einem **echten Produktionslauf verifizierte** Kette und der eigentliche
@@ -179,6 +199,11 @@ Convert to webp for the site (and optionally run knockout.py first for transpare
 
 ```bash
 for n in $NAMES; do cwebp -quiet -q 84 -resize 1800 0 "$WORK/still_$n.png" -o "$ASSETS/$n.webp"; done
+
+# No cwebp on PATH? ffmpeg is mandatory anyway and carries the libwebp encoder
+# (`ffmpeg -hide_banner -encoders | grep -i webp` -> " V....D libwebp"):
+# for n in $NAMES; do ffmpeg -v error -y -i "$WORK/still_$n.png" \
+#   -vf scale=1800:-2 -c:v libwebp -quality 84 "$ASSETS/$n.webp"; done
 ```
 
 Review the stills for cohesion before continuing. Re-roll any off-style one (if your fal
@@ -392,6 +417,21 @@ seam_check() { # connector.mp4  expected_first.png(=Still N)  expected_last.png(
 
 Die **visuelle** QA (Look, Design-Bar) darf mit benanntem Owner + Termin an manuelles QA deferieren;
 die **datenseitige** Prüfung oben deferiert **nie** (kein Browser, keine Session nötig).
+
+**Zwei Anwendungen derselben Prüfung anderswo — damit keine zweite Skala entsteht.**
+
+1. Ein **geschlossener Loop** (N Clips an EINEM Anker, `A -> A`) misst seine Loop-Naht mit genau
+   diesem `seam_check()` und derselben `>~40 dB`-Skala. Der einzige Unterschied ist der Maßstab: die
+   Loop-Naht muss IM FELD der inneren Nähte derselben Kette liegen, nicht über einer absoluten
+   Schwelle. Rezept, Ankerherkunft und Endpoint-Anforderung: `skill:fsd-3d-fal-pipeline`,
+   `references/01-fal-models.md`, Abschnitt „Seamless Video Loops" — dort steht auch, warum eine
+   unkalibrierte SSIM-Zahl **neben** dieser PSNR-Skala nur verwirrt.
+2. Dasselbe Ausbleiben des `error`-Ereignisses trifft nicht nur das Dekodieren, sondern auch die
+   **Kandidatenwahl**: ein `<video>` mit `<source>`-Liste nimmt den ersten Kandidaten, den die Engine
+   zu können BEHAUPTET, und nimmt ihn nie zurück — `canPlayType` meldete in mindestens einem
+   WebKit-Build `"probably"` für einen frei erfundenen Codec. Deshalb `mp4` **vor** `webm`, und ein
+   `onError`-Fallback zählt nicht als Absicherung. Checkliste: `skill:fsd-3d-fal-pipeline`,
+   `references/04-pitfalls.md`, „Video-Auslieferung im Browser".
 
 ## Notes
 

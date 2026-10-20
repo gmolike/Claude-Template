@@ -1,6 +1,6 @@
 ---
 name: color-registry
-description: 'VS-Code-Fensterfarben: welche Farbe ein Fenster heute trägt (Registry mit Fundstelle) und welche ein neues bekommt (deterministischer Vergabeplan aus Projekt-Slot und Rollen-Sprosse, ohne Buchführung). Nutze, wenn eine `*.code-workspace` oder `.vscode/settings.json` angelegt oder umgefärbt wird, wenn ein neues Projekt oder eine neue Rolle einen Farbton braucht, wenn zwei Fenster gleich aussehen, ein Fenster grau bleibt, die Titelleiste rot oder grau ist, oder Kontrast/Lesbarkeit an Status- oder Titelleiste beanstandet wird.'
+description: 'VS-Code-Fensterfarben: welche Farbe ein Fenster heute trägt (Registry mit Fundstelle) und welche ein neues bekommt (deterministischer Vergabeplan aus Projekt-Slot und Rollen-Sprosse, ohne Buchführung). Die Registry entscheidet die Farbe, Peacock wendet sie an. Nutze, wenn eine `*.code-workspace` oder `.vscode/settings.json` angelegt oder umgefärbt wird, wenn ein neues Projekt oder eine neue Rolle einen Farbton braucht, wenn zwei Fenster gleich aussehen, ein Fenster grau bleibt, die Titelleiste rot oder grau ist, wenn eine gesetzte Farbe kurz aufblitzt und wieder verschwindet, wenn Peacock im Spiel ist, wenn Kontrast/Lesbarkeit an Status- oder Titelleiste beanstandet wird, oder wenn gefragt wird, warum die Activity Bar keine Farbe trägt.'
 allowed-tools: Read, Bash, Glob, Grep
 ---
 
@@ -26,6 +26,7 @@ ohne Nachschlagen, ohne Aushandeln.
 - Die Titelleiste ist **rot**, obwohl niemand Rot gesetzt hat — oder sie ist grau, während die
   Statusleiste Farbe hat.
 - Kontrast/Lesbarkeit wird beanstandet („Schrift in der Leiste kaum lesbar").
+- Es wird gefragt, warum die **Activity Bar** keine Farbe trägt — oder jemand will sie einfärben.
 - Ein Farbwert soll **von Hand** geändert werden. (Antwort: nein — siehe Vergabeplan.)
 
 ## Zuerst: was hier NICHT automatisch passiert
@@ -34,15 +35,29 @@ ohne Nachschlagen, ohne Aushandeln.
 `"sinks": []`, mit dem `$comment` „empty and stays empty until the VS Code emitter exists".
 agent-core schreibt heute ausschließlich nach `~/.claude/*` und in die Bundle-Stage.
 
+**Und: die Registry wendet die Farbe nicht selbst an — Peacock tut es.** Die Registry entscheidet
+**welche** Farbe, `johnpapa.vscode-peacock` **wendet sie an**. Geschrieben wird genau **ein**
+Farbschlüssel, `peacock.color`; die Erweiterung leitet daraus die gefärbten Flächen ab. Ohne die
+Erweiterung liest **nichts** diesen Schlüssel, und das Fenster bleibt **grau**. Peacock ist damit
+**Voraussetzung**, nicht Kür — deklariert in `.vscode/extensions.json` und in `shared/editors.json`
+unter `prerequisites` des Editors `vscode`.
+
+**Gefärbt werden zwei Flächen, nicht drei: Titelleiste und Statusleiste. Die Activity Bar
+ausdrücklich nicht** — `peacock.affectActivityBar: false`, entschieden am 2026-08-03. Der Grund und
+die Zahlen stehen unter „Die Activity Bar wird nicht gefärbt"; die Regel dahinter gilt über diesen
+Fall hinaus: **wir färben keine Fläche ein, deren Kontrast wir nicht zusagen können.**
+
 Daraus folgt, ungeschönt:
 
 | Frage | Antwort heute |
 |---|---|
 | Schreibt `agent-core sync` die Farbe? | **Nein.** Kein Sink, kein Emitter. |
-| Wer schreibt die `*.code-workspace`? | Ein Mensch oder ein Agent — **jetzt**, von Hand, mit den Werten aus diesem Skill. Diese Hälfte wartet auf nichts. |
-| Wer schreibt die `.vscode/settings.json`? | **Niemand von Hand.** Diese Hälfte wartet auf den VS-Code-Emitter und wird dann **werkzeuggeschrieben unter `seed-only`** — entschieden in `docs/decisions/ADR-0043-window-color-second-location-awaits-emitter.md`. Bis dahin bleibt sie in **jedem** Repo ohne Farbblock. |
+| Wer schreibt die `*.code-workspace`? | Ein Mensch oder ein Agent — **jetzt**, von Hand, mit dem Wert aus diesem Skill. Diese Hälfte wartet auf nichts. |
+| Wer **wendet** die Farbe an? | **Peacock**, aus `peacock.color`. Nicht die Registry, nicht VS Code selbst. |
+| Was passiert ohne die Erweiterung? | **Graues Fenster.** Kein Fehler, keine Meldung — bewusst in Kauf genommen. |
+| Wer schreibt die `.vscode/settings.json`? | **Niemand von Hand.** Diese Hälfte wartet auf den VS-Code-Emitter und wird dann **werkzeuggeschrieben unter `seed-only`** — entschieden in `docs/decisions/ADR-0043-window-color-second-location-awaits-emitter.md` (samt Nachtrag vom 2026-08-03). Bis dahin bleibt sie in **jedem** Repo ohne Farbblock. |
 | Schreibt agent-core in Claude-Template / faninitiative-platform / dnd / smart-home-app? | **Nie.** agent-core emittiert nur in das Repo, in dem es läuft. Der Rollout dort ist cross-repo-Handarbeit. |
-| Wird ein vorhandener Peacock-Block überschrieben? | **Nein**, auch später nicht — siehe „Peacock" bei den Fallen. |
+| Wird ein vorhandener Peacock-Wert überschrieben? | **Nein**, auch später nicht — siehe „Peacock" bei den Fallen. |
 
 Ein Skill, der Automatik verspricht, die es nicht gibt, ist schlimmer als keiner. Wenn hier später
 `sinks` gefüllt wird, ist **dieser Abschnitt** die Stelle, die als Erstes falsch wird.
@@ -91,7 +106,9 @@ zweite Driftquelle: **wer den Port kennt, kennt die Farbe.** Fundstelle der Numm
 
 - Ein **bestehender Slot wird nie umnummeriert.** Er verschiebt sonst still jedes Fenster jedes
   Worktrees dieses Projekts — und, weil die Tabelle geteilt ist, zusätzlich jeden Port.
-- **Neues Projekt → nächster freier Slot**, eingetragen in **beide** Registries.
+- **Neues Projekt → der Slot wird angefordert, nicht genommen.** Eintragen kann ihn nur agent-core,
+  und dann in **beide** Registries plus `PROJECT_SLOTS`; wie ein Konsument ihn anfordert und was er
+  bis dahin tut, steht unter „Einen neuen Eintrag anfordern".
 - **Nach Slot 11 ist Schluss.** Kein 13. Farbton: er behauptet eine Information, die er nicht mehr
   trägt (siehe Fallen). Entweder räumt ein totes Projekt seinen Slot, oder der Kanal wird als voll
   gemeldet.
@@ -137,7 +154,12 @@ wären 171 Zustände statt 99.
 
 ### Die fertige Palette — 99 Werte, nichts auszuhandeln
 
-Jede Zelle: **Hintergrund · Kontrast gegen `#ffffff`**. Der Vordergrund ist überall `#ffffff`.
+Jede Zelle: **Hintergrund · Kontrast gegen `#ffffff`**. Der Vordergrund ist überall `#ffffff` —
+und weil Peacock ihn anwendet, gilt das nur mit `peacock.lightForegroundColor: "#ffffff"`; mit
+Peacocks Voreinstellung `#e7e7e7` sinkt jede Zahl dieser Tabelle (Minimum 3,86 statt 4,77).
+
+**Diese Zahlen gelten für die gefärbten Flächen — Titel- und Statusleiste.** Sie gelten nicht für
+eine aufgehellte Ableitung davon; genau deshalb wird die Activity Bar nicht mitgefärbt (s. u.).
 
 | Projekt | h | `project` | `shared` | `api` | `web` | `mobile` | `designer` | `content` | `po` | `qa` |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -153,7 +175,8 @@ Jede Zelle: **Hintergrund · Kontrast gegen `#ffffff`**. Der Vordergrund ist üb
 | **Projects** | 270° | `#5469b4` · 5.18 | `#4c60aa` · 5.90 | `#4458a1` · 6.65 | `#3c4f97` · 7.62 | `#34468e` · 8.70 | `#2d3e84` · 9.84 | `#26357b` · 11.18 | `#1f2d72` · 12.53 | `#182469` · 14.05 |
 | **canu-camp-hennig** | 300° | `#7a5da9` · 5.29 | `#7154a0` · 6.04 | `#694b96` · 6.89 | `#60438d` · 7.82 | `#583a84` · 8.92 | `#50327b` · 10.08 | `#482971` · 11.47 | `#402168` · 12.84 | `#38185f` · 14.34 |
 
-Gemessen über alle 99 Kombinationen: Kontrast **4,77 … 14,44** — alle bestehen WCAG AA; AAA (7:1)
+Gemessen über alle 99 Kombinationen, für Titel- und Statusleiste: Kontrast **4,77 … 14,44** — alle
+bestehen WCAG AA; AAA (7:1)
 erreichen alle 11 Projekte erst **ab Sprosse 3** (dort min 7,02), Sprosse 2 liegt im schlechtesten
 Fall bei 6,15. Kleinste Trennung zweier gleichzeitig sichtbarer Fenster in Normalsicht
 **0,026** (geplant) bzw. **0,029** (die 20 real belegten Fenster). Beispiel für die gelöste Aufgabe:
@@ -169,11 +192,15 @@ Repo-Wurzel von agent-core:
 npx tsx -e "import {deriveColor} from './src/colorRegistry.ts'; console.log(deriveColor('Claude-Template','web'))"
 ```
 
-Die vier Schlüssel fertig zum Einfügen:
+Der eine Schlüssel, fertig zum Einfügen:
 
 ```bash
-npx tsx -e "import {windowColors} from './src/colorRegistry.ts'; console.log(JSON.stringify(windowColors('Claude-Template','web'),null,2))"
+npx tsx -e "import {deriveColor} from './src/colorRegistry.ts'; console.log('\"peacock.color\": \"' + deriveColor('Claude-Template','web').background + '\"')"
 ```
+
+`windowColors(project, role)` liefert weiterhin die vier `workbench.colorCustomizations`-Schlüssel.
+Sie sind **kein Lieferformat mehr**, sondern nur noch die Rechengrundlage der Kontrastzusage — in
+eine Einstellungsdatei geschrieben werden sie nicht (siehe „Der eine Schlüssel").
 
 **Einzeiler oder Datei — nie mehrzeilig.** Mehrzeiliges `node -e` läuft unter Git-Bash als **leeres
 Programm** und endet mit Exit 0 (`shared/memory/00-knowledge.md`): es sieht aus wie ein Erfolg und
@@ -192,7 +219,7 @@ wirklich drinsteht.
 
 | Rolle | Soll | Kontrast | Fundstelle | Ist |
 |---|---|---|---|---|
-| `project` | `#a54d6c` | 5.42 | `claude-skills/claude-skills.code-workspace` | `#a54d6c` — **Soll = Ist** |
+| `project` | `#a54d6c` | 5.42 | `claude-skills/claude-skills.code-workspace` | `"peacock.color": "#a54d6c"` — **Soll = Ist** |
 
 Der Dateiname trägt hier den **Projektschlüssel** (`PROJECT_SLOTS` in `src/colorRegistry.ts` führt
 `"claude-skills"`, Verzeichnisname, case-sensitive), nicht die Rolle — anders als in
@@ -250,9 +277,9 @@ Hand** befüllt: er wartet auf den VS-Code-Emitter und wird dann werkzeuggeschri
 
 | Repo | Soll | Kontrast | Fundstelle | Ist |
 |---|---|---|---|---|
-| `claude-skills` | `#a54d6c` | 5.42 | `claude-skills/.vscode/settings.json` | keine Farbe — Block **namentlich ausgeschlossen** (s. u.) |
+| `claude-skills` | `#a54d6c` | 5.42 | `claude-skills/.vscode/settings.json` | keine Farbe — der ausgeschlossene Block ist `workbench.colorCustomizations` und wird ohnehin nicht mehr geschrieben (s. u.) |
 | `Claude-Template` | `#a05b11` | 5.25 | `Claude-Template/.vscode/settings.json` | keine Farbe |
-| `dnd` | `#a95043` | 5.36 | `dnd/.vscode/settings.json` | **Peacock, 24 Farbschlüssel** — wird nicht angefasst |
+| `dnd` | `#a95043` | 5.36 | `dnd/.vscode/settings.json` | **`peacock.color: #6e6e6e` + 24 abgeleitete Schlüssel** — fremder Wert, wird nicht angefasst |
 | `faninitiative-platform` | `#667815` | 4.93 | `faninitiative-platform/.vscode/settings.json` | keine Farbe |
 | `San` | `#007d8d` | 4.86 | `San/.vscode/settings.json` | keine Farbe |
 | `smart-home-app` | `#008171` | 4.80 | `smart-home-app/.vscode/settings.json` | keine Farbe |
@@ -263,45 +290,158 @@ Hand** befüllt: er wartet auf den VS-Code-Emitter und wird dann werkzeuggeschri
 tabu. Und unter `faninitiative-platform/.claude/worktrees/` liegen neun Kopien der Workspace-Dateien;
 sie erben dieselben Werte und sind kein Sonderfall, aber „19 Dateien" darf nicht zu „19 von 28" werden.
 
-## Die vier Schlüssel — an beiden Orten dieselben
+## Der eine Schlüssel — die Registry entscheidet, Peacock wendet an
 
-| Schlüssel | Wert |
-|---|---|
-| `statusBar.background` | die Farbe aus dem Plan |
-| `statusBar.foreground` | `#ffffff` |
-| `titleBar.activeBackground` | **dieselbe** Farbe |
-| `titleBar.activeForeground` | `#ffffff` |
-
-Beide Hintergründe tragen denselben Wert — eine Rolle, **eine** Farbe. Das ist die Festlegung gegen
-den Ist-Zustand, in dem `designer` und `po` je zwei verschiedene tragen.
-
-**Warum zwei Ablageorte sich nicht widersprechen können:** `workbench.colorCustomizations` ist ohne
-`scope` registriert, gilt also als `window`-scoped. Ist eine `*.code-workspace` geöffnet, gewinnt
-deren Wert und die `settings.json` der eingebundenen Ordner werden ignoriert; wird der Ordner direkt
-geöffnet, **ist** `.vscode/settings.json` die Workspace-Ebene. Komplementär, nie konkurrierend —
-und genau deshalb muss der Hex an beiden Orten **derselbe** sein: dem Nutzer soll nicht auffallen,
-wie er die Datei geöffnet hat.
+**Ein Fakt, ein Besitzer.** Geschrieben wird `peacock.color`, sonst nichts Farbiges — dazu drei
+Schlüssel, die **keine** Farbe tragen, sondern die Zusage absichern und begrenzen:
 
 ```jsonc
 // Generated -- do not hand-edit. Regenerate with:
-//   npx tsx -e "import {windowColors} from './src/colorRegistry.ts'; console.log(JSON.stringify(windowColors('Claude-Template','web'),null,2))"
+//   npx tsx -e "import {deriveColor} from './src/colorRegistry.ts'; console.log(deriveColor('Claude-Template','web').background)"
 // color-registry: project=Claude-Template (slot 2, hue 60) x role=web (rung 3, L 45%)
 // oklch(45% 0.12 60) -> #7f4400 -- contrast 7.69:1 vs #ffffff (WCAG AA)
-"workbench.colorCustomizations": {
-  "statusBar.background": "#7f4400",
-  "statusBar.foreground": "#ffffff",
-  "titleBar.activeBackground": "#7f4400",
-  "titleBar.activeForeground": "#ffffff"
-}
+"peacock.color": "#7f4400",
+
+// Die Zusage, nicht die Farbe: Peacock rechnet den Vordergrund sonst selbst aus
+// und landet bei #e7e7e7 -- damit fallen 14 von 99 Kombinationen unter 4,5:1.
+"peacock.lightForegroundColor": "#ffffff",
+"peacock.keepForegroundColor": false,
+
+// Die Grenze der Zusage: die Activity Bar wird NICHT gefaerbt. Peacock hellt sie
+// um 10 (nicht 5) HSL-Punkte auf -> 2.62 .. 10.91, 30 von 99 unter 4,5:1.
+"peacock.affectActivityBar": false
 ```
 
-**Bewusst NICHT gesetzt:** `titleBar.inactiveBackground`/`-Foreground` (das inaktive Fenster fällt
-auf die Theme-Farbe zurück; wer es will, nimmt denselben Hex plus Alpha `99` — Opt-in, weil ein
-Alpha-Wert gegen einen unbekannten Untergrund keinen garantierbaren Kontrast mehr hat).
-`workbench.colorTheme` und alles übrige `workbench.*` (ein Theme in einer geteilten Datei nimmt
-jedem Mitleser seins weg). Die ~20 weiteren Peacock-Schlüssel (`activityBar.*`, `commandCenter.*`,
-`statusBarItem.*`, …) — jede weitere Fläche wäre eine weitere, die kontrastgeprüft werden muss.
-Vier reichen.
+Die vier `workbench.colorCustomizations`-Schlüssel **entfallen**. Sie sind nicht überflüssig
+geworden, sie waren **schädlich** — und das ist der Kern dieses Abschnitts.
+
+### Warum es nicht anders geht — der Konflikt-Mechanismus
+
+Peacock aktiviert sich über `"activationEvents": ["*"]` in **jedem** Fenster und verwaltet per
+Voreinstellung genau die Flächen, die die Registry setzte: `titleBar`, `statusBar`, `activityBar`.
+Es hängt an `onDidChangeConfiguration` und führt sinngemäß aus:
+
+```js
+const t = getEnvironmentAwareColor();          // peacock.color -> "" (leer)
+const o = getCurrentColorBeforeAdjustments();  // liest die VORHANDENEN colorCustomizations
+if (peacockSettingsChanged && (t || o)) { await applyColor(t); … }
+```
+
+Unsere vier Schlüssel machten `o` wahr, `t` war leer — Peacock wandte **„keine Farbe"** an und
+**löschte sie**. Symptom: die Farbe blitzt kurz auf und verschwindet. Zwei Besitzer für einen Fakt,
+und der andere gewinnt jedes Mal. Deshalb steht dort jetzt **kein** `workbench.colorCustomizations`
+mehr — weder in der `*.code-workspace` noch (später) in der `.vscode/settings.json`.
+
+**Peacock ist damit Voraussetzung.** Ohne die Erweiterung liest niemand `peacock.color`, und das
+Fenster bleibt **grau**. Bewusst in Kauf genommen: ein graues Fenster ist billiger als zwei
+Schreiber auf einer Fläche. Deklariert wird die Voraussetzung an zwei Stellen —
+`.vscode/extensions.json` (Empfehlung mit Begründung) und `shared/editors.json`
+(`prerequisites: ["vscode", "vscode-peacock-extension"]`).
+
+### Die Kontrastzusage wechselt den Besitzer — und hält nur mit Nachhilfe
+
+**Wofür die Zusage gilt: für die gefärbten Flächen, Titel- und Statusleiste.** Nicht „für alles, was
+Peacock anfasst" — was nicht zugesagt werden kann, wird gar nicht erst gefärbt (nächster Abschnitt).
+
+Die Registry hat 4,5:1 gegen `#ffffff` gerechnet. Peacock rechnet den Vordergrund **selbst**
+(`getForegroundColorHex`): `tinycolor(bg).isLight() ? darkForegroundColor : lightForegroundColor`,
+mit `isLight() = (299r+587g+114b)/1000 ≥ 128`. Über alle 99 Kombinationen nachgerechnet:
+
+| Vordergrund | min. Kontrast | unter 4,5:1 | |
+|---|---|---|---|
+| `#e7e7e7` — Peacocks Voreinstellung | **3,86** (`global-login/project` `#2f8247`) | **14 von 99** | **fällt durch** |
+| `#ffffff` — der Vordergrund der Registry | **4,77** (dieselbe Zelle) | **0 von 99** | besteht |
+| `#15202b` — Peacocks dunkler Kandidat | 1,14 | 99 von 99 | wird nie gewählt |
+
+Der dunkle Kandidat kommt nie zum Zug: die hellste Farbe der Palette hat YIQ-Helligkeit **110,3**
+(`canu-camp-hennig/project` `#7a5da9`), die Schwelle liegt bei 128. Also **99 von 99** über den
+hellen Kandidaten — und genau der muss auf `#ffffff` gesetzt werden, sonst ist die Zusage falsch.
+
+**`keepForegroundColor: true` ist hier NICHT die sichere Variante, sondern die gefährliche.** In
+`prepareColors` werden die Vordergrundschlüssel nur unter `if (!keepForegroundColor)` geschrieben:
+mit `true` schreibt Peacock **nur Hintergründe** und überlässt den Vordergrund dem **Theme**.
+Gegen die Vordergründe der mitgelieferten VS-Code-Themes gerechnet:
+
+| Theme-Vordergrund | min. Kontrast | unter 4,5:1 |
+|---|---|---|
+| `#cccccc` Dark Modern | 2,97 | 36 von 99 |
+| `#8c8c8c` Dark 2026 | 1,42 | 99 von 99 |
+| `#3b3b3b` Light Modern (statusBar) | 1,00 | 99 von 99 |
+| `#606060` Light 2026 | 1,00 | 99 von 99 |
+
+Ein Theme-Wechsel würde den Farbvertrag stillschweigend mitnehmen. Deshalb steht
+`keepForegroundColor: false` **ausgeschrieben** in der Datei, obwohl es der Voreinstellung
+entspricht: Workspace sticht User, und die Zeile ist genau das, was ein globales `true` eines
+Nutzers abfängt. Eine Sperrklinke, kein No-op.
+
+### Die Activity Bar wird nicht gefärbt — und das ist die Regel, nicht die Ausnahme
+
+**Entschieden am 2026-08-03: `"peacock.affectActivityBar": false`.** Gefärbt werden **zwei** Flächen,
+Titelleiste und Statusleiste. Die Activity Bar wird **ausdrücklich nicht** gefärbt.
+
+Die Regel dahinter ist der eigentliche Inhalt dieses Abschnitts, und sie ist bewusst nicht als
+Ausnahme formuliert:
+
+> **Wir färben keine Fläche ein, deren Kontrast wir nicht zusagen können.**
+
+Nicht „die Zusage gilt für zwei von drei Flächen" — sondern: **was wir nicht garantieren, färben wir
+nicht.** Eine gefärbte Fläche ohne Zusage ist schlechter als eine ungefärbte: sie sieht aus wie Teil
+des Systems und ist es nicht.
+
+**Die Falle, in die sonst jeder Nächste genauso läuft: die Aufhellung beträgt 10 Prozentpunkte, nicht
+5.** `peacock.elementAdjustments` steht per Voreinstellung auf `{"activityBar": "lighten", …}`, und
+`getAdjustedColorHex` ruft den Aufheller **ohne Betrag** auf — er fällt damit auf
+`defaultAmountToDarkenLighten = **10**` zurück. Die Einstellung `peacock.darkenLightenPercentage`
+(Voreinstellung **5**) lesen **nur** die manuellen Darken/Lighten-Befehle; auf diesen Pfad wirkt sie
+nie. Wer die 5 aus der Einstellung abliest und damit rechnet, rechnet die Fläche schön.
+
+**Die Zahlen, gerechnet mit +10 HSL-Helligkeit und dem oben fixierten Vordergrund:**
+
+| Fläche | Kontrastbereich | unter 4,5:1 | dieses Fenster (`claude-skills/project`) |
+|---|---|---|---|
+| Titelleiste + Statusleiste — **gefärbt** | **4,77 … 14,44** | **0 von 99** | `#a54d6c` → **5,42:1** |
+| Activity Bar — **nicht gefärbt** | **2,62 … 10,91** | **30 von 99** | `#a54d6c` → `#ba6b87` → **4,35:1** |
+
+Schlechteste Zelle ist `smart-home-app/project`: `#008171` → `#00b49e` = **2,62**. Dieses Repo ist
+selbst betroffen — `#ba6b87` überschreitet mit YIQ **133,8** die `isLight()`-Schwelle (128) und
+bekommt deshalb den **dunklen** Vordergrund `#15202b`, was 4,35:1 ergibt. Ein Drittel der Palette
+unter AA ist keine Zusage, die man nachbessert, sondern eine Fläche, die man nicht anfasst.
+
+**Verifiziert an Peacocks eigener Ausgabe, nicht nur gerechnet:** vor dem Abschalten schrieb Peacock
+in die geöffnete Workspace-Datei einen Block mit 24 Schlüsseln, darunter
+`activityBar.background: #ba6b87` und `activityBar.foreground: #15202b` — der Beleg für die +10 und
+für den Schwellenübertritt. Nach dem Abschalten schreibt es **14** Schlüssel und **keinen einzigen**
+`activityBar.*` mehr (`sash.hoverBorder` und `statusBarItem.hoverBackground` tragen `#ba6b87`
+weiter — dort lebt die Aufhellung fort, aber sie trägt keinen Text).
+
+**Bewusst NICHT gesetzt:** `titleBar.inactiveBackground`/`-Foreground` (Peacock setzt sie von sich
+aus mit Alpha `99`; die Registry sagt dafür keinen Kontrast zu — ein Alpha-Wert gegen einen
+unbekannten Untergrund hat keinen garantierbaren — **derselbe Grundsatz, andere Fläche**).
+`workbench.colorTheme` und alles übrige `workbench.*` (ein Theme in einer geteilten Datei nimmt jedem
+Mitleser seins weg). Und die ~20 weiteren Flächen, die Peacock ableitet (`commandCenter.*`,
+`statusBarItem.*`, `activityBarBadge.*`, …) — sie entstehen, aber sie sind **Peacocks** Ableitung,
+nicht die Zusage der Registry. `affectActivityBar` ist der **einzige** von Peacocks ~20
+Flächenschaltern, den die Registry setzt — und er schaltet eine Fläche **ab**, nicht an.
+
+### Warum zwei Ablageorte sich trotzdem nicht widersprechen
+
+`peacock.color` ist wie `workbench.colorCustomizations` ohne `scope` registriert, gilt also als
+`window`-scoped. Ist eine `*.code-workspace` geöffnet, gewinnt deren Wert und die `settings.json`
+der eingebundenen Ordner werden ignoriert; wird der Ordner direkt geöffnet, **ist**
+`.vscode/settings.json` die Workspace-Ebene. Komplementär, nie konkurrierend — und genau deshalb
+muss der Hex an beiden Orten **derselbe** sein: dem Nutzer soll nicht auffallen, wie er die Datei
+geöffnet hat. Geändert hat sich nur, **welcher** Schlüssel dort steht.
+
+### Was Peacock zurückschreibt — beobachtet, nicht vermutet
+
+Sobald `peacock.color` in einer geöffneten `*.code-workspace` landet, wendet Peacock sie an und
+schreibt seinen **eigenen** `workbench.colorCustomizations`-Block (24 Schlüssel) in genau diese
+Datei zurück — in einem Multi-Root-Workspace **ist** diese Datei das Workspace-Ziel. Der Block wird
+nicht committet: dieses Repo führt **einen** Farbfakt, und die abgeleiteten Werte wieder
+einzuchecken stellte genau die Redundanz her, die hier gerade entfernt wurde (samt veraltender
+Werte). Die Folge gehört aber auf den Tisch: bei geöffnetem Workspace erscheint die Datei als
+**geändert**. Wer einen dauerhaft sauberen Arbeitsbaum will, muss zwischen dieser Unruhe und dem
+Einchecken von Peacocks Generat wählen — das ist offen, nicht entschieden.
 
 ## Die Fallen
 
@@ -366,35 +506,45 @@ unterscheidbar, Projekte nicht.** Ist der Nutzer rot-grün-blind, trägt der Far
 
 ### Das Theme überschreibt nichts — der **native** Fensterrahmen schon
 
-`workbench.colorCustomizations` gewinnt gegen jedes Theme. Was wirklich droht:
-`window.titleBarStyle: "native"` — dann zeichnet das Betriebssystem die Titelleiste und **kein
-`titleBar.*` greift**. Symptom: „die Farbe ist halb da", Statusleiste bunt, Titelleiste grau. Das ist
-der zweite, unabhängige Grund, **beide** Flächen zu setzen: bei nativem Rahmen trägt die Statusleiste
-die Information allein.
+Der `workbench.colorCustomizations`-Block, den Peacock aus `peacock.color` erzeugt, gewinnt gegen
+jedes Theme. Was wirklich droht: `window.titleBarStyle: "native"` — dann zeichnet das Betriebssystem
+die Titelleiste und **kein `titleBar.*` greift**. Symptom: „die Farbe ist halb da", Statusleiste
+bunt, Titelleiste grau. Das ist der zweite, unabhängige Grund, warum Peacock **beide** Flächen
+bespielt: bei nativem Rahmen trägt die Statusleiste die Information allein.
 
-### Graues Fenster: die Workspace-Datei ist gar nicht geöffnet
+### Graues Fenster: drei Ursachen, in dieser Reihenfolge prüfen
 
-Wer `code C:/Entwicklung/Claude-Template` tippt statt `code Claude-Template/web.code-workspace`,
-öffnet einen **Ordner** — die Workspace-Datei liegt nur herum. Genau dafür steht die Farbe zusätzlich
-in `.vscode/settings.json`.
+1. **Peacock fehlt.** Nichts außer der Erweiterung liest `peacock.color` — ohne sie bleibt das
+   Fenster grau, ohne Fehler und ohne Meldung. Das ist seit der Umstellung die **häufigste**
+   Ursache und die erste, die man prüft: `code --list-extensions | rg peacock`.
+2. **Die Workspace-Datei ist gar nicht geöffnet.** Wer `code C:/Entwicklung/Claude-Template` tippt
+   statt `code Claude-Template/web.code-workspace`, öffnet einen **Ordner** — die Workspace-Datei
+   liegt nur herum. Genau dafür steht die Farbe zusätzlich in `.vscode/settings.json`.
+3. **Ein Unterordner ist direkt geöffnet** (`code Claude-Template/apps/web`) — dann greift weder das
+   eine noch das andere, es sei denn, dort liegt eine eigene `.vscode/settings.json`. Das ist dnds
+   Muster mit acht Dateien. Dieser Skill deckt **eine** Datei je Repo-Wurzel ab; ein
+   Unterordner-Rollout ist eine eigene Entscheidung.
 
-**Rest-Lücke:** wer einen **Unterordner** direkt öffnet (`code Claude-Template/apps/web`), bekommt
-weder das eine noch das andere — es sei denn, dort liegt eine eigene `.vscode/settings.json`. Das ist
-dnds Muster mit acht Dateien. Dieser Skill deckt **eine** Datei je Repo-Wurzel ab; ein
-Unterordner-Rollout ist eine eigene Entscheidung.
+### Peacock: derselbe Schlüssel, ein fremder Wert — melden, nicht lösen
 
-### Peacock: die Farbe kommt an, wo nichts steht — und nur dort
-
-`dnd/.vscode/settings.json` trägt einen Peacock-Block mit **24 Farbschlüsseln** plus
-`"peacock.color"`, darunter alle vier dieser Registry. Dort passiert **nie** etwas — kein
-Endlos-Diff gegen ein Werkzeug des Nutzers. Von außen sieht das aus wie ein kaputter Emitter.
+Peacock ist nicht mehr der Gegner, sondern der Anwender — aber es bleibt der **Besitzer** seines
+Schlüssels. `dnd/.vscode/settings.json` trägt `"peacock.color": "#6e6e6e"` plus 24 abgeleitete
+Farbschlüssel; acht solcher Dateien liegen dort. Ein fremder, **nicht leerer** `peacock.color` wird
+**nicht** überschrieben — unter `seed-only` schreibt der spätere Emitter nur, wo der Schlüssel
+**fehlt**. Dort fehlt er nicht, also kommt die Farbe dort **nie** an. Von außen sieht das aus wie
+ein kaputter Emitter.
 
 **Deshalb: den Konflikt melden, nicht lösen** — mit Dateipfad und dem gefundenen Wert. Ein Mensch
-entscheidet, ob Peacock weicht. Ein Gate, das still nichts tut, ist von einem kaputten nicht zu
-unterscheiden.
+entscheidet, ob der fremde Wert weicht. Ein Gate, das still nichts tut, ist von einem kaputten nicht
+zu unterscheiden.
+
+Und die Umkehrung, die diese Umstellung überhaupt erst nötig machte: ein **leerer** `peacock.color`
+ist kein „nichts". Peacock wendet dann „keine Farbe" an und **löscht** vorhandene Werte auf
+`titleBar`/`statusBar`/`activityBar` — auch fremde. Wer die vier Schlüssel von Hand daneben setzt,
+sieht sie aufblitzen und verschwinden.
 
 ```bash
-rg -n "workbench.colorCustomizations|peacock.color" --glob "**/.vscode/settings.json" --glob "*.code-workspace"
+rg -n "workbench.colorCustomizations|peacock\.color" --glob "**/.vscode/settings.json" --glob "*.code-workspace"
 ```
 
 ### Zwei Orte driften — der Ist-Zustand ist der Beweis
@@ -415,38 +565,77 @@ wird generiert — beide Orte aus **einer** Funktion (`src/colorRegistry.ts`). D
   ein Komma vor einer schließenden Klammer. Jedes Skript mit `JSON.parse` über den Bestand stirbt
   dort; ein JSONC-Strip hilft nicht, es ist kein Kommentarproblem. Erst reparieren, dann umfärben.
 - **`claude-skills/.vscode/settings.json` schließt `workbench.colorCustomizations` namentlich aus**
-  (Block „DELIBERATELY NOT IN THE TEAM REPO … (Peacock!)"). Die Begründung zielt auf
-  `workbench.colorTheme`; **entschieden ist das inzwischen** (ADR-0043): der Ausschluss wird **nicht
-  von Hand** aufgehoben, sondern **im selben Commit wie der Emitter** präzisiert — `colorTheme` und
-  `iconTheme` bleiben draußen, die vier Chrome-Schlüssel kommen herein. Bis dahin gilt der Ausschluss
-  unverändert: **kein Farbblock in dieser Datei.**
+  (Block „DELIBERATELY NOT IN THE TEAM REPO … (Peacock!)"). Seit der Umstellung auf `peacock.color`
+  ist dieser Ausschluss **kein Hindernis mehr** — er trifft einen Schlüssel, den die Registry gar
+  nicht mehr schreibt. Was der Emitter-Commit präzisieren muss, ist stattdessen die Aufnahme von
+  `peacock.color` (ADR-0043 samt Nachtrag). Bis dahin gilt unverändert: **kein Farbschlüssel in
+  dieser Datei**, weder der alte noch der neue.
 - **Der Rollout ist cross-repo**: fünf Repos, fünf Commits, kein gemeinsamer PR. Vor jedem Commit
   `git fetch` und gegen die eigene Upstream **und** `origin/<default-branch>` diffen — zwei Sitzungen
   sehen einander nicht (`shared/rules/26-autonomy.md`).
 - **Umlaute:** JSON-Schlüssel, Farbnamen und Kommentare in den ausgelieferten Dateien bleiben
   englisch und ASCII; nur die Prosa hier ist deutsch (`shared/rules/40-language.md`).
 
-## Einen neuen Eintrag hinzufügen
+## Einen neuen Eintrag anfordern — die Farbe holst du selbst, die Zeile nicht
 
-Damit die Registry nicht driftet:
+**Dieselbe Besitzgrenze wie bei den Ports** (`shared/skills/port-registry/SKILL.md`, letzter
+Abschnitt), und aus demselben Grund: diese Datei ist eine Auslieferung. `src/targets/claude.ts`
+kopiert das Skill-Verzeichnis bei jedem Sync **bedingungslos** nach `~/.claude/skills/`, ausgelöst vom
+SessionStart-Hook `targets/claude/hooks/agent-core-sync.sh`. Ein Slot, den ein Konsument hier
+einträgt, ist beim nächsten Chat-Start weg; `src/colorRegistry.ts` steht ihm ohnehin nicht offen, es
+ist agent-core-**Code**. Zwei Schritte liegen trotzdem vollständig in seinem eigenen Repo — die Farbe
+**holen** und sein Fenster **schreiben**. Sie brauchen keinen Antrag und stehen deshalb zuerst.
 
-1. **Neues Projekt** → nächster freier Slot, eingetragen in **beide** Registries (hier **und**
-   `shared/skills/port-registry/SKILL.md`) und in `PROJECT_SLOTS` in `src/colorRegistry.ts`.
-   Bestehende Slots **nie** umnummerieren. Nach Slot 11 ist der Kanal voll.
-2. **Neue Rolle** → das ist eine **Entscheidung**, keine Zeile: Sprosse 9 gibt es nicht. Erst prüfen,
-   ob die Rolle eine Obermenge einer bestehenden ist (so ist `team` weggefallen).
-3. **Farbe holen**, nie ausdenken — `npx tsx -e "…deriveColor(…)"` aus der Repo-Wurzel.
-4. **Die `*.code-workspace` schreiben** — vier Schlüssel, Vordergrund `#ffffff`, Hex aus dem Modul.
+### Selbst tun — im eigenen Repo, ohne Antrag
+
+1. **Farbe holen**, nie ausdenken. Wer ein agent-core-Checkout hat, ruft aus dessen Wurzel das Modul
+   auf (`npx tsx -e "…deriveColor(…)"`, siehe „Nachrechnen"). Wer keins hat, liest den Hex aus der
+   Palette oben ab — sie **ist** die Ausgabe genau dieses Moduls und kein zweites Literal. Beides
+   ergibt denselben Wert; was **nicht** geht, ist ein selbst gewählter Ton.
+2. **Die `*.code-workspace` schreiben** — **ein** Farbschlüssel, `peacock.color`, Hex aus dem Modul,
+   plus `lightForegroundColor: "#ffffff"` und `keepForegroundColor: false` als Kontrastzusage **und
+   `affectActivityBar: false` als deren Grenze**. Alle drei gehören dazu: ohne den dritten färbt
+   Peacock eine Fläche, für die keine Zusage existiert (30 von 99 unter 4,5:1). **Keine**
+   `workbench.colorCustomizations`: Peacock löscht sie. Und: **Peacock muss installiert sein**, sonst
+   bleibt das Fenster grau.
    **Die `.vscode/settings.json` der Repo-Wurzel dabei NICHT anfassen:** derselbe Hex, aber nicht
    derselbe Zeitpunkt — dieser Ablageort wartet auf den Emitter und wird dann unter `seed-only`
    werkzeuggeschrieben (ADR-0043). Ein Handeintrag dort kippt einen dokumentierten Ausschluss still.
-5. **Zeile in die Registry oben** — mit `datei` als Fundstelle (vorher gegreppt, nicht aus dem Kopf)
-   und dem Ist-Wert, falls schon einer dasteht.
-6. **Drift-Check** — findet Farben, die von der Ableitung abweichen:
+3. **Drift-Check** — findet Farben, die von der Ableitung abweichen. Beide Formen suchen: den neuen
+   Schlüssel **und** die alten vier, denn ein übriggebliebener Block löscht sich selbst und sieht
+   dabei aus wie ein Fehler des Plans:
 
 ```bash
-rg -n "statusBar\.background|titleBar\.activeBackground" --glob "*.code-workspace" --glob "**/.vscode/settings.json" C:/Entwicklung
+rg -n "peacock\.color|statusBar\.background|titleBar\.activeBackground" --glob "*.code-workspace" --glob "**/.vscode/settings.json" C:/Entwicklung
 ```
 
    Was der Check findet und hier fehlt, ist ein fehlender Eintrag — **kein Fund ohne Fundstelle gilt.**
-   Was er findet und was von der Tabelle abweicht, ist Drift: Modul aufrufen, Modul gewinnt.
+   Was er findet und was von der Tabelle abweicht, ist Drift: Modul aufrufen, Modul gewinnt. Der Fund
+   wird **gemeldet**, wenn die Zeile in dieser Datei fehlt — der Antrag steht gleich darunter.
+
+### Anfordern — was nur agent-core eintragen kann
+
+1. **Neues Projekt → Slot anfordern**, wörtlich. Bis zur Vergabe gilt dieselbe Überbrückung wie bei
+   den Ports: provisorisch weiterarbeiten, das Issue **ist** die Notiz, bei Kollision entscheidet die
+   Eingangsreihenfolge:
+
+```bash
+gh issue create --repo gmolike/agent-core --label skill-improvement \
+  --title "color-registry: PROJECT_SLOT <verzeichnisname>" \
+  --body "Projekt: <verzeichnisname unter C:/Entwicklung>, Remote: <url>
+Fenster: <datei> je Rolle, Ist-Farbe <hex oder kein Farbblock>
+Peacock installiert: <ja/nein>"
+```
+
+   Es ist **ein** Antrag für beide Registries, nicht zwei: der Slot **ist** der `PROJECT_INDEX` der
+   Ports. Und der Kanal ist endlich — nach Slot 11 wird er als **voll** gemeldet, nicht unterteilt.
+2. **Neue Rolle** → das ist eine **Entscheidung**, keine Zeile: Sprosse 9 gibt es nicht. Erst prüfen,
+   ob die Rolle eine Obermenge einer bestehenden ist (so ist `team` weggefallen). Auch das geht als
+   Antrag, aber mit der Obermengen-Prüfung im Text — sonst ist es eine Zeile, die niemand entscheiden
+   kann.
+3. **Zeile in die Registry oben** — mit `datei` als Fundstelle (vorher gegreppt, nicht aus dem Kopf)
+   und dem Ist-Wert, falls schon einer dasteht. Und **dieselbe Zahl** in die Projekt-Tabelle von
+   `shared/skills/port-registry/SKILL.md` sowie in `PROJECT_SLOTS` in `src/colorRegistry.ts`.
+   Bestehende Slots **nie** umnummerieren. Der Golden Test `src/projectSlots.golden.test.ts` vergleicht
+   alle Kopien gegen `PROJECT_SLOTS`, nennt die Zahl der verglichenen Projektzeilen und wird rot,
+   sobald eine Tabelle zurückbleibt — auch bei einer bloßen **Vertauschung** zweier Zeilen.

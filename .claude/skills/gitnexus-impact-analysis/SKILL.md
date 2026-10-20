@@ -25,6 +25,8 @@ description: "Use when the user wants to know what will break if they change som
 4. Assess risk and report to user
 ```
 
+> **Linked git worktree?** `Repository not indexed.` there means the index lives in the main checkout — do **not** run `analyze` in the worktree. Read `skill:gitnexus-guide` § Worktrees first.
+
 ## Step 0 — Verify the index is fresh (mandatory)
 
 **A stale index makes this skill's output worthless.** The graph does not self-maintain — no hook re-indexes it after a commit or merge. It reflects the codebase as of the last manual `analyze`, which may be months old.
@@ -41,9 +43,11 @@ Know exactly how each tool fails on a stale index — they are not equally hones
 | Tool | On a stale index | Deceptive? |
 | --- | --- | --- |
 | `gitnexus_detect_changes` | Returns the literal **`"No changes detected."`** even with hundreds of changed files — it never checks staleness. | **YES.** Reads as an all-clear; it is not one. It means "I have no idea," not "you are safe." |
-| `gitnexus_impact` | Returns `{"error": "Target '<x>' not found", "impactedCount": 0, "risk": "UNKNOWN"}` for a symbol it never indexed. | No. It reports an explicit error and `UNKNOWN` — not a false green. Treat `UNKNOWN` as "re-index," never as "low risk." |
+| `gitnexus_impact` | For a symbol it **never indexed**: `{"error": "Target '<x>' not found", "impactedCount": 0, "risk": "UNKNOWN"}`. For an **indexed** symbol it can answer `impactedCount: 0 · risk: "LOW" · epistemic: "exact"` while a live caller sits in the very same index. | **Half.** `UNKNOWN` is honest — treat it as "re-index," never as "low risk." `0 / LOW / exact` is **not**: it is a false green, and staleness does not explain it — the edge was already in the indexed state, so re-indexing is not the remedy (not re-measured after an `analyze`). |
 
 > **Trap for automation:** `npx gitnexus status` **exits 0 in every case** — for a stale index and for "Repository not indexed." alike. A `gitnexus status || block` gate never fires. Parse stdout; do not branch on the exit code.
+
+> **`impactedCount: 0` is a claim, not a verdict — and staleness does not explain this one.** Measured on this repo 2026-09-17, re-measured 2026-09-22, against the index stamped `829606e` — 72 commits behind `HEAD`, so stale, but the production call `settings = mergeClaudeSettings(…)` already stood in `src/targets/claude.ts` at `829606e`: `impact({target: "mergeClaudeSettings", direction: "upstream"})` answered `impactedCount: 0 · risk: LOW · epistemic: "exact"` (with `includeTests: true` only the test file appears), while `impact({target_uid: "Function:src/targets/claude.ts:syncClaude", direction: "downstream"})` lists exactly that edge, out of the **same** index, as `CALLS` at confidence 0.85 (by name alone it answers `ambiguous`). The upstream traversal loses an edge the downstream traversal finds, and labels the result `exact`. So `epistemic` describes the traversal's own confidence, never the graph's coverage. A zero blast radius owes a second, non-graph confirmation before it becomes "safe to change": grep the symbol name across the repo and report `file:line` as **substitute evidence**, never as "gate green" (`30-quality`, gate evidence). Three failure modes, three different remedies — **no index** (a linked worktree, see the pointer above), **stale index** (`analyze`), and **this one**, which neither of those reaches: the edge sits in the indexed snapshot, so an `analyze` is not its cure (not re-measured after one).
 
 ## Checklist
 

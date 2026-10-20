@@ -1,6 +1,12 @@
 # Cost Model Reference
 
-> **Stand:** 2026-07-23 — Preise schwanken; vor jeder groesseren Kalkulation aktuelle fal.ai-Pricing-Seite gegenpruefen.
+> **Stand:** 2026-07-23 · Loop-Zeilen 2026-09-22 korrigiert — Preise schwanken; vor jeder größeren Kalkulation aktuelle fal.ai-Pricing-Seite gegenprüfen.
+>
+> **KORREKTUR 2026-09-22:** Die beiden Loop-Zeilen rechneten mit `fal-ai/wan/v2.7/text-to-video`. Ein
+> `text-to-video`-Endpoint nimmt kein Start-/Endbild an und kann deshalb keine Naht halten (Issue #64,
+> `01-fal-models.md`, „Seamless Video Loops"). Sie rechnen jetzt mit `fal-ai/wan/v2.7/image-to-video`
+> — gleiche Preisstaffel, `duration` 2–15 s, `image_url` + `end_image_url` (Input-Schema am
+> 2026-09-22 über die OpenAPI-Route gelesen). Die Beträge bleiben gleich.
 >
 > **KORREKTUR 2026-07-23:** Alle Zahlen unten waren zu niedrig, weil die Video-Zeile mit $0.05/s
 > gerechnet hat (real: $0.10/s @720p, $0.15/s @1080p) und weil zwei Endpoint-IDs tot waren
@@ -14,7 +20,7 @@
 | 3D model | `fal-ai/hyper3d/rodin` | $0.40 pro Generation |
 | Fallback image | `fal-ai/flux-2-pro` | $0.03 bei 1 MP Output (jedes weitere MP +$0.015) |
 | Panorama | `fal-ai/flux-2-pro` | $0.03 als Untergrenze — 2048×1024 sind ≈2,1 MP → 3 MP aufgerundet, also mehr |
-| 5 s loop video | `fal-ai/wan/v2.7/text-to-video` | $0.50 @720p ($0.10/s) · $0.75 @1080p ($0.15/s) |
+| 5 s loop video | `fal-ai/wan/v2.7/image-to-video` (`image_url` = `end_image_url`) | $0.50 @720p ($0.10/s) · $0.75 @1080p ($0.15/s) |
 | **Single run** | | **$0.96 @720p · $1.21 @1080p** |
 
 Beide `fal-ai/flux-2-pro`-Zeilen sind Untergrenzen. Beim Panorama steht die Aufloesung sogar fest
@@ -33,7 +39,7 @@ Base scenario: 10k page views/month, 80 % cache-hit rate.
 | Dynamic 3D (2k unique) | `fal-ai/hunyuan-3d/v3.1/rapid/text-to-3d` | $0.225 × 2000 | $450 |
 | Textures (5k unique) | `fal-ai/flux/schnell` | $0.003 × 5000 (pro MP, aufgerundet) | $15 |
 | Dynamic images (1k) | `fal-ai/flux-2-pro` | $0.03 × 1000 (erstes MP) | $30 |
-| Video loops (100 × 5 s) | `fal-ai/wan/v2.7/text-to-video` | $0.50 × 100 @720p · $0.75 × 100 @1080p | $50–75 |
+| Video loops (100 × 5 s) | `fal-ai/wan/v2.7/image-to-video` | $0.50 × 100 @720p · $0.75 × 100 @1080p | $50–75 |
 | R2 storage (~50 GB) | — | $0.015/GB | $0.75 |
 | Upstash Redis | — | free tier or | $0–10 |
 | Backend hosting (Fly/Railway) | — | | $5–20 |

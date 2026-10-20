@@ -25,6 +25,8 @@ description: "Use when the user asks how code works, wants to understand archite
 5. READ gitnexus://repo/{name}/process/{name}      → Trace full execution flow
 ```
 
+> **Linked git worktree?** `Repository not indexed.` there means the index lives in the main checkout — do **not** run `analyze` in the worktree. Read `skill:gitnexus-guide` § Worktrees first.
+
 ## Step 0 — Verify the index is fresh (mandatory)
 
 Steps 1 and 2 *do* carry a staleness signal — `gitnexus://repos` and `.../context` compare the indexed commit to HEAD and emit `⚠️ Index is N commits behind HEAD. Run analyze tool to update.` **Do not wait for it anyway.** It fails in the direction that hurts: any git error — an indexed commit rebased away or garbage-collected — is swallowed and reported as *fresh*, and it counts only committed drift, never your uncommitted working tree. Silence means "no drift I could measure," not "the graph matches your tree."

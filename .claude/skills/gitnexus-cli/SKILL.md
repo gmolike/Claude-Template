@@ -37,6 +37,8 @@ Shows whether the current repo has a GitNexus index, when it was last updated, a
 
 > **Trap — `status` always exits 0.** It returns exit code 0 in every case, including "Repository not indexed." and a months-old index. `gitnexus status || npx gitnexus analyze` therefore **never fires**. Parse stdout; do not branch on the exit code.
 
+> **Linked git worktree?** `Repository not indexed.` there means the index lives in the main checkout — do **not** run `analyze` in the worktree. Read `skill:gitnexus-guide` § Worktrees first.
+
 ### clean — Delete the index
 
 ```bash

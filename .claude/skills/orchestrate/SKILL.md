@@ -86,6 +86,10 @@ Nicht „grün" = nicht „gut/funktioniert". So prüft die Haupt-Instanz wirkli
 - Conventional Commits, **gruppiert nach Paket** (z. B. `feat(shared-types)` / `fix(shared-print)` / `feat(tool-*)` / `docs`).
   Commit/Push/PR **erst nach Freigabe**; Merge nur auf ausdrückliches „merge".
 - **Build-Artefakte NICHT committen** (`dist-single/`, `dist/`, `downloads/*.zip`).
+- **Vor einem `agent-core sync --scope project` erst einen WIP-Commit** — nie stashen, nie den Branch
+  wechseln (der Default-Branch ist ein Auto-Deploy-Target). Messung: Knowledge & Decisions, „A stash is the
+  wrong safety net around a config sync" (immer geladen) — nicht `skill:integration`, den das Modell wegen
+  `disable-model-invocation: true` nicht selbst laden kann.
 - Pflegen: CHANGELOG `[Unreleased]`, `.scrum`-Ticket (in-progress→done bei Merge), ADR bei Architektur-Entscheidungen,
   **Memory**. Nach Merge `main` synchronisieren; bei stale Dev-Server (`6345`, strictPort) neu starten + hart neu laden.
 

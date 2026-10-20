@@ -4,6 +4,7 @@ description: Schreibt Tests nach Testplan und fuehrt Qualitaets-Checks durch. Re
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: opus
 effort: max
+tier-class: C
 ---
 
 # Worker QS

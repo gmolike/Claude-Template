@@ -21,20 +21,20 @@ Interaktive Landingpage, bei der das Scrollen eine Kamera kontinuierlich durch v
 
 Vor jeder Generierung sicherstellen (Windows: alles in Git-Bash mit bash-3.2-Kompatibilität, Tools im `PATH`):
 
-- **`FAL_KEY`** gesetzt; **`@fal-ai/client`** (npm) **oder** `curl` für den Queue-HTTP-Weg.
+- **`FAL_KEY`** gesetzt; dazu **einer** von drei HTTP-Wegen: node ≥20 `fetch` aus einer `.mjs`-Datei (kein Zusatzpaket — **Default**; der Block unter Asset-Generierung ist eine Helfer-Bibliothek, die drei Stufen-Skripte aus `references/pipeline.md` portierst du auf diesem Weg selbst), **`@fal-ai/client`** (npm, braucht eine Installation) oder `curl` (Queue-HTTP; erst die Sperr-Notiz unten lesen).
 - **ffmpeg / ffprobe** — Frame-Extraktion und Encode; `ffprobe` liefert die native Auflösung ("encode what ffprobe reports, never upscale").
-- **jq** — Result-URL aus dem JSON-Ergebnis parsen; **curl** — Clip-/Bild-URLs (`-fsSL`) laden und Queue-Jobs submitten/pollen.
-- **cwebp** (libwebp) — PNG→WebP mit Alpha für Float-Szenen; **sips** (macOS, optional) als Alternative.
+- **`jq` + `curl`** — **beide Pflicht, wenn du das ausgelieferte Shell-Rezept in `references/pipeline.md` fährst**, und zwar mehr als das Wort „parsen" hergibt: `jq -n` baut dort die Request-Bodies **aller drei** fal-Stufen (`gen_still`, `gen_dive`, `gen_conn`), **bevor** `fal_run` überhaupt läuft, `curl` submittet/pollt/lädt (`-fsSL`). Beide entfallen **nur** beim `.mjs`-Weg — das ist ein Wechsel des ganzen Pfads, kein Werkzeugtausch. **Claude-only:** agent-core liefert `Bash(curl *)` und `Bash(wget *)` selbst in `permissions.deny` aus (`targets/claude/settings.partial.json`), auf einer Standard-Claude-Installation wird also jeder direkt aufgerufene `curl` verweigert (ob die Sperre auch das `curl` in einem per `bash script.sh` gestarteten Skript erreicht, ist nicht gemessen); auf dem OpenCode-Ziel existiert diese Sperre nicht. Deshalb ist der `.mjs`-Weg der Normalfall, keine Notlösung — er braucht die Antwort auf diese Frage nicht.
+- **cwebp** (libwebp) — *optional*: erzeugt die `.webp`-Stills, die die Seite liest (Step 2 in `pipeline.md`, nicht nur Step 3), und Alpha für Float-Szenen. Ersatz ohne Zusatzwerkzeug: `ffmpeg -c:v libwebp -quality 84` — ffmpeg ist ohnehin Pflicht und trägt den `libwebp`-Encoder. **sips** (macOS) als dritte Variante.
 - **Python 3 + Pillow/PIL** — `knockout.py` (Border-Flood-Fill + GaussianBlur) und `python -m http.server` zum Servieren.
-- **bash (3.2-safe!)** — alle Pipeline-Skripte; **keine** associative arrays; Array-getriebene Kettenschritte als `#!/bin/bash`-Datei via `bash script.sh` laufen lassen, **nie** inline in zsh (1- vs. 0-indexed).
+- **bash (3.2-safe!)** — alle Pipeline-Skripte; **keine** associative arrays; Array-getriebene Kettenschritte als `#!/bin/bash`-Datei via `bash script.sh` laufen lassen, **nie** inline in zsh (1- vs. 0-indexed). Das Shell-Rezept braucht zusätzlich `base64` + `tr` (`img_datauri()` inlined lokale Frames als Data-URI) — beim `.mjs`-Weg erledigt das `readFileSync(...).toString('base64')`.
 - **Codex CLI** (optional, ≥0.125) — Stills-Alternative via eingebautem `image_gen` (ChatGPT-Abo statt Credits).
 - **Headless-Browser** — Seam-QA (Step 8); Coreutils (`mkdir`, `cat`, `wc`, `cut`, `du`).
 
-**Windows-Hinweis:** Git-Bash stellt die bash-3.2-kompatible Shell; `jq`, `cwebp`, `ffmpeg`, `ffprobe` müssen im `PATH` liegen. Die Regel "Kettenschritte als `#!/bin/bash`-Skript" gilt auch hier.
+**Windows-Hinweis:** Git-Bash stellt die bash-3.2-kompatible Shell; `ffmpeg` und `ffprobe` müssen im `PATH` liegen (`jq`, `curl`, `cwebp` nur für den jeweiligen Weg oben). Mehrzeiliges `node -e` ist unter Git-Bash still kaputt — es läuft als LEERES Programm und endet mit Exit 0; node-Code deshalb immer in eine `.mjs`-Datei schreiben und die Datei fahren. Die Regel "Kettenschritte als `#!/bin/bash`-Skript" gilt auch hier.
 
 ## Ablauf (Steps 0–8)
 
-**Step 0 — Bootstrap.** `FAL_KEY` prüfen; ffmpeg/ffprobe/jq/curl vorhanden. Generierungen dauern 3–8 min → immer detached starten und pollen, nie blockierend. Ob ein Endpoint Start-/Endframe akzeptiert, per OpenAPI-Route verifizieren (siehe Asset-Generierung), nicht raten.
+**Step 0 — Bootstrap.** `FAL_KEY` prüfen; ffmpeg/ffprobe vorhanden; HTTP-Weg wählen (`fetch` aus einer `.mjs`-Datei = Default; `jq` + `curl` nur, wenn du das Shell-Rezept fährst **und** curl erlaubt ist). Generierungen dauern 3–8 min → immer detached starten und pollen, nie blockierend. Ob ein Endpoint Start-/Endframe akzeptiert, per OpenAPI-Route verifizieren (siehe Asset-Generierung), nicht raten.
 
 **Step 1 — Interview.** Thema/Pitch/Brand-Name; Brand-Kit (Nutzer liefert Palette+Name+Tone, oder du schlägst 4–6 benannte Hex-Werte vor, oder du liest sie aus der Website — fal hat **kein** Brand-Kit-Feature, also manuell); Art-Direction (Default: "soft matte low-poly clay diorama, isometric, tilt-shift miniature, warm light" → wird als Style-Preamble **verbatim** in jeden Szenen-Prompt übernommen); Journey aus 5–7 Sektionen entlang der Wertschöpfungskette (letzte = Hero-Produkt + CTA); Mobile ja/nein (`AskUserQuestion`); Budget/Tier (`AskUserQuestion`). Nie stillschweigend einen Center-Crop als Mobile-Version ausliefern. Intake-Checkliste + alle Prompt-Templates: `references/prompts.md`.
 
@@ -92,10 +92,62 @@ const result = await fal.subscribe('fal-ai/veo3.1/fast/first-last-frame-to-video
     generate_audio: false,          // stumm -> ~50% guenstiger
   },
 });
-// result.data traegt die Clip-URL -> mit curl -fsSL herunterladen
+// result.data traegt die Clip-URL -> mit download() (unten) oder curl -fsSL herunterladen
 ```
 
-**Aufruf per Queue-HTTP** (Dive-Beispiel, nur Startframe):
+**Aufruf per node `fetch`** (Default — kein Zusatzpaket, kein `curl`, kein `jq`: Submit → `status_url` pollen → `response_url` holen; `JSON.stringify` baut den Body, `readFileSync` den Data-URI). Als Modul in eine `.mjs`-Datei schreiben (`fal.mjs`) und aus dem eigenen Stufen-Skript importieren: `import { falQueue, download, dataUri } from './fal.mjs'`. **Der Block ist eine Bibliothek, keine Pipeline** — `node fal.mjs` allein tut nichts und endet mit Exit 0 (gemessen). Die drei Stufen (`gen_still`, `gen_dive`, `gen_conn`) stehen nur als Shell-Rezept in `references/pipeline.md`; auf diesem Weg portierst du sie selbst, die Abbildung Shell → Block steht dort im Sperrhinweis vor dem Qualitäts-Rezept.
+```js
+// fal.mjs — submit, poll, download over node fetch (node >= 20). No curl, no jq.
+// Import it as a module; run on its own it does nothing. Never as a multi-line
+// `node -e`: under Git-Bash that runs as an EMPTY program and exits 0.
+import { readFileSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
+
+const key = process.env.FAL_KEY;
+if (!key) throw new Error('FAL_KEY is not set');   // never print the key
+const auth = { authorization: `Key ${key}` };
+
+async function okJson(url, what) {                 // CHECK res.ok: without it a 401/429
+  const res = await fetch(url, { headers: auth }); // yields `undefined` instead of a
+  const text = await res.text();                   // readable error
+  if (!res.ok) throw new Error(`${what} ${res.status}: ${text.slice(0, 400)}`);
+  return JSON.parse(text);
+}
+
+export async function falQueue(endpoint, body, { timeoutMs = 1_200_000 } = {}) {
+  const submit = await fetch(`https://queue.fal.run/${endpoint}`, {
+    method: 'POST',
+    headers: { ...auth, 'content-type': 'application/json' },
+    body: JSON.stringify(body),                  // replaces `jq -n` as the body builder
+  });
+  const text = await submit.text();
+  if (!submit.ok) throw new Error(`submit ${submit.status}: ${text.slice(0, 400)}`);
+  const { status_url, response_url } = JSON.parse(text);
+  if (!status_url || !response_url) throw new Error(`response without status_url: ${text.slice(0, 300)}`);
+  const deadline = Date.now() + timeoutMs;       // WITHOUT a deadline a backgrounded script
+  for (;;) {                                     // hangs silently; fal jobs take minutes
+    if (Date.now() > deadline) throw new Error(`timeout after ${timeoutMs} ms (${endpoint})`);
+    await new Promise((r) => setTimeout(r, 10_000));
+    const { status } = await okJson(status_url, 'status');
+    if (status === 'COMPLETED') break;
+    if (status !== 'IN_QUEUE' && status !== 'IN_PROGRESS') throw new Error(`status=${status}`);
+  }
+  return okJson(response_url, 'response');       // .video.url or .images[0].url
+}
+
+export async function download(url, out) {       // replaces `curl -fsSL`
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`download ${res.status}`);
+  await writeFile(out, Buffer.from(await res.arrayBuffer()));
+}
+
+export const dataUri = (png) =>                  // replaces img_datauri() (base64 + tr)
+  `data:image/png;base64,${readFileSync(png).toString('base64')}`;
+```
+
+Dieser Weg ist live gefahren worden (Konsumentenprojekt, 2026-09-15/16, node ≥20): 6 Stills + 6 Legs, Nahtübergabe per sha256 belegt, Naht-PSNR 38,9–41,5 dB (dieselben Nähte arbeitsverzeichnis-frei nachgerechnet: 36,9–39,8 dB) — ohne einen einzigen `curl`-Aufruf. **Der Block oben ist nicht byte-gleich mit dem Code, der lief:** dort las die Datei `FAL_API_KEY ?? FAL_KEY` aus einem maschinengebundenen Key-File und hatte weder eine Frist noch `res.ok` auf dem Status-Poll. Beides ist hier normalisiert bzw. ergänzt — die Messung belegt den **Weg**, nicht diese Fassung Zeile für Zeile.
+
+**Aufruf per Queue-HTTP mit `curl`** (Alternative — nur wo `curl` erlaubt ist, siehe Voraussetzungen; Dive-Beispiel, nur Startframe):
 ```bash
 curl -s -X POST https://queue.fal.run/fal-ai/kling-video/v3/pro/image-to-video \
   -H "Authorization: Key $FAL_KEY" -H "Content-Type: application/json" \

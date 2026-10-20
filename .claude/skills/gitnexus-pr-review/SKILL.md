@@ -28,6 +28,8 @@ description: "Use when the user wants to review a pull request, understand what 
 6. Summarize findings with risk assessment
 ```
 
+> **Linked git worktree?** `Repository not indexed.` there means the index lives in the main checkout — do **not** run `analyze` in the worktree. Read `skill:gitnexus-guide` § Worktrees first.
+
 ## Step 0 — Verify the index is fresh (mandatory)
 
 **A stale index makes this review worthless** — and worse than worthless if it is gating a merge, because it produces a clean review of code it has never seen. The graph does not self-maintain: no hook re-indexes it after a commit or merge. It reflects the codebase as of the last manual `analyze`, which may be months old.

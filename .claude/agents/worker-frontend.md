@@ -2,8 +2,9 @@
 name: worker-frontend
 description: Implementiert Frontend-Code nach Tech-Spec. Schreibt Tests. Reiner Code-Output.
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: opus
+model: sonnet
 effort: max
+tier-class: B
 ---
 
 # Worker Frontend

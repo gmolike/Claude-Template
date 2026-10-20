@@ -3,8 +3,8 @@
 #
 # Two Claude sessions cannot see each other. Verified: two parallel sessions built wave 1 TWICE,
 # divergently, and nothing caught it but a manual `git log` diff (rule 26-autonomy, ADR-0025). This
-# hook is the mechanical half of that rule: on a `git push` it fetches and reports, as COMMIT COUNTS,
-# which refs hold work HEAD does not — so the divergence is seen BEFORE more work is stacked on it.
+# hook is the mechanical half of that rule: on a `git push` it fetches and reports which refs hold
+# work HEAD does not — so the divergence is seen BEFORE more work is stacked on it.
 #
 # WHICH REF IS COMPARED — the org workflow is feature-branch + one PR (20-workflow), and comparing
 # only against origin/<default-branch> was measured to be both too loud AND blind:
@@ -13,13 +13,39 @@
 #            session pushed to origin/feat/x and the reminder never named that ref at all.
 #   INFO   : origin/<default-branch>, and only when it is not already the primary ref AND holds
 #            commits HEAD lacks AND there is a primary finding to attach it to — or when the branch
-#            has NO upstream, where it is the only thing that can be said. A routine feature push
-#            whose upstream is in sync therefore stays SILENT even after the default branch moved.
-#            Measured before this change: exactly that safe push fired the full alarm — alarm fatigue
-#            on the one channel ADR-0025 is built on.
-# WHAT IT CLAIMS — only what it measured: which ref, how many commits, and that the counts were taken
-# after a fetch. It never asserts WHO pushed or WHY; that reading belongs to the human. The earlier
-# wording ("another session pushed since this one started") was a causal claim the hook cannot make.
+#            has NO upstream, where it is the only thing that can be said.
+#
+# A COUNT IS NOT CONTENT — and the count-only form had a hole the size of the incident it was built
+# for. Until this change the two branches above were the ONLY ones that could speak, so a feature
+# branch whose OWN upstream is in sync while origin/<default> moved fell through both and the hook
+# exited 0 with no output. That is exactly the reported shape: two sessions build the same wave, the
+# second one merges to the default branch, the first pushes its branch — every counter that this hook
+# looked at said "your push target is untouched", and it was right. Semantic duplication is invisible
+# to a COUNT by construction; what it is visible in is the FILE SET. So a third question is asked, of
+# whichever ref this message is about: which paths did BOTH sides change since they diverged
+# (`git diff --name-only HEAD...<ref>` vs `<ref>...HEAD`). A non-empty answer is reported — and it is
+# also, on its own, a reason to speak when no counter found anything.
+#   Why this is not a return to the alarm fatigue ADR-0025 closed: the old noise fired on "the
+#   default branch moved", which is true after every merge anybody does — measured before ADR-0025,
+#   exactly that safe push fired the full alarm, on the one channel ADR-0025 is built on. This fires
+#   on "the default branch moved AND it moved in files you are also changing", which is a measured
+#   overlap, not a proxy. A routine feature push into an untouched area therefore still stays SILENT,
+#   and golden scenarios pin that direction too (src/targets/push-contract.golden.test.ts,
+#   `disjoint-on-default` and `changelog-only-on-default`): without them, "must speak on the
+#   incident" is satisfied by a copy that simply speaks on every push.
+#   THE ONE PATH THAT IS NOT CONTENT: the root CHANGELOG.md. Rule 20-workflow makes EVERY change
+#   update its [Unreleased] section, so a branch that follows the org's own rules shares that file
+#   with every merge the default branch has seen. Measured 2026-09-22 over this repo's 30 merges into
+#   main: all 8 whose branch AND whose moved main both touched CHANGELOG.md overlapped, 5 of them in
+#   CHANGELOG.md ALONE. Counted as content, the overlap would fire on nearly every push after any
+#   merge — ADR-0025's noise back under a new name. So the in-sync case speaks only when a path OTHER
+#   than CHANGELOG.md is shared; once it speaks, the list still names every shared path, changelog
+#   included, because that is what was measured (ADR-0053).
+# WHAT IT CLAIMS — only what it measured: which ref, how many commits, which paths both sides
+# changed, and that all of it was taken after a fetch. It never asserts WHO pushed or WHY, and it
+# never claims the overlap IS a duplication — only that a count cannot see one and these paths are
+# where one would be. That reading belongs to the human. The earlier wording ("another session pushed
+# since this one started") was a causal claim the hook cannot make.
 #
 # NEVER BLOCKS — by construction, and the choice is deliberate (live hook docs, fetched 2026-07-23):
 #   - nothing to say -> exit 0 with NO output. "Exit code 0 with no output means the hook has no
@@ -164,6 +190,25 @@ count_behind() {
   printf '%s' "$n"
 }
 
+# Paths BOTH sides changed since HEAD and $1 diverged, one per line, in git's own order. Empty output
+# means "nothing to add" for every reason alike — no merge base, an unusable ref, a git that failed:
+# this is an advisory, and a missing hint costs a hint.
+#   `git diff --name-only HEAD...$1` is merge-base(HEAD,$1)..$1, i.e. what THEY changed; `$1...HEAD`
+#   is the mirror, what WE changed. Both lists come out of the same git in the same sorted order, so
+#   the intersection below is order-stable and identical in the .ps1 variant — nothing is sorted here,
+#   because `sort` follows the locale and the two variants would then disagree on a non-ASCII path.
+#   core.quotePath=false for the same reason: it keeps a non-ASCII path a readable path instead of an
+#   octal escape, in both variants.
+# The list travels through the ENVIRONMENT rather than `awk -v`: -v processes backslash escapes in the
+# value, which would mangle any path holding one.
+overlap_paths() {
+  ov_theirs="$(git -C "$cwd" -c core.quotePath=false diff --name-only "HEAD...$1" 2>/dev/null || true)"
+  [ -n "$ov_theirs" ] || return 0
+  ov_ours="$(git -C "$cwd" -c core.quotePath=false diff --name-only "$1...HEAD" 2>/dev/null || true)"
+  [ -n "$ov_ours" ] || return 0
+  printf '%s\n' "$ov_theirs" | OURS="$ov_ours" awk 'BEGIN{n=split(ENVIRON["OURS"],o,"\n");for(i=1;i<=n;i++)if(o[i]!="")m[o[i]]=1}($0!="")&&($0 in m)'
+}
+
 # PRIMARY: the ref this push updates. Resolved AFTER the fetch, so a freshly created upstream counts.
 primary_ref="$(git -C "$cwd" rev-parse --symbolic-full-name --verify --quiet '@{upstream}' 2>/dev/null || true)"
 primary_n=0
@@ -179,6 +224,35 @@ if [ "$primary_ref" != "$default_ref" ]; then
   [ -n "$info_n" ] || info_n=0
 fi
 
+# --- the CONTENT question, asked of the ref this message is about ------------------------------------
+# One ref, never two: whichever ref the sentence below names is the one whose file set is compared, so
+# the message can never point at an overlap it did not report a divergence for.
+overlap_ref=""
+if [ -n "$primary_ref" ] && [ "$primary_n" -gt 0 ]; then
+  overlap_ref="$primary_ref"
+elif [ "$info_n" -gt 0 ]; then
+  overlap_ref="$default_ref"
+fi
+overlap_n=0
+overlap_content_n=0
+overlap_head=""
+if [ -n "$overlap_ref" ]; then
+  overlap_out="$(overlap_paths "$overlap_ref")"
+  if [ -n "$overlap_out" ]; then
+    overlap_n="$(printf '%s\n' "$overlap_out" | awk 'END{print NR}')"
+    # What may make the in-sync case speak: every shared path except the root CHANGELOG.md, which
+    # rule 20-workflow makes every change touch (see the header). Exact, case-sensitive match.
+    overlap_content_n="$(printf '%s\n' "$overlap_out" | awk '$0!="CHANGELOG.md"{c++}END{print c+0}')"
+    # At most three names plus a remainder count: an unbounded list would push the real sentence off
+    # the top of the reminder. `%s` takes the path as an ARGUMENT, so a path holding % is safe.
+    overlap_head="$(printf '%s\n' "$overlap_out" | awk 'NR<=3{if(NR>1)printf ", ";printf "%s",$0}END{if(NR>3)printf " and %d more",NR-3}')"
+    # A missing awk would otherwise make the arithmetic tests below print an error to stderr — fail
+    # open to "no overlap" instead, exactly like every other unusable tool on this path.
+    case "$overlap_n" in '' | *[!0-9]*) overlap_n=0 ;; esac
+    case "$overlap_content_n" in '' | *[!0-9]*) overlap_content_n=0 ;; esac
+  fi
+fi
+
 # --- report observable facts, decide nothing --------------------------------------------------------
 facts=""
 if [ -n "$primary_ref" ] && [ "$primary_n" -gt 0 ]; then
@@ -188,10 +262,19 @@ if [ -n "$primary_ref" ] && [ "$primary_n" -gt 0 ]; then
   fi
 elif [ -z "$primary_ref" ] && [ "$info_n" -gt 0 ]; then
   facts="this branch has no upstream on origin, so the ref this push updates cannot be named here; $default_ref holds $info_n commit(s) that HEAD does not, measured after fetching origin."
+elif [ -n "$primary_ref" ] && [ "$info_n" -gt 0 ] && [ "$overlap_content_n" -gt 0 ]; then
+  # THE CASE THAT USED TO BE SILENT: the push target itself is untouched, so no count here is a push
+  # conflict — and that is precisely why the old two-branch form said nothing at all. It speaks now
+  # only because the file sets overlap beyond CHANGELOG.md; without that it still stays silent.
+  facts="$primary_ref (the upstream of this branch) is in sync, so this push has no ref conflict; $default_ref holds $info_n commit(s) that HEAD does not, measured after fetching origin."
 fi
-[ -n "$facts" ] || exit 0 # push target in sync (or ahead) -> nothing to say
+[ -n "$facts" ] || exit 0 # push target in sync (or ahead), no shared path beyond the changelog -> nothing to say
 
-msg="[agent-core] ORIGIN AHEAD: $facts Observed counts only - this hook cannot tell who pushed or why. If a second session may share this branch, the living status log and its session-ownership section are the shared state (rule 26-autonomy). Reminder only: this hook never blocks."
+if [ "$overlap_n" -gt 0 ]; then
+  facts="$facts Observed paths, not a verdict: $overlap_n file(s) were changed on BOTH sides since HEAD and $overlap_ref diverged ($overlap_head) - a commit COUNT cannot see that, so read the foreign SUBJECTS: 'git log HEAD..$overlap_ref --oneline'. A subject naming work you also did is a semantic conflict even when nothing collides in the merge (rule 25-orchestration decides which version survives)."
+fi
+
+msg="[agent-core] ORIGIN AHEAD: $facts Observed counts and paths only - this hook cannot tell who pushed or why. If a second session may share this branch, the living status log and its session-ownership section are the shared state (rule 26-autonomy). Reminder only: this hook never blocks."
 reason="$facts Advisory only: this hook defers to the normal permission flow and never blocks."
 printf '{"systemMessage":"%s","hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"defer","permissionDecisionReason":"%s"}}' \
   "$(json_escape "$msg")" "$(json_escape "$reason")"

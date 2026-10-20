@@ -1,6 +1,20 @@
 # fal.ai Model Reference (Juli 2026)
 
-> **Stand:** 2026-07-23 — Modell-Preise und Endpoint-IDs aendern sich oefter. Halbjaehrlich review-en.
+> **Stand:** 2026-07-23 · Tabellen nachgemessen 2026-09-17 — Modell-Preise und Endpoint-IDs ändern
+> sich öfter. **„Halbjährlich reviewen" reicht nachweislich nicht:** eine hier am 2026-07-23 als
+> „live verifiziert" ausgezeichnete ID war 47 Tage später tot (Issue #63, aus einem
+> Konsumentenprojekt gemeldet). Diese Datei ist ein **datierter Stand, keine Garantie** — jede ID vor
+> Nutzung selbst nach der Prüfmethode unten prüfen, auch wenn sie hier steht.
+> Reichweite der Nachmessung 2026-09-17: **28 IDs, jede auf beiden Routen.** Genau eine antwortet
+> nicht (`fal-ai/stable-point-aware-3d`, 404/404), genau zwei tragen den per-Modell-Deprecation-Marker
+> (`fal-ai/veo3`, `fal-ai/flux-pro`) — alle drei führt diese Datei bereits so. Die einzige **tote ID**
+> stand im Wan-2.6-Absatz unter „Video Models"; er ist unten widerrufen.
+> **Im selben Durchgang korrigiert (Issue #64): die Loop-Aussagen.** `fal-ai/wan/v2.7/text-to-video`
+> stand als „DEFAULT for hero loops" in der Video-Tabelle, obwohl ein `text-to-video`-Endpoint kein
+> Start-/Endbild annimmt und deshalb keine Naht halten kann; „Seamless Video Loops" nannte nur die
+> Primitive und einen Helfer (`optimizeVideo`), den es nur als unausgefülltes Template gibt. Der
+> Abschnitt trägt jetzt das Rezept (Anker aus dem Pilot-Video, Sterntopologie, Endpoint-Anforderung)
+> und verweist für die Naht auf die **eine** Skala in `skill:scroll-world`.
 >
 > **KORREKTUR 2026-07-23 — der Befund-Block vom 2026-05-13 war falsch und ist widerrufen.**
 > Jede ID unten wurde einzeln gegen zwei unabhaengige Routen geprueft (Methode siehe naechster
@@ -51,8 +65,16 @@ nicht gegen die Live-API pruefbar. Immer die konkreten Endpoint-IDs auflisten.
 3. Negativkontrolle mit einer erfundenen ID (muss auf **beiden** Routen 404 liefern) und
    Positivkontrolle mit `fal-ai/flux/schnell` (muss auf beiden Routen antworten). Ohne beide
    Kontrollen ist das Ergebnis wertlos.
-4. **Statuscode allein reicht nicht:** `fal-ai/veo3` und `fal-ai/flux-pro` antworten mit 200 und
-   tragen trotzdem "This endpoint is deprecated". Den Seiteninhalt lesen, nicht nur den Code.
+4. **Statuscode allein reicht nicht — aber "steht 'deprecated' auf der Seite?" ist selbst ein
+   Falschbefund-Generator.** Richtig bleibt: `fal-ai/veo3` und `fal-ai/flux-pro` antworten mit 200
+   und tragen trotzdem "This endpoint is deprecated", der Seiteninhalt muss also gelesen werden.
+   Aber **jede** fal.ai-Modellseite trägt zusätzlich eine globale Bannerkonfiguration — am
+   2026-09-17 wörtlich `"value":"fal-ai/ltx-2/","message":"This endpoint will be deprecated on
+   August 15, 2026"`. Ein naives `/deprecated/i` auf dem HTML färbt darum auch die Positivkontrolle
+   `fal-ai/flux/schnell` rot. Nur der **per-Modell-Marker** unterscheidet: exakt "This endpoint is
+   deprecated" bzw. "This model is no longer supported", bezogen auf die abgefragte ID. Gemessen
+   2026-09-17 über 28 IDs: Marker true genau bei `veo3` und `flux-pro`, false bei den anderen 26.
+   Wer nur den Text "deprecated" sucht, wiederholt die Fehlerklasse, die diese Datei korrigiert.
 5. **NICHT benutzen:** `https://queue.fal.run/<id>/openapi.json` — liefert per GET fuer jede ID
    405 Method Not Allowed, auch fuer erfundene. Die Route unterscheidet nicht zwischen echt und tot.
 6. Ein Treffer im fal-Modellindex (`fal.ai/api/models?keywords=...`) oder in einer Websuche ist
@@ -106,17 +128,25 @@ Regel bestehen (SKILL.md, Hard Rule 5): `fal-ai/flux/schnell` oder `fal-ai/flux-
 
 | Endpoint | Price | Use |
 |---|---|---|
-| `fal-ai/wan/v2.7/text-to-video` | $0.10/s @720p · $0.15/s @1080p | **DEFAULT for hero loops**. Cheapest viable. Ersetzt `fal-ai/wan/v2.6/text-to-video` (tot, 404 auf beiden Routen). |
+| `fal-ai/wan/v2.7/text-to-video` | $0.10/s @720p · $0.15/s @1080p | **DEFAULT for hero clips**. Cheapest viable. Ersetzt `fal-ai/wan/v2.6/text-to-video` (tot, 404 auf beiden Routen). Kann **keinen** frame-gelockten Loop — dafür braucht es getrennte Start-/Endbild-Felder, siehe "Seamless Video Loops". |
+| `fal-ai/wan/v2.7/image-to-video` | $0.10/s @720p · $0.15/s @1080p | Image-to-video derselben Familie. Modi: `image_url` (first frame), `image_url` + `end_image_url` (first/last), `video_url` (continuation). Gemessen 2026-09-17: 200 auf beiden Routen, kein per-Modell-Deprecation-Marker. Ersatz für das tote `fal-ai/wan/v2.6/image-to-video`. |
 | `fal-ai/kling-video/v2.5-turbo/pro/text-to-video` | $0.35 pauschal fuer 5 s Video · danach $0.07 je weiterer Sekunde | Better motion quality. **Kein reiner Pro-Sekunde-Tarif** — 5-s-Mindestblock, ein 2-s-Clip kostet ebenfalls $0.35. |
 | `fal-ai/kling-video/v3/pro/text-to-video` (ebenso `/image-to-video`, `/motion-control`) | $0.112/s Audio off · $0.168/s Audio on · $0.196/s Audio + Voice-Control | Top-tier, optional audio. |
 | `fal-ai/veo3.1` (+ `/fast`, `/lite`, `/image-to-video`, `/first-last-frame-to-video`, `/reference-to-video`, `/extend-video`) | Standard: $0.20/s @720p und @1080p ohne Audio · $0.40/s mit Audio · $0.40/s @4K ohne Audio · $0.60/s @4K mit Audio. `/fast`: $0.10/s bzw. $0.15/s @720p und @1080p · $0.30/s bzw. $0.35/s @4K. `/lite`: $0.03/s @720p ohne Audio · $0.05/s @720p mit Audio · $0.05/s @1080p ohne Audio · $0.08/s @1080p mit Audio | Highest quality, native audio. |
 
 - **`fal-ai/veo3` ist deprecated** (200, aber "This model is no longer supported"), Preis war $0.20/s
   ohne Audio / $0.40/s mit Audio. Ersatz ist `fal-ai/veo3.1` mit der Staffel oben.
-- **Wan 2.6:** nur `fal-ai/wan/v2.6/text-to-video` ist tot. Im selben Namespace sind
-  `fal-ai/wan/v2.6/image-to-video`, `/reference-to-video` und `/text-to-image` weiterhin erreichbar —
-  reicht image-to-video fachlich aus, ist `fal-ai/wan/v2.6/image-to-video` die live verifizierte
-  v2.6-Alternative.
+- **Wan 2.6 ist als Ganzes tot — es gibt keinen v2.6-Notnagel (gemessen 2026-09-17).** Nicht nur
+  `fal-ai/wan/v2.6/text-to-video`: auch `fal-ai/wan/v2.6/image-to-video`,
+  `fal-ai/wan/v2.6/reference-to-video` und `fal-ai/wan/v2.6/text-to-image` liefern **404 auf beiden
+  Routen**. Die früher hier stehende Empfehlung, `fal-ai/wan/v2.6/image-to-video` sei "die live
+  verifizierte v2.6-Alternative", ist **widerrufen** — sie stand am 2026-07-23 als live verifiziert
+  in dieser Datei und war 47 Tage später tot. Ersatz für image-to-video:
+  `fal-ai/wan/v2.7/image-to-video` (Tabellenzeile oben) oder
+  `fal-ai/kling-video/v3/pro/image-to-video` — letzteres nimmt `duration` als **String** ("3".."15"),
+  hat `generate_audio` mit Default **true** und **kein** `aspect_ratio`.
+  Kontrollen dieses Durchgangs bestanden: Positiv `fal-ai/flux/schnell` 200 auf beiden Routen,
+  Negativ (erfundene ID) `fal-ai/kling-video/v9/ultra/image-to-video` 404 auf beiden Routen.
 
 ## HDRI / Environment Maps
 
@@ -130,11 +160,63 @@ No true HDR generation exists on fal.ai. Workaround:
 
 ## Seamless Video Loops
 
-No model generates seamless loops natively. Workarounds:
+Nativ generiert kein Modell einen Loop. Ein Loop **beliebiger Länge** lässt sich aber KOMPONIEREN
+— das ist eine andere Aussage als "geht nicht". In dieser Reihenfolge:
 
+- **Ankerverankerte Sterntopologie (empfohlen; 70 s belegt).** Zuerst einen Pilot-Clip erzeugen und
+  aus ihm EINEN Frame als Anker A entnehmen — ausdrücklich **nicht** das Originalbild. Jeder
+  weitere Clip läuft dann `A -> A` (Kling: `start_image_url` == `end_image_url`; Wan 2.7:
+  `image_url` == `end_image_url`; veo3.1-FLF: `first_frame_url` == `last_frame_url`) mit eigenem
+  zyklischem Bewegungsmotiv; die fertigen Clips sind in **beliebiger Reihenfolge** aneinanderhängbar, weil
+  jeder an demselben Frame beginnt und endet. Warum der Anker aus dem VIDEO kommen muss, ist im Haus
+  schon Gesetz und wird hier nur angewandt: `skill:scroll-world`, `SKILL.md` Kern-Prinzip — "echte
+  gerenderte Frames, niemals die Original-Stills, sonst sichtbarer Pop". Gemessen am selben Motiv
+  (SSIM auf der Gebäude-Region, Bild-Edit gegen Original / Videomodell gegen sein eigenes
+  Ausgangsbild): 1440 px 0,6475 / 0,8566 · 720 px 0,8655 / 0,9822 · 480 px 0,9257 / 0,9936 — ein
+  Bild-Edit zeichnet die Architektur neu, das Videomodell reproduziert sie. Genuin neu gegenüber
+  scroll-world ist allein die **geschlossene** Stern-Form: scroll-world baut eine LINEARE Kette
+  (Clip i endet, wo Clip i+1 beginnt), hier beginnen und enden ALLE Clips am selben Anker.
 - **First-frame = last-frame trick** (Kling, Wan support this): pass the same image as both endpoints
-- **ffmpeg crossfade polish** in `optimize.ts` (overlay first 0.5 s alpha-faded into last 0.5 s) — see `optimizeVideo({ loop: true })`
+  — das ist die Primitive der Sterntopologie, angewandt auf einen EINZELNEN Clip.
+- **ffmpeg crossfade polish** (overlay first 0.5 s alpha-faded into last 0.5 s). Der hier früher
+  genannte Helfer `optimizeVideo({ loop: true })` gehört zu `templates/backend/`, und dieses
+  Template ist **noch nicht ausgefüllt** (`templates/backend/README.md` führt
+  `src/services/{fal-client,cache,storage,optimize}.ts` als TODO) — bis dahin Handarbeit.
 - **Boomerang** (video + reversed): only for symmetric motion, often looks artificial
+
+**Endpoint-Anforderung — ein `text-to-video`-Endpoint kann das konstruktiv nicht.** `A -> A` braucht
+einen Endpoint, der Start- UND Endbild **getrennt** annimmt. Im Haus belegt, Feldnamen live aus der
+OpenAPI-Route abgelesen: `fal-ai/kling-video/v3/pro/image-to-video` und
+`fal-ai/kling-video/o1/image-to-video` (`start_image_url` required, `end_image_url` optional), dazu
+die nativen FLF-Endpoints `fal-ai/veo3.1/first-last-frame-to-video` (ebenso `/fast/...`, `/lite/...`)
+und `fal-ai/wan-flf2v` (beide Frames Pflicht). Vollständige Tabelle mit Feldnamen und Preisstaffel:
+`skill:scroll-world`, `SKILL.md` Abschnitt "Asset-Generierung". Vor Nutzung nach der Prüfmethode
+oben zweiroutig nachprüfen — `fal-ai/wan/v2.7/image-to-video` aus der Tabelle oben ist der Kandidat
+aus dieser Datei, der `image_url` + `end_image_url` annimmt (Input-Schema `WanV27ImageToVideoInput`
+am 2026-09-22 über die OpenAPI-Route gelesen, beide Felder optional; zum Vergleich trägt
+`fal-ai/veo3.1` ohne Suffix gar kein Bildfeld — die Basis-ID ist `text-to-video`).
+
+**Die Naht prüfen — mit EINEM Instrument, nicht mit einem zweiten.** Die Nahtprüfung ist im Haus
+bereits kanonisch und laufbereit: `skill:scroll-world`, `references/pipeline.md` Abschnitt 7 —
+browser-freies `seam_check()` (ffmpeg-Frameextraktion + PSNR), Skala `>~40 dB = frame-tight`. Sie
+gilt auch für die Loop-Naht; hier wird **keine zweite Skala** aufgemacht. Zwei Zusätze gelten nur
+für den Loop:
+
+1. **Der Maßstab ist relativ.** Der Loop ist gut, wenn die Loop-Naht IM FELD der inneren Nähte
+   derselben Kette liegt — nicht, wenn sie eine absolute Schwelle reißt.
+2. **Wer statt PSNR eine Ähnlichkeitszahl wie SSIM nimmt, kalibriert sie vorher.** Referenzpunkte
+   EINES solchen Aufbaus (Konsumentenmessung, nicht agent-cores Skala): identische Frames 1,0000 ·
+   verlustbehaftetes Re-Encode 0,93 · **3 px Versatz 0,3017**. Drei Pixel drücken den Wert auf 0,30
+   — wer ohne diese Skala misst, hält 0,93 für "fast identisch". PSNR und SSIM sind zwei
+   Instrumente für dieselbe Größe: nie Zahlen aus beiden gegeneinander lesen.
+
+**Belegter Lauf mit Geltungsbereich, damit niemand mehr ableitet als gemessen wurde.**
+Konsumentenprojekt, 2026-09-08/10, sieben Clips, in agent-core nicht nachstellbar: Loop 70,29 s ·
+Loop-Naht SSIM 0,9872 · sieben innere Nähte 0,9885-0,9893 · Kamera-Drift über zehn Stichproben
+0,8052-0,8227 ohne Trend · 9,08 $ für diesen einen Lauf, kein Tarif. Geltungsbereich: EINE
+Motivgattung (Architektur/Umgebung, statische Kamera, zyklische Bewegung), EIN Videomodell in der
+Anker-Rolle (vom Melder nicht benannt — die Kostenzahl lässt mindestens drei Endpoints zu), kein
+Vergleich gegen Crossfade unter sonst gleichen Bedingungen.
 
 ## Texture Tileability
 

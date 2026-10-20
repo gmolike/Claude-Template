@@ -32,6 +32,8 @@ Memory: `project_plugins_installed.md` + `project_redesign_prompt_style.md`.
 | Component placement | `references/02-fsd-placement.md` |
 | Motion / animation work | `references/03-motion-tokens.md`, `references/04-pitfalls.md` |
 | Cost estimate / SLA discussion | `references/05-cost-model.md` |
+| Seamless loop of any length (anchor, star topology, seam check) | `references/01-fal-models.md` ("Seamless Video Loops"), `skill:scroll-world` |
+| Shipping video in the browser (`<video>`, `<source>` order, fallbacks) | `references/04-pitfalls.md` ("Video-Auslieferung im Browser") |
 
 **Step 3: Copy from `templates/` rather than re-creating from scratch.** The templates are battle-tested. Adapt placeholders (prompts, endpoint IDs, environment names) but do not change the structure unless the user explicitly requests it.
 
@@ -45,7 +47,7 @@ Memory: `project_plugins_installed.md` + `project_redesign_prompt_style.md`.
 6. R3F decorative canvases get `pointerEvents: 'none'` + `events={undefined}` + `aria-hidden="true"`.
 7. Motion: `m.*` (not `motion.*`) under `<LazyMotion strict>`. `import from 'motion/react'`, never `framer-motion`.
 8. Rate-limit middleware on every `/api/fal/*` route. Without it, a single bot can drain $1000+/hour.
-9. **Endpoint-IDs nie analog ableiten.** fal.ai mischt Slash und Bindestrich innerhalb derselben Modellfamilie (`fal-ai/flux/schnell` vs. `fal-ai/flux-2-pro`, `fal-ai/hunyuan3d/v2` vs. `fal-ai/hunyuan-3d/v3.1/rapid/text-to-3d`), und mal fehlt das `fal-ai/`-Präfix, mal ist es Pflicht. Jede ID einzeln gegen `https://fal.ai/models/<id>` prüfen — mit Negativkontrolle (erfundene ID muss 404 liefern) und Seiteninhalt lesen (deprecated Endpoints antworten trotzdem mit 200). Nie eine Wildcard-ID (`.../v3/pro/*`) in Code oder Referenz schreiben: sie ist per Konstruktion nicht prüfbar. Methode: `references/01-fal-models.md`.
+9. **Endpoint-IDs nie analog ableiten.** fal.ai mischt Slash und Bindestrich innerhalb derselben Modellfamilie (`fal-ai/flux/schnell` vs. `fal-ai/flux-2-pro`, `fal-ai/hunyuan3d/v2` vs. `fal-ai/hunyuan-3d/v3.1/rapid/text-to-3d`), und mal fehlt das `fal-ai/`-Präfix, mal ist es Pflicht. Jede ID einzeln gegen `https://fal.ai/models/<id>` prüfen — mit Negativkontrolle (erfundene ID muss 404 liefern) und Seiteninhalt lesen (deprecated Endpoints antworten trotzdem mit 200) — und zwar den per-Modell-Marker („This endpoint is deprecated" / „This model is no longer supported"), nie das bloße Wort „deprecated": jede fal.ai-Modellseite trägt einen globalen Deprecation-Banner, der sonst auch die Positivkontrolle `fal-ai/flux/schnell` rot färbt. Nie eine Wildcard-ID (`.../v3/pro/*`) in Code oder Referenz schreiben: sie ist per Konstruktion nicht prüfbar. Methode: `references/01-fal-models.md`.
 
 ## FSD Placement Quick Reference
 
@@ -61,7 +63,8 @@ Memory: `project_plugins_installed.md` + `project_redesign_prompt_style.md`.
 
 ## Model Selection Heuristic
 
-> Alle IDs und Preise hier sind der Kurzauszug aus `references/01-fal-models.md` (Stand 2026-07-23).
+> Alle IDs und Preise hier sind der Kurzauszug aus `references/01-fal-models.md` (Stand 2026-07-23,
+> Tabellen nachgemessen 2026-09-17).
 > Bei Abweichung gilt die Referenz — und vor Nutzung immer die dort beschriebene Pruefmethode.
 
 When the user asks for a 3D model:
@@ -80,11 +83,19 @@ When the user asks for an image:
   1K/2K, $0.30 bei 4K, +$0.015 mit Web-Search)
 
 When the user asks for video:
-- Cheapest viable loop → Wan 2.7 (`fal-ai/wan/v2.7/text-to-video`, $0.10/s @720p, $0.15/s @1080p)
+- Cheapest viable **single clip** → Wan 2.7 (`fal-ai/wan/v2.7/text-to-video`, $0.10/s @720p,
+  $0.15/s @1080p). **Not a loop:** a `text-to-video` endpoint takes no start/end frame at all, so it
+  cannot hold a seam — this line used to say "cheapest viable loop" and sent readers past the only
+  endpoint class that can do the job.
 - Cinematic quality → Kling 3.0 Pro (`fal-ai/kling-video/v3/pro/text-to-video`, $0.112/s ohne Audio,
   $0.168/s mit Audio, $0.196/s mit Audio + Voice-Control)
 - Audio required → Veo 3.1 (`fal-ai/veo3.1`, $0.20/s @720p/1080p ohne Audio, $0.40/s mit Audio;
   @4K $0.40/s bzw. $0.60/s — günstigere Tiers: `/fast` und `/lite`)
+- **Seamless loop of any length** → an **image-to-video** endpoint that takes start AND end frame
+  separately: `fal-ai/wan/v2.7/image-to-video`, `fal-ai/kling-video/v3/pro/image-to-video` or a
+  native FLF endpoint (`fal-ai/veo3.1/first-last-frame-to-video`, `fal-ai/wan-flf2v`). The anchor
+  frame comes from a **pilot video**, never from the original still. Recipe, endpoint requirement and
+  seam check: `references/01-fal-models.md`, "Seamless Video Loops".
 
 When the user asks for HDRI:
 - Stop. Explain: fal.ai has no true HDR generation. Generate LDR panorama via FLUX.2 Pro

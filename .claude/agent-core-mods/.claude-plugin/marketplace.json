@@ -1,0 +1,14 @@
+{
+  "name": "agent-core-mods",
+  "description": "agent-core's own mods: display surfaces for Claude Code, delivered by `agent-core sync`.",
+  "owner": {
+    "name": "agent-core"
+  },
+  "plugins": [
+    {
+      "name": "agent-core-sessions",
+      "source": "./plugins/agent-core-sessions",
+      "description": "Zeigt alle lokalen Claude-Code-Sitzungen in einer Pane: Name, Status, Arbeitsverzeichnis und Alter aus dem Sitzungsregister der Engine, dazu Kontextfüllung und laufende Agenten der eigenen Sitzung."
+    }
+  ]
+}
